@@ -403,6 +403,15 @@ def validate_column_exists(input_file: str, column_name: str):
 
     except Exception as e:
         raise ValueError(f"Error validating column '{column_name}': {e}") from e
+
+
+def get_base_path():
+    """Get the base path for the application, handling both development and PyInstaller contexts."""
+    if getattr(sys, 'frozen', False):
+        return Path(sys._MEIPASS)
+    return Path(__file__).parent
+
+    
 class XMLExtractor:
     """Class to extract XML elements from an input file and save them as separate files.
 
@@ -763,7 +772,7 @@ def main():
             raise FileNotFoundError(f"Input file '{args.input_file}' does not exist.")
 
         # Determine path to replacements.json based on execution context
-        base_path = os.path.abspath(os.path.dirname(__file__))
+        base_path = get_base_path()
         replace_map_path = os.path.join("..", base_path, "replacements.json") if running_in_test_mode() else os.path.join(base_path, "replacements.json")
         # Load character replacement mappings
         replace_map = load_replace_map_from_json(replace_map_path) if replace_map_path else {"*": "-", "\x02": "", "\x1A": ""}

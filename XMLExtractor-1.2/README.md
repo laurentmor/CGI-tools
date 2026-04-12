@@ -25,6 +25,7 @@ This Python tool extracts, cleans, validates, and exports XML content from SQL D
 - Corrected XML file name extraction logic to reliably derive output names from XML content.
 - Resolved an undefined variable error in the script's error handling path.
 - Improved memory usage and parsing stability by fully cleaning `iterparse` XML elements.
+- Fixed path resolution issues when the tool is packaged as an executable with PyInstaller.
 
 ## Requirements
 
