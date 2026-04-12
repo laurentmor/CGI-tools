@@ -29,6 +29,8 @@ All notable changes to this project will be documented in this file.
 
 - All 112 unit tests now pass with 94.40% code coverage.
 - Verified comprehensive test suite functionality after implementing path normalization, regex precompilation, and streaming I/O improvements.
+- Improved test coverage to 97.79% with 119 tests by adding comprehensive tests for check_output_dir method and removing unused code.
+- Added tests covering all user interaction paths in directory handling, including file deletion prompts and test mode behaviors.
 
 ## [Released]
 
