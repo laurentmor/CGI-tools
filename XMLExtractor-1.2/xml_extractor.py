@@ -94,6 +94,22 @@ from xml.etree import ElementTree as ET
 from tests.generate_test_sets import generate
 from decorators import log_exceptions
 
+# Constants
+DEFAULT_COLUMN_NAME = "RICH_TEXT_NCLOB"
+DEFAULT_FILE_ID_TAG = "MessageID"
+DEFAULT_OUTPUT_DIR = "xmls"
+DEFAULT_TEST_SIZE = 10
+MIN_PASSWORD_LENGTH = 5
+TEST_MODE_INDICATOR = "test"
+SOUND_START = "homer_start.wav"
+SOUND_DONE = "homer_done.wav"
+SOUND_ERROR = "homer_error.wav"
+LOG_FILE_NAME = "script.log"
+LOG_FILE_TEST_NAME = "script-test.log"
+REPLACEMENT_MAP_FILE = "replacements.json"
+TEST_SET_PATH_TEMPLATE = "sets/set_{}.xml"
+TEST_SET_PATH_TEST_TEMPLATE = "tests/sets/set_{}.xml"
+
 # Global variables used throughout the script
 # logger: Configured logging instance for outputting messages to console and file
 logger = None
@@ -113,7 +129,7 @@ def running_in_test_mode() -> bool:
     Returns:
         bool: True if 'test' is in the current working directory path, False otherwise.
     """
-    return "test" in os.getcwd()
+    return TEST_MODE_INDICATOR in os.getcwd()
 
 def configure_logging() -> logging.Logger:
     """Configures the logger for the script with console and file handlers.
@@ -137,7 +153,7 @@ def configure_logging() -> logging.Logger:
         logger.addHandler(console_handler)
 
         # File handler; log file name changes based on test mode
-        log_file_name = "script-test.log" if running_in_test_mode() else "script.log"
+        log_file_name = LOG_FILE_TEST_NAME if running_in_test_mode() else LOG_FILE_NAME
         out_file_handler = logging.FileHandler(log_file_name, mode="a", encoding="utf-8")
         out_file_handler.setFormatter(formatter)
         out_file_handler.setLevel(logging.INFO)
@@ -222,11 +238,11 @@ def validate_arguments():
     logger.info("Validating CLI arguments")
     parser = argparse.ArgumentParser(description="Generate XML files based on SQLDEV export.")
     parser.add_argument("input_file", nargs="?", help="Input XML file (optional if --test is used)")
-    parser.add_argument("output_dir", nargs="?", help="Output directory for XML files (optional) (default: xmls)", default="xmls")
-    parser.add_argument("--column-name", default="RICH_TEXT_NCLOB", help="Column name to extract XML from (default RICH_TEXT_NCLOB)")
+    parser.add_argument("output_dir", nargs="?", help=f"Output directory for XML files (optional) (default: {DEFAULT_OUTPUT_DIR})", default=DEFAULT_OUTPUT_DIR)
+    parser.add_argument("--column-name", default=DEFAULT_COLUMN_NAME, help=f"Column name to extract XML from (default {DEFAULT_COLUMN_NAME})")
     parser.add_argument(     "--z", nargs="+",  metavar=("zip_name", "[zip_password]"), help="Create a zip file. Optionally provide a password.")
-    parser.add_argument("--file-id-tag", default="MessageID", help="XML tag to use as the file name (default: 'MessageID')")
-    parser.add_argument("--test", nargs="?", type=int,const=10,default=None, help="Optional test size. Defaults to 10 if used without value.")
+    parser.add_argument("--file-id-tag", default=DEFAULT_FILE_ID_TAG, help=f"XML tag to use as the file name (default: '{DEFAULT_FILE_ID_TAG}')")
+    parser.add_argument("--test", nargs="?", type=int,const=DEFAULT_TEST_SIZE,default=None, help=f"Optional test size. Defaults to {DEFAULT_TEST_SIZE} if used without value.")
 
     parser.add_argument("--skip-pause", action="store_true", help="Skip pause at the end of execution", default=False)
     parser.add_argument("--mute", action="store_true",  help="Mute sound effects during execution ")
@@ -251,7 +267,7 @@ def validate_arguments():
     # Handle test mode: adjust input file and output directory paths
     if args.test:
         # Adjust test set path depending on whether script is run from runner or pure CLI
-        args.input_file = f"sets/set_{args.test}.xml" if running_in_test_mode() else f"tests/sets/set_{args.test}.xml"
+        args.input_file = TEST_SET_PATH_TEMPLATE.format(args.test) if running_in_test_mode() else TEST_SET_PATH_TEST_TEMPLATE.format(args.test)
         args.output_dir = "tests-results"
         logger.info(f"Test mode enabled. Using test set: {args.input_file}")
         if not os.path.isfile(args.input_file):
@@ -781,7 +797,7 @@ def main():
 
         # Determine path to replacements.json consistently using pathlib
         base_path = get_base_path()
-        replace_map_path = base_path / "replacements.json"
+        replace_map_path = base_path / REPLACEMENT_MAP_FILE
         # Load character replacement mappings
         replace_map = load_replace_map_from_json(replace_map_path) if replace_map_path.exists() else {"*": "-", "\x02": "", "\x1A": ""}
         logger.info(f"Replacement map loaded from {replace_map_path} : {replace_map}")
@@ -792,12 +808,12 @@ def main():
         validate_column_exists(args.input_file, args.column_name)
 
         logger.info("Starting XMLExtractor script")
-        play_sound("homer_start.wav", args.mute)  # Play start sound effect
+        play_sound(SOUND_START, args.mute)  # Play start sound effect
 
         # Extract ZIP parameters from arguments
         zip_password = args.z[1] if args.z and len(args.z) > 1 else None
         zip_name = args.z[0] if args.z else None
-        test_set_size = args.test if args.test else 10  # Default test size
+        test_set_size = args.test if args.test else DEFAULT_TEST_SIZE  # Default test size
         is_test_mode = args.test is not None
 
         # Initialize XMLExtractor with all parameters
@@ -818,7 +834,7 @@ def main():
         extractor.extract_and_save_elements()
 
         logger.info("Script completed successfully.")
-        play_sound("homer_done.wav", args.mute)  # Play completion sound
+        play_sound(SOUND_DONE, args.mute)  # Play completion sound
         logger.info(f"Total execution time: {time.time() - start_time:.2f} seconds")
 
         # Pause for user interaction unless skip-pause is set
@@ -828,7 +844,7 @@ def main():
     except Exception as e:
         logger.error(f"Unexpected error: {e}")
         logger.error("Script execution failed.")
-        play_sound("homer_error.wav", "N")  # Play error sound (force on)
+        play_sound(SOUND_ERROR, "N")  # Play error sound (force on)
         sys.exit(1)
 
 
