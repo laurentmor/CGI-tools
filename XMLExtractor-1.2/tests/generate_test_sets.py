@@ -11,7 +11,7 @@ def generate(base_dir,size:int):
     generate_xml_file(base_dir,size)
     generate_test_runners(base_dir,size)
 
-
+   
 def generate_test_runners(base_dir,size:int):
     """Genereate test runners for given set size"""
     print(f"Generating run-test-set-{size}-files-no-zip.bat")
