@@ -1,3 +1,5 @@
+"""Regression tests for edge-case behavior across XML cleaning, ZIP password validation, and XMLExtractor settings.
+They ensure the extractor handles unusual input without crashing."""
 import logging
 import unittest
 from unittest.mock import MagicMock, patch
@@ -7,25 +9,31 @@ from tests.fixtures import make_extractor, patch_iterparse, REPLACE_MAP
 
 class TestEdgeCases(unittest.TestCase):
 
+    """Validate edge-case behavior for XML cleaning, zip password validation, and extractor configuration values."""
     def setUp(self):
         xe.logger = logging.getLogger("test")
 
     def test_get_message_id_with_whitespace(self):
+        """Verify that Get message id with whitespace."""
         ext = make_extractor()
         content = "<Root>  <MessageID>  MSG  </MessageID>  </Root>"
         self.assertIn("MSG", ext.get_message_id(content))
 
     def test_clean_xml_unicode_passthrough(self):
+        """Verify that Clean xml unicode passthrough."""
         result = xe.clean_xml_content("Héllo Wörld", {})
         self.assertEqual(result, "Héllo Wörld")
 
     def test_validate_zip_password_unicode(self):
+        """Verify that Validate zip password unicode."""
         self.assertTrue(xe.validate_zip_password("pässwörd123"))
 
     def test_extractor_column_name_stored(self):
+        """Verify that Extractor column name stored."""
         self.assertEqual(make_extractor(column_name="MY_COL").column_name, "MY_COL")
 
     def test_row_with_no_message_id_skipped(self):
+        """Verify that Row with no message id skipped."""
         xml = """\
 <RESULTS>
   <ROW>

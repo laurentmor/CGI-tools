@@ -1,3 +1,5 @@
+"""Unit tests for the log_exceptions decorator.
+These tests verify exception mapping, logger resolution, and wrapper metadata preservation."""
 import types
 import unittest
 from unittest.mock import MagicMock
@@ -7,16 +9,7 @@ log_exceptions = load_real_log_exceptions()
 
 
 class TestLogExceptionsDecorator(unittest.TestCase):
-    """
-    Tests for the real log_exceptions decorator loaded directly from
-    decorators.py.
-
-    Key gotcha: MagicMock() is callable, so the decorator's
-        `if callable(logger): log_instance = logger(*args, **kwargs)`
-    branch fires and calls the mock as a factory, returning a *child* mock
-    rather than using the mock we passed.  Fix: use a non-callable
-    types.SimpleNamespace that exposes only the needed log methods.
-    """
+    """Validate decorator behavior for mapping exceptions to log messages and preserving wrapped functions."""
 
     @staticmethod
     def _spy():
@@ -28,6 +21,7 @@ class TestLogExceptionsDecorator(unittest.TestCase):
         )
 
     def test_no_exception_returns_value(self):
+        """Verify that No exception returns value."""
         @log_exceptions({ValueError: "bad value"})
         def good():
             return 42
@@ -35,6 +29,7 @@ class TestLogExceptionsDecorator(unittest.TestCase):
         self.assertEqual(good(), 42)
 
     def test_mapped_exception_logged_returns_none(self):
+        """Verify that Mapped exception logged returns none."""
         spy = self._spy()
 
         @log_exceptions({ValueError: "bad value"}, logger=spy)
@@ -45,6 +40,7 @@ class TestLogExceptionsDecorator(unittest.TestCase):
         spy.warning.assert_called_once()
 
     def test_raise_exception_true_re_raises(self):
+        """Verify that Raise exception true re raises."""
         spy = self._spy()
 
         @log_exceptions({ValueError: "bad"}, raise_exception=True, logger=spy)
@@ -55,6 +51,7 @@ class TestLogExceptionsDecorator(unittest.TestCase):
             bad()
 
     def test_log_level_error(self):
+        """Verify that Log level error."""
         spy = self._spy()
 
         @log_exceptions({KeyError: "missing key"}, log_level="error", logger=spy)
@@ -65,6 +62,7 @@ class TestLogExceptionsDecorator(unittest.TestCase):
         spy.error.assert_called_once()
 
     def test_unmapped_exception_propagates(self):
+        """Verify that Unmapped exception propagates."""
         @log_exceptions({ValueError: "val"})
         def bad():
             raise RuntimeError("unhandled")
@@ -73,6 +71,7 @@ class TestLogExceptionsDecorator(unittest.TestCase):
             bad()
 
     def test_wraps_preserves_function_name(self):
+        """Verify that Wraps preserves function name."""
         @log_exceptions({ValueError: "v"})
         def my_function():
             pass
@@ -80,7 +79,7 @@ class TestLogExceptionsDecorator(unittest.TestCase):
         self.assertEqual(my_function.__name__, "my_function")
 
     def test_instance_logger_resolved(self):
-        """logger='logger' string resolved from args[0].logger attribute."""
+        """Verify that Instance logger resolved."""
 
         class MyClass:
             def __init__(self):

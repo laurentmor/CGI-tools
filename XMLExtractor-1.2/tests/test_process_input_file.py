@@ -1,3 +1,5 @@
+"""Unit tests for process_input_file_to_ensure_is_clean().
+These tests cover file cleaning, temporary backup handling, and replacement semantics."""
 import unittest
 from unittest.mock import MagicMock, mock_open, patch
 import xml_extractor as xe
@@ -6,11 +8,13 @@ from tests.fixtures import REPLACE_MAP
 
 class TestProcessInputFile(unittest.TestCase):
 
+    """Verify that input files are cleaned, backed up, and replaced correctly when necessary."""
     def setUp(self):
         xe.logger = MagicMock()
         xe.replace_map = REPLACE_MAP
 
     def test_cleaning_happens(self):
+        """Verify that Cleaning happens."""
         m_read = mock_open(read_data="dirty\n")
         m_write = mock_open()
 
@@ -28,6 +32,7 @@ class TestProcessInputFile(unittest.TestCase):
             mock_replace.assert_called_once()
 
     def test_no_cleaning_no_temp_file(self):
+        """Verify that No cleaning no temporary file."""
         m = mock_open(read_data="clean\n")
 
         with patch("builtins.open", m), \
@@ -41,6 +46,7 @@ class TestProcessInputFile(unittest.TestCase):
             mock_remove.assert_not_called()
 
     def test_no_cleaning_temp_exists_removed(self):
+        """Verify that No cleaning temporary exists removed."""
         m = mock_open(read_data="clean\n")
 
         with patch("builtins.open", m), \
@@ -54,6 +60,7 @@ class TestProcessInputFile(unittest.TestCase):
             mock_remove.assert_called_once()
 
     def test_multiple_lines_some_cleaned(self):
+        """Verify that Multiple lines some cleaned."""
         m_read = mock_open(read_data="line1\nline2\n")
         m_write = mock_open()
 
@@ -73,6 +80,7 @@ class TestProcessInputFile(unittest.TestCase):
             m_write().writelines.assert_called_once_with(["cleaned\n", "line2\n"])
 
     def test_backup_created(self):
+        """Verify that Backup created."""
         m = mock_open(read_data="data\n")
 
         with patch("builtins.open", m), \

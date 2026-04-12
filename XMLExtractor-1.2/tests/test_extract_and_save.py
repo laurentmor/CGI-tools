@@ -1,3 +1,5 @@
+"""Unit tests for extract_and_save_elements().
+These tests exercise the row extraction pipeline, invalid input handling, dry-run behavior, and ZIP triggering."""
 import unittest
 from unittest.mock import MagicMock, mock_open, patch
 import xml_extractor as xe
@@ -6,6 +8,7 @@ from tests.fixtures import make_extractor
 
 class TestExtractAndSave(unittest.TestCase):
 
+    """Test extract_and_save_elements() for XML extraction flow, file writing, and zip handling under edge cases."""
     def setUp(self):
         xe.logger = MagicMock()
 
@@ -21,6 +24,7 @@ class TestExtractAndSave(unittest.TestCase):
     # 1. Invalid root tag
     # --------------------------------------------------
     def test_invalid_root(self):
+        """Verify that Invalid root."""
         ext = make_extractor()
         context = iter([("start", MagicMock(tag="WRONG"))])
         with patch("xml_extractor.ET.iterparse", return_value=context), \
@@ -33,6 +37,7 @@ class TestExtractAndSave(unittest.TestCase):
     # 2. No ROW elements
     # --------------------------------------------------
     def test_no_rows(self):
+        """Verify that No rows."""
         ext = make_extractor()
         context = iter([("start", MagicMock(tag="RESULTS"))])
         with patch("xml_extractor.ET.iterparse", return_value=context), \
@@ -44,6 +49,7 @@ class TestExtractAndSave(unittest.TestCase):
     # 3. ROW with no matching column
     # --------------------------------------------------
     def test_row_without_column(self):
+        """Verify that Row without column."""
         ext = make_extractor()
         root = MagicMock(tag="RESULTS")
         row = self._make_elem("ROW")
@@ -58,6 +64,7 @@ class TestExtractAndSave(unittest.TestCase):
     # 4. Column present but text is None
     # --------------------------------------------------
     def test_column_without_text(self):
+        """Verify that Column without text."""
         ext = make_extractor()
         root = MagicMock(tag="RESULTS")
         row = self._make_elem("ROW")
@@ -72,6 +79,7 @@ class TestExtractAndSave(unittest.TestCase):
     # 5. Column present but xml_id is empty
     # --------------------------------------------------
     def test_empty_xml_id(self):
+        """Verify that Empty xml id."""
         ext = make_extractor()
         root = MagicMock(tag="RESULTS")
         row = self._make_elem("ROW")
@@ -87,6 +95,7 @@ class TestExtractAndSave(unittest.TestCase):
     # 6. Nominal case — file created with correct content
     # --------------------------------------------------
     def test_valid_row_creates_file(self):
+        """Verify that Valid row creates file."""
         ext = make_extractor(dry_run=False)
         root = MagicMock(tag="RESULTS")
         row = self._make_elem("ROW")
@@ -105,6 +114,7 @@ class TestExtractAndSave(unittest.TestCase):
     # 7. Dry run — no file written
     # --------------------------------------------------
     def test_dry_run(self):
+        """Verify that dry-run mode."""
         ext = make_extractor(dry_run=True)
         root = MagicMock(tag="RESULTS")
         row = self._make_elem("ROW")
@@ -122,6 +132,7 @@ class TestExtractAndSave(unittest.TestCase):
     # 8. ZIP triggered when create_zip=True
     # --------------------------------------------------
     def test_create_zip_called(self):
+        """Verify that Create zip called."""
         ext = make_extractor(create_zip=True)
         context = iter([("start", MagicMock(tag="RESULTS"))])
         with patch("xml_extractor.ET.iterparse", return_value=context), \

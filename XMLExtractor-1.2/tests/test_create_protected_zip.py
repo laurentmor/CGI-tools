@@ -1,3 +1,5 @@
+"""Unit tests for create_protected_zip().
+These tests cover password handling, nested directory traversal, and error propagation during protected ZIP creation."""
 import logging
 import unittest
 from unittest.mock import MagicMock, patch
@@ -7,6 +9,7 @@ from tests.fixtures import make_extractor
 
 class TestCreateProtectedZip(unittest.TestCase):
 
+    """Verify protected ZIP creation includes password setup, nested directories, and robust error handling."""
     def setUp(self):
         xe.logger = logging.getLogger("test")
 
@@ -20,6 +23,7 @@ class TestCreateProtectedZip(unittest.TestCase):
     # 1. Nominal case (covers file loop)
     # --------------------------------------------------
     def test_zip_with_files(self):
+        """Verify that Zip with files."""
         ext = make_extractor(zip_password="secret123", output_dir="out")
         fake_zip = self._make_fake_zip()
         walk_data = [("out", [], ["a.xml", "b.xml"])]
@@ -35,6 +39,7 @@ class TestCreateProtectedZip(unittest.TestCase):
     # 2. No files (empty branch)
     # --------------------------------------------------
     def test_zip_no_files(self):
+        """Verify that Zip no files."""
         ext = make_extractor(zip_password="secret123", output_dir="out")
         fake_zip = self._make_fake_zip()
 
@@ -48,6 +53,7 @@ class TestCreateProtectedZip(unittest.TestCase):
     # 3. Nested subdirectories
     # --------------------------------------------------
     def test_nested_directories(self):
+        """Verify that Nested directories."""
         ext = make_extractor(zip_password="secret123", output_dir="out")
         fake_zip = self._make_fake_zip()
         walk_data = [("out", ["sub"], ["a.xml"]), ("out/sub", [], ["b.xml"])]
@@ -62,6 +68,7 @@ class TestCreateProtectedZip(unittest.TestCase):
     # 4. UTF-8 password encoding
     # --------------------------------------------------
     def test_password_encoding(self):
+        """Verify that Password encoding."""
         ext = make_extractor(zip_password="pässwörd", output_dir="out")
         fake_zip = self._make_fake_zip()
 
@@ -75,6 +82,7 @@ class TestCreateProtectedZip(unittest.TestCase):
     # 5. Exception on open re-raised
     # --------------------------------------------------
     def test_exception_in_zipfile_reraised(self):
+        """Verify that Exception in zipfile reraised."""
         ext = make_extractor(zip_password="secret123", output_dir="out")
         with patch("xml_extractor.pyzipper.AESZipFile", side_effect=IOError("zip error")):
             with self.assertRaises(IOError):
@@ -84,6 +92,7 @@ class TestCreateProtectedZip(unittest.TestCase):
     # 6. Exception on write re-raised
     # --------------------------------------------------
     def test_exception_in_write_reraised(self):
+        """Verify that Exception in write reraised."""
         ext = make_extractor(zip_password="secret123", output_dir="out")
         fake_zip = self._make_fake_zip()
         fake_zip.write.side_effect = IOError("write error")
@@ -97,6 +106,7 @@ class TestCreateProtectedZip(unittest.TestCase):
     # 7. Logger called on success
     # --------------------------------------------------
     def test_logger_called(self):
+        """Verify that Logger called."""
         ext = make_extractor(zip_password="secret123", output_dir="out")
         fake_zip = self._make_fake_zip()
 

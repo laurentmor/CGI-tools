@@ -1,19 +1,5 @@
-"""
-test_main_block.py
-==================
-Tests for xml_extractor.main() — the script entry-point.
-
-The original source used a bare `if __name__ == "__main__":` block with no
-main() function, making it impossible to patch reliably.  xml_extractor.py
-has been refactored to extract that block into main() so it can be called
-and patched normally here.
-
-time.time() note
-----------------
-We use itertools.count() instead of side_effect=[0, 1] because Python's
-logging module also calls time.time() internally when formatting records,
-which would exhaust a fixed-length list before the code under test runs.
-"""
+"""Unit tests for xml_extractor.main() and the module entry-point guard.
+These tests verify CLI flow, error handling, ZIP options, and the __main__ execution path."""
 
 import itertools
 import unittest
@@ -24,6 +10,7 @@ import xml_extractor as xe
 
 class TestMainBlock(unittest.TestCase):
 
+    """Verify main entrypoint behavior, CLI handling, and __main__ guard execution."""
     def _fake_args(self, **overrides):
         defaults = dict(
             input_file="file.xml", output_dir="out", column_name="COL",
@@ -37,6 +24,7 @@ class TestMainBlock(unittest.TestCase):
     # SUCCESS path
     # --------------------------------------------------
     def test_main_success(self):
+        """Verify that Main success."""
         fake_args = self._fake_args(skip_pause=True)
         fake_extractor = MagicMock()
 
@@ -62,6 +50,7 @@ class TestMainBlock(unittest.TestCase):
     # FILE NOT FOUND path
     # --------------------------------------------------
     def test_main_file_not_found(self):
+        """Verify that Main file not found."""
         fake_args = self._fake_args()
 
         with patch.object(xe, "configure_logging", return_value=MagicMock()), \
@@ -79,6 +68,7 @@ class TestMainBlock(unittest.TestCase):
     # EXCEPTION path
     # --------------------------------------------------
     def test_main_exception(self):
+        """Verify that Main exception."""
         fake_args = self._fake_args()
 
         with patch.object(xe, "configure_logging", return_value=MagicMock()), \
@@ -98,6 +88,7 @@ class TestMainBlock(unittest.TestCase):
     # ZIP path
     # --------------------------------------------------
     def test_main_with_zip(self):
+        """Verify that Main with zip."""
         fake_args = self._fake_args(z=["archive.zip", "pass123"], skip_pause=True)
         fake_extractor = MagicMock()
 
@@ -122,6 +113,7 @@ class TestMainBlock(unittest.TestCase):
     # PAUSE path (skip_pause=None → input() called)
     # --------------------------------------------------
     def test_main_pause(self):
+        """Verify that Main pause."""
         fake_args = self._fake_args(skip_pause=None)
         fake_extractor = MagicMock()
 
@@ -145,32 +137,10 @@ class TestMainBlock(unittest.TestCase):
 
 
 class TestMainGuard(unittest.TestCase):
-    """
-    Covers the `if __name__ == "__main__": main()` guard (lines 617-618).
-
-    pytest always imports xml_extractor as a module so __name__ is never
-    "__main__" during a normal run — coverage marks line 618 as a missing
-    branch (617 ↛ 618).
-
-    Strategy
-    --------
-    The guard condition `if __name__ == "__main__"` is a plain runtime
-    boolean evaluated against the module attribute xe.__name__.  We can
-    trigger it in-process by:
-
-      1. Patching xe.main() so it raises SystemExit(42) immediately —
-         no real I/O, no argument parsing.
-      2. Temporarily setting xe.__name__ = "__main__".
-      3. Evaluating the guard expression and calling xe.main() exactly
-         as the guard does.
-      4. Restoring xe.__name__ in a finally block.
-
-    This is fully equivalent to running the script directly as far as
-    coverage is concerned: the branch `617 → 618` is taken, and
-    `main()` is confirmed to be the callee.
-    """
+    """Verify main entrypoint behavior, CLI handling, and __main__ guard execution."""
 
     def test_name_main_guard_executes_main(self):
+        """Verify that Name main guard executes main."""
         original_name = xe.__name__
         try:
             with patch.object(xe, "main", side_effect=SystemExit(42)) as mock_main:

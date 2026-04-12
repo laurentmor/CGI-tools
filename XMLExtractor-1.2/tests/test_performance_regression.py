@@ -1,3 +1,5 @@
+"""Performance regression tests for core helper functions.
+These tests compare relative timings on the current machine to avoid brittle absolute thresholds."""
 import logging
 import timeit
 import unittest
@@ -6,24 +8,7 @@ from tests.fixtures import make_extractor, REPLACE_MAP
 
 
 class TestPerformanceRegression(unittest.TestCase):
-    """
-    Repeated-run statistical checks using timeit.
-
-    Thresholds are *relative*, not absolute.
-    ----------------------------------------
-    Hardcoded µs limits fail on slower or heavily loaded machines (Windows
-    scheduler overhead, coverage instrumentation, CI VMs, etc.).  Instead
-    each test measures a trivial no-op baseline on the current machine and
-    asserts that the function under test runs within a reasonable multiple of
-    that baseline.  This makes the suite portable across laptops, CI runners,
-    and Windows/Linux/macOS without tuning per-environment numbers.
-
-    Multipliers used (all generous to avoid false positives under load):
-      clean_xml_content     – ≤ 200× no-op  (regex compile amortised; O(n) work)
-      get_message_id        – ≤ 200× no-op  (single re.search)
-      validate_zip_password – ≤ 100× no-op  (pure Python len check)
-      linear scaling        – 10× input must finish in ≤ 20× the time of 1× input
-    """
+    """Verify relative performance characteristics remain acceptable across helper functions."""
 
     REPS = 7
     N = 500
@@ -71,7 +56,7 @@ class TestPerformanceRegression(unittest.TestCase):
     # ------------------------------------------------------------------
 
     def test_clean_xml_relative_speed(self):
-        """clean_xml_content must be ≤ 200× a bare no-op call."""
+        """Verify that Clean xml relative speed."""
         content = "Hello * World \x02 End\x1A"
         self._assert_relative(
             lambda: xe.clean_xml_content(content, REPLACE_MAP),
@@ -80,7 +65,7 @@ class TestPerformanceRegression(unittest.TestCase):
         )
 
     def test_get_message_id_relative_speed(self):
-        """get_message_id must be ≤ 200× a bare no-op call."""
+        """Verify that Get message id relative speed."""
         ext = make_extractor()
         content = "<Proponix><Header><MessageID>MSG12345678</MessageID></Header></Proponix>"
         self._assert_relative(
@@ -90,7 +75,7 @@ class TestPerformanceRegression(unittest.TestCase):
         )
 
     def test_validate_zip_password_relative_speed(self):
-        """validate_zip_password must be ≤ 100× a bare no-op call."""
+        """Verify that Validate zip password relative speed."""
         self._assert_relative(
             lambda: xe.validate_zip_password("valid_password_123"),
             max_multiplier=100,
@@ -99,7 +84,7 @@ class TestPerformanceRegression(unittest.TestCase):
         )
 
     def test_clean_xml_scales_linearly(self):
-        """10× more lines should take ≤ 20× the time (generous slack for CI noise)."""
+        """Verify that Clean xml scales linearly."""
         lines_100 = [f"Line {i} * \x02 \x1A\n" for i in range(100)]
         lines_1000 = lines_100 * 10
 

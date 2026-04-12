@@ -1,3 +1,5 @@
+"""Unit tests for create_unprotected_zip().
+These tests assert correct ZIP creation behavior, compression mode, and file inclusion."""
 import logging
 import unittest
 import zipfile
@@ -8,10 +10,12 @@ from tests.fixtures import make_extractor
 
 class TestCreateUnprotectedZip(unittest.TestCase):
 
+    """Verify unprotected ZIP creation uses ZIP_DEFLATED and writes expected files into the archive."""
     def setUp(self):
         xe.logger = logging.getLogger("test")
 
     def test_zip_contains_output_files(self):
+        """Verify that Zip contains output files."""
         ext = make_extractor(output_dir="out", output_file_name="archive")
         ext.zip_filename = "archive.zip"
         walk_result = [("out", [], ["a.xml", "b.xml"])]
@@ -24,6 +28,7 @@ class TestCreateUnprotectedZip(unittest.TestCase):
         self.assertTrue(fake_zip.write.called)
 
     def test_zip_created_with_deflate(self):
+        """Verify that Zip created with deflate."""
         ext = make_extractor()
         ext.zip_filename = "out.zip"
         fake_zip = MagicMock()

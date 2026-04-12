@@ -1,3 +1,5 @@
+"""Benchmark tests for XMLExtractor helper functions.
+These tests measure performance to detect regressions while staying tolerant of slower machines."""
 import logging
 import time
 import unittest
@@ -7,7 +9,7 @@ from tests.fixtures import make_extractor, patch_iterparse, REPLACE_MAP
 
 
 class BenchmarkFixtures:
-    """In-memory XML generation utilities for benchmark tests."""
+    """Benchmark helper functions under reasonable thresholds to catch performance regressions early."""
 
     @staticmethod
     def make_xml(n_rows: int) -> str:
@@ -34,11 +36,7 @@ class BenchmarkFixtures:
 
 
 class TestBenchmarks(unittest.TestCase):
-    """
-    Micro-benchmark suite executed as part of the normal test run.
-    Each test records elapsed wall time and asserts it stays within a
-    generous threshold so CI does not false-positive on slow machines.
-    """
+    """Benchmark helper functions under reasonable thresholds to catch performance regressions early."""
 
     THRESHOLDS = {
         "clean_xml_1000_lines": 0.5,    # seconds
@@ -52,6 +50,7 @@ class TestBenchmarks(unittest.TestCase):
         xe.logger = logging.getLogger("test")
 
     def test_bench_clean_xml_1000_lines(self):
+        """Verify that Bench clean xml 1000 lines."""
         lines = [f"Line {i} with * and \x02 and \x1A\n" for i in range(1000)]
         t0 = time.perf_counter()
         for line in lines:
@@ -61,6 +60,7 @@ class TestBenchmarks(unittest.TestCase):
         self.assertLess(elapsed, self.THRESHOLDS["clean_xml_1000_lines"])
 
     def test_bench_get_message_id_10000_calls(self):
+        """Verify that Bench get message id 10000 calls."""
         ext = make_extractor()
         content = "<Proponix><Header><MessageID>MSG12345678</MessageID></Header></Proponix>"
         t0 = time.perf_counter()
@@ -71,6 +71,7 @@ class TestBenchmarks(unittest.TestCase):
         self.assertLess(elapsed, self.THRESHOLDS["get_message_id_10000"])
 
     def test_bench_get_row_count_100_rows(self):
+        """Verify that Bench get row count 100 rows."""
         xml_100 = BenchmarkFixtures.make_xml(100)
         ext = make_extractor()
         t0 = time.perf_counter()
@@ -81,9 +82,11 @@ class TestBenchmarks(unittest.TestCase):
         self.assertLess(elapsed, self.THRESHOLDS["get_row_count_100_rows"])
 
     def test_bench_extract_10_rows(self):
+        """Verify that Bench extract 10 rows."""
         self._bench_extraction(BenchmarkFixtures.make_xml(10), "extract_10_rows")
 
     def test_bench_extract_100_rows(self):
+        """Verify that Bench extract 100 rows."""
         self._bench_extraction(BenchmarkFixtures.make_xml(100), "extract_100_rows")
 
     def _bench_extraction(self, xml_string: str, label: str):
