@@ -28,7 +28,8 @@ This Python tool extracts, cleans, validates, and exports XML content from SQL D
 - Fixed path resolution issues when the tool is packaged as an executable with PyInstaller.
 - Optimized file cleaning with streaming I/O to reduce memory footprint for large XML files.
 - Normalized path handling across all file operations using `pathlib.Path`.
-- Precompiled regex patterns for character replacement to improve performance during XML cleaning.
+- Added static type hints to core functions and methods for clearer code contracts and maintainability.
+- Cached precompiled regex patterns for character replacement when the replacement map is reused, improving performance during XML cleaning.
 - Updated test mocks to maintain compatibility with code improvements, ensuring all 119 tests pass.
 - Achieved 97.79% test coverage with comprehensive testing of user interaction paths and edge cases.
 

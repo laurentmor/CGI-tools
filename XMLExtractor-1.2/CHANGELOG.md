@@ -8,14 +8,15 @@ All notable changes to this project will be documented in this file.
 
 - Added richer module-, class-, and method-level documentation to the XMLExtractor test suite.
 - Improved test maintainability by documenting every XMLExtractor unit test with narrative comments.
-- Expanded the changelog to explicitly capture recent documentation and quality improvements.
+- Updated README and changelog to reflect recent type annotations and regex caching improvements in `xml_extractor.py`.
 - Verified the updated XMLExtractor test suite compiles cleanly after documentation changes.
 
 ### Improvements
 
 - Normalized path handling throughout the codebase using `pathlib.Path` for consistency and cross-platform compatibility.
+- Added static type hints to `xml_extractor.py` signatures for improved readability and static analysis.
 - Fixed `test_mode` comparison logic to use boolean flags instead of string comparison (`"Y"`).
-- Precompiled XML replacement regex patterns to avoid recompilation on every line during file cleaning.
+- Cached precompiled XML replacement regex when the replacement map is reused to avoid recompiling on every clean pass.
 - Implemented streaming I/O for file cleaning to minimize memory overhead when processing large XML files.
 
 ### Bug Fixes
