@@ -353,7 +353,7 @@ def clean_xml_content(content: str, replace_map: dict, replace_regex=None) -> st
     Args:
         content (str): The XML content string to clean.
         replace_map (dict): Dictionary of character replacements (e.g., {'*': '-', '\x02': ''}).
-        replace_regex (Pattern, optional): Precompiled regex for replace_map.
+        replace_regex (Pattern, optional): Precompiled regex for replace_map. If not provided and replace_map is present, will be compiled.
 
     Returns:
         str: The cleaned XML content string.
@@ -369,7 +369,10 @@ def clean_xml_content(content: str, replace_map: dict, replace_regex=None) -> st
     )
 
     # 🔥 Apply the replace_map (if present)
-    if replace_map and replace_regex is not None:
+    if replace_map:
+        # Compile regex if not already provided (for backward compatibility)
+        if replace_regex is None:
+            replace_regex = re.compile('|'.join(map(re.escape, replace_map)))
         content = replace_regex.sub(lambda m: replace_map[m.group(0)], content)
 
     return content
@@ -675,16 +678,22 @@ class XMLExtractor:
         return parent / self.output_file_name
 
     @log_exceptions({Exception: "Error creating unprotected zip file"}, log_level="error", raise_exception=True, logger=logger)
-    def create_unprotected_zip(self):
+    def create_unprotected_zip(self, zip_filename: str = None):
          """Creates a plain ZIP archive without password protection.
 
          Uses standard ZIP compression to archive all files in the output directory.
-         The ZIP file is named based on the output_file_name attribute.
+         The ZIP file is named based on the provided filename or output_file_name attribute.
+
+         Args:
+             zip_filename (str, optional): Explicit ZIP filename. If not provided, uses output_file_name.
 
          Raises:
              Exception: For any errors during ZIP creation or file operations.
          """
-         full_zip_path = self.build_zip_file_path()
+         if zip_filename:
+             full_zip_path = Path(self.output_dir).parent / zip_filename
+         else:
+             full_zip_path = self.build_zip_file_path()
          with zipfile.ZipFile(str(full_zip_path), 'w', compression=zipfile.ZIP_DEFLATED) as zipf:
             # Walk through output directory and add all files
             for root, _, files in os.walk(self.output_dir):
@@ -698,19 +707,22 @@ class XMLExtractor:
     @log_exceptions({
        Exception: "Error creating protected zip file"
    }, log_level="error", raise_exception=True)
-    def create_protected_zip(self):
+    def create_protected_zip(self, zip_filename: str = None):
         """Creates a ZIP archive with AES encryption and password protection.
 
         Uses pyzipper to create a password-protected ZIP file with AES encryption.
         All files in the output directory are added to the archive.
 
         Args:
-                None
+            zip_filename (str, optional): Explicit ZIP filename. If not provided, uses output_file_name.
 
         Raises:
             Exception: For errors during ZIP creation or file operations.
         """
-        full_zip_path = self.build_zip_file_path()
+        if zip_filename:
+            full_zip_path = Path(self.output_dir).parent / zip_filename
+        else:
+            full_zip_path = self.build_zip_file_path()
         with pyzipper.AESZipFile(str(full_zip_path), 'w', compression=zipfile.ZIP_DEFLATED, encryption=pyzipper.WZ_AES) as zipf:
             zipf.setpassword(self.zip_password.encode('utf-8'))  # Set password for encryption
             # Add all files from output directory
@@ -724,8 +736,8 @@ class XMLExtractor:
         """Creates a ZIP archive of the extracted XML files.
 
         Determines whether to create a password-protected or unprotected ZIP
-        based on the presence of a password. Sets the appropriate filename
-        and calls the corresponding creation method. Skips if dry-run is enabled.
+        based on the presence of a password. Calls the appropriate ZIP creation method.
+        Skips if dry-run is enabled.
 
         This method orchestrates ZIP creation after file extraction.
         """
@@ -735,12 +747,12 @@ class XMLExtractor:
 
         if self.zip_password:
             # Create password-protected ZIP
-            self.output_file_name = f"{self.output_file_name}-protected.zip"
-            self.create_protected_zip()
+            zip_filename = f"{self.output_file_name}-protected.zip"
+            self.create_protected_zip(zip_filename)
         else:
             # Create unprotected ZIP
-            self.output_file_name = f"{self.output_file_name}.zip"
-            self.create_unprotected_zip()
+            zip_filename = f"{self.output_file_name}.zip"
+            self.create_unprotected_zip(zip_filename)
 
 
 
