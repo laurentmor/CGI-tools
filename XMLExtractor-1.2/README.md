@@ -19,13 +19,16 @@ This Python tool extracts, cleans, validates, and exports XML content from SQL D
 - 🧪 Dry-run mode to simulate execution without writing files.
 - 🧪 Improved test coverage and documentation for the XMLExtractor suite.
 
-## Bug Fixes
+## Bug Fixes & Performance Improvements
 
 - Fixed ZIP encryption and encoding issues when creating protected archives with `pyzipper`.
 - Corrected XML file name extraction logic to reliably derive output names from XML content.
 - Resolved an undefined variable error in the script's error handling path.
 - Improved memory usage and parsing stability by fully cleaning `iterparse` XML elements.
 - Fixed path resolution issues when the tool is packaged as an executable with PyInstaller.
+- Optimized file cleaning with streaming I/O to reduce memory footprint for large XML files.
+- Normalized path handling across all file operations using `pathlib.Path`.
+- Precompiled regex patterns for character replacement to improve performance during XML cleaning.
 
 ## Requirements
 

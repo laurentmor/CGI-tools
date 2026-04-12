@@ -11,6 +11,13 @@ All notable changes to this project will be documented in this file.
 - Expanded the changelog to explicitly capture recent documentation and quality improvements.
 - Verified the updated XMLExtractor test suite compiles cleanly after documentation changes.
 
+### Improvements
+
+- Normalized path handling throughout the codebase using `pathlib.Path` for consistency and cross-platform compatibility.
+- Fixed `test_mode` comparison logic to use boolean flags instead of string comparison (`"Y"`).
+- Precompiled XML replacement regex patterns to avoid recompilation on every line during file cleaning.
+- Implemented streaming I/O for file cleaning to minimize memory overhead when processing large XML files.
+
 ### Bug Fixes
 
 - Fixed path resolution for PyInstaller-packaged executables by introducing a `get_base_path()` function that correctly determines the base path in both development and frozen contexts.
