@@ -665,19 +665,6 @@ class XMLExtractor:
                    row_count += 1
                elem.clear()  # Clear element to free memory
         return row_count
-    def build_zip_file_path(self):
-        """Builds the full file path for the ZIP archive based on output directory and name.
-
-        Combines the output directory and the output file name to create a full
-        path for the ZIP file. This is used when creating the ZIP archive to
-        ensure it is saved in the correct location.
-
-        Returns:
-            Path: The full file path for the ZIP archive.
-        """
-        parent = Path(self.output_dir).parent
-        return parent / self.output_file_name
-
     @log_exceptions({Exception: "Error creating unprotected zip file"}, log_level="error", raise_exception=True, logger=logger)
     def create_unprotected_zip(self, zip_filename: str = None):
          """Creates a plain ZIP archive without password protection.

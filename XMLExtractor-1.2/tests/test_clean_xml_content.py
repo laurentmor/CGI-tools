@@ -48,3 +48,8 @@ class TestCleanXmlContent(unittest.TestCase):
         """Verify that Multiple replacements."""
         result = xe.clean_xml_content("A*B*C", {"*": "-"})
         self.assertEqual(result, "A-B-C")
+
+    def test_regex_compilation_when_none(self):
+        """Verify that Regex compilation when none."""
+        result = xe.clean_xml_content("A*B", {"*": "-"}, None)
+        self.assertEqual(result, "A-B")
