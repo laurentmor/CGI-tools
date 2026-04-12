@@ -1,0 +1,52 @@
+# .coveragerc
+# ---------------------------------------------------------------------------
+# Coverage.py configuration for the xml_extractor project.
+#
+# This file is used when running coverage directly:
+#   coverage run -m pytest
+#   coverage report
+#   coverage html
+#
+# It is also picked up automatically by pytest-cov when pytest.ini does not
+# fully override it.
+# ---------------------------------------------------------------------------
+
+[run]
+disable_warnings = module-not-python
+				   no-data-collected
+				   module-not-measured		
+
+# ---- CRITICAL: source must list the MODULE FILE STEM, not the class name ----
+# Wrong:  source = XMLExtractor   ← this is the CLASS, coverage can't find it
+# Right:  source = xml_extractor  ← this is the FILE stem (xml_extractor.py)
+source = xml_extractor
+    
+
+# Branch coverage catches untested if/else paths, not just line coverage.
+branch = true
+
+# Omit standard library and third-party packages from the report.
+omit =
+    */site-packages/*
+    */distutils/*
+	*/decorators*
+    */tests/generate_test_sets.py
+    conftest.py
+    test_xml_extractor.py
+
+[report]
+# Lines to exclude from coverage counting (pragmas + defensive branches).
+exclude_lines =__main__
+
+
+# Show lines that were not executed in the terminal report.
+show_missing = true
+
+# Minimum acceptable coverage percentage (0 = disabled).
+# Uncomment and raise this value as you improve coverage.
+fail_under = 80
+
+[html]
+# Output directory for the HTML report (opened with: python -m http.server -d htmlcov)
+directory = htmlcov
+title = xml_extractor coverage report

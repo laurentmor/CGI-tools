@@ -1,0 +1,35 @@
+Guide to use the XML Exporter script.docx
+script.log
+XML-From-DB-Grabber-1.0.zip
+tests/sets
+tests/tests-results
+**.xml
+**.log
+**.docx
+**.zip
+**.bak
+**.tmp
+**.tmp.*
+**.tmp.*
+**.sql
+Middleware_Checklist_App_Package/
+SanityCode/
+# Byte-compiled / optimized / DLL files
+*.pyc
+*.pyo
+*.pyd
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+
+# Virtual environment
+venv/
+.env/
+
+# VS Code and other IDEs
+.vscode/
+.idea/
+export.xml
+sql_statements.sql
