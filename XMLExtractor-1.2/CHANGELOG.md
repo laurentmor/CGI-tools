@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Documentation
+
+- Added richer module-, class-, and method-level documentation to the XMLExtractor test suite.
+- Improved test maintainability by documenting every XMLExtractor unit test with narrative comments.
+- Expanded the changelog to explicitly capture recent documentation and quality improvements.
+- Verified the updated XMLExtractor test suite compiles cleanly after documentation changes.
+
+### Improvements
+
+- Added more descriptive narrative comments across XMLExtractor tests to make the suite easier to read and maintain.
+- Consolidated project documentation for the XMLExtractor tool chain.
+
 ## [Released]
 
 ### Added Features

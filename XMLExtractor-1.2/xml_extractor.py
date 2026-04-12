@@ -232,7 +232,7 @@ def validate_arguments():
     parser.add_argument('--dry-run', help='Simulate script execution',action="store_true")
     parser.add_argument("--validate", action="store_true", help="Validate XML structure only")
 
-    parser.add_argument("--version", action="version", version="%(prog)s 1.2 by Laurent Morissette - Generate XML files based on SQLDEV export.", help="Show version information")
+    parser.add_argument("--version", action="version", version="%(prog)s 1.3 by Laurent Morissette - Generate XML files based on SQLDEV export.", help="Show version information")
     args = parser.parse_args()
 
     # Check if script is run without arguments and not in test mode; show help and exit
@@ -793,7 +793,7 @@ def main():
         logger.info(f"Total execution time: {time.time() - start_time:.2f} seconds")
 
         # Pause for user interaction unless skip-pause is set
-        input("Press Enter to exit...") if (args.skip_pause is None) else sys.exit(0)
+        input("Press Enter to exit...") if (args.skip_pause is False) else sys.exit(0)
         sys.exit(0)
 
     except Exception as e:

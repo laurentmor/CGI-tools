@@ -1,14 +1,14 @@
 
 # XML Extractor from SQL Developer Export
 
-This Python script is designed to extract, clean, and validate XML content from SQL Developer export files. It supports advanced features like ZIP compression with password protection, logging, test mode, and data cleaning for invalid XML characters.
+This Python tool extracts, cleans, validates, and exports XML content from SQL Developer export files. It now uses `xml_extractor.py` as the primary script entry point and supports advanced capabilities like ZIP compression, password protection, logging, test mode, and invalid XML character replacement.
 
 ## Features
 
 - ✅ Extracts XML content from a specified column in an SQL Developer export.
 - 🔒 Optionally compresses extracted files into a password-protected ZIP archive.
 - 🧼 Cleans invalid XML characters and optionally applies a user-defined replacement map.
-- 🔁 Supports test mode to process predefined test sets.
+- 🔁 Supports test mode to process predefined test sets and auto-generate missing sets.
 - 🧪 Validates XML structure and ensures the required column and tag exist.
 - 📁 Organizes extracted XML files in a user-specified output directory.
 - 🔉 Plays sound effects at script start/end (Windows only; can be muted).
@@ -16,7 +16,15 @@ This Python script is designed to extract, clean, and validate XML content from 
 - 🧰 Built-in argument validation and error handling.
 - 📈 Displays progress for each processed item.
 - 🔁 Optional pause at the end (can be skipped).
-- 🧪 Dry-run mode to simulate execution without performing actual writes.
+- 🧪 Dry-run mode to simulate execution without writing files.
+- 🧪 Improved test coverage and documentation for the XMLExtractor suite.
+
+## Bug Fixes
+
+- Fixed ZIP encryption and encoding issues when creating protected archives with `pyzipper`.
+- Corrected XML file name extraction logic to reliably derive output names from XML content.
+- Resolved an undefined variable error in the script's error handling path.
+- Improved memory usage and parsing stability by fully cleaning `iterparse` XML elements.
 
 ## Requirements
 
@@ -26,7 +34,7 @@ This Python script is designed to extract, clean, and validate XML content from 
 
 ## Installation
 
-1. Clone the repository or copy the script.
+1. Clone the repository.
 2. Install dependencies:
 
    ```bash
@@ -36,7 +44,7 @@ This Python script is designed to extract, clean, and validate XML content from 
 ## Usage
 
 ```bash
-python script.py <input_file> <output_dir> [options]
+python xml_extractor.py <input_file> <output_dir> [options]
 ```
 
 ### Positional Arguments
@@ -63,26 +71,25 @@ python script.py <input_file> <output_dir> [options]
 Extract XML content into `xmls/` directory:
 
 ```bash
-python script.py export.xml xmls/
+python xml_extractor.py export.xml xmls/
 ```
 
 Create a password-protected ZIP file:
 
 ```bash
-
-python script.py export.xml xmls/ --z result.zip mypassword
+python xml_extractor.py export.xml xmls/ --z result.zip mypassword
 ```
 
 Run in test mode with 5 mock entries:
 
 ```bash
-python script.py --test 5
+python xml_extractor.py --test 5
 ```
 
 Validate XML structure only:
 
 ```bash
-python script.py export.xml --validate
+python xml_extractor.py export.xml --validate
 ```
 
 ## Logging
@@ -102,11 +109,13 @@ If an error occurs, it will also be shown in Notepad (on Windows).
 - Logging, dry-run mode, and progress display
 - Improved performance and memory management
 - Automatic test set generation
+- Updated test suite documentation and narrative comments
+- Resolved ZIP encoding and XML naming bug fixes
 
 ## Author
 
 **Laurent Morissette**
-Version: `1.2`
+Version: `1.3`
 
 ---
 
