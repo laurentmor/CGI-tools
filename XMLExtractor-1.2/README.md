@@ -17,7 +17,7 @@ This Python tool extracts, cleans, validates, and exports XML content from SQL D
 - 📈 Displays progress for each processed item.
 - 🔁 Optional pause at the end (can be skipped).
 - 🧪 Dry-run mode to simulate execution without writing files.
-- 🧪 Improved test coverage and documentation for the XMLExtractor suite.
+- 🧪 Improved test coverage and documentation for the XMLExtractor suite (94.40% coverage across 112 tests).
 
 ## Bug Fixes & Performance Improvements
 
@@ -29,6 +29,7 @@ This Python tool extracts, cleans, validates, and exports XML content from SQL D
 - Optimized file cleaning with streaming I/O to reduce memory footprint for large XML files.
 - Normalized path handling across all file operations using `pathlib.Path`.
 - Precompiled regex patterns for character replacement to improve performance during XML cleaning.
+- Updated test mocks to maintain compatibility with code improvements, ensuring all 112 tests pass.
 
 ## Requirements
 

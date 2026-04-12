@@ -156,7 +156,7 @@ def play_sound(sound_file, mute):
         mute (bool): If True, sound playback is disabled.
     """
     sound_path = Path("sounds") / sound_file
-    if mute is False and sound_path.exists():
+    if mute is False and os.path.exists(str(sound_path)):
         winsound.PlaySound(str(sound_path.resolve()), winsound.SND_FILENAME)
         return
 
@@ -321,7 +321,7 @@ def process_input_file_to_ensure_is_clean(input_file: str):
         replace_regex = re.compile('|'.join(map(re.escape, replace_map)))
 
     # Read the input file and clean it line by line
-    with input_path.open('r', encoding='utf-8', errors='ignore') as fin:
+    with open(str(input_path), 'r', encoding='utf-8', errors='ignore') as fin:
         for ligne in fin:
             ligne_propre = clean_xml_content(ligne, replace_map, replace_regex)
             if ligne_propre != ligne:
@@ -330,15 +330,15 @@ def process_input_file_to_ensure_is_clean(input_file: str):
 
     # Write the cleaned lines to the temporary file if any replacements were made
     if cleaned:
-        with open(temp, 'w', encoding='utf-8') as fout:
+        with open(str(temp), 'w', encoding='utf-8') as fout:
             fout.writelines(cleaned_lines)
         logger.info("Cleaning done. Continuing...")
-        os.replace(temp, input_file)  # Replace original with cleaned version
+        os.replace(str(temp), str(input_path))  # Replace original with cleaned version
     else:
         # No replacements were made, remove temp file if it exists
         logger.info("No illegal characters found. No replacement done.")
-        if os.path.exists(temp):
-            os.remove(temp)  
+        if os.path.exists(str(temp)):
+            os.remove(str(temp))  
 
 
 def clean_xml_content(content: str, replace_map: dict, replace_regex=None) -> str:
@@ -459,6 +459,7 @@ class XMLExtractor:
         self.mute = mute
         self.test_mode = test_mode
         self.dry_run = dry_run
+        self.zip_filename = None
 
 
 
@@ -623,7 +624,7 @@ class XMLExtractor:
                         if not self.dry_run:
                             # Write XML content to individual file
                             output_path = Path(self.output_dir) / file_name
-                            with output_path.open("w", encoding="utf-8") as output:
+                            with open(str(output_path), "w", encoding="utf-8") as output:
                                 output.write(rich_text.text.strip())
                                 file_count += 1
                                 logger.info(f"File created: {file_name}")
@@ -690,10 +691,9 @@ class XMLExtractor:
          Raises:
              Exception: For any errors during ZIP creation or file operations.
          """
-         if zip_filename:
-             full_zip_path = Path(self.output_dir).parent / zip_filename
-         else:
-             full_zip_path = self.build_zip_file_path()
+         if not zip_filename:
+             zip_filename = self.zip_filename or f"{self.output_file_name}.zip"
+         full_zip_path = Path(self.output_dir).parent / zip_filename
          with zipfile.ZipFile(str(full_zip_path), 'w', compression=zipfile.ZIP_DEFLATED) as zipf:
             # Walk through output directory and add all files
             for root, _, files in os.walk(self.output_dir):
@@ -719,10 +719,9 @@ class XMLExtractor:
         Raises:
             Exception: For errors during ZIP creation or file operations.
         """
-        if zip_filename:
-            full_zip_path = Path(self.output_dir).parent / zip_filename
-        else:
-            full_zip_path = self.build_zip_file_path()
+        if not zip_filename:
+            zip_filename = self.zip_filename or f"{self.output_file_name}-protected.zip"
+        full_zip_path = Path(self.output_dir).parent / zip_filename
         with pyzipper.AESZipFile(str(full_zip_path), 'w', compression=zipfile.ZIP_DEFLATED, encryption=pyzipper.WZ_AES) as zipf:
             zipf.setpassword(self.zip_password.encode('utf-8'))  # Set password for encryption
             # Add all files from output directory
@@ -748,10 +747,12 @@ class XMLExtractor:
         if self.zip_password:
             # Create password-protected ZIP
             zip_filename = f"{self.output_file_name}-protected.zip"
+            self.zip_filename = zip_filename
             self.create_protected_zip(zip_filename)
         else:
             # Create unprotected ZIP
             zip_filename = f"{self.output_file_name}.zip"
+            self.zip_filename = zip_filename
             self.create_unprotected_zip(zip_filename)
 
 

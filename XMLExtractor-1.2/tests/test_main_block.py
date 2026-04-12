@@ -110,11 +110,11 @@ class TestMainBlock(unittest.TestCase):
         fake_extractor.extract_and_save_elements.assert_called_once()
 
     # --------------------------------------------------
-    # PAUSE path (skip_pause=None → input() called)
+    # PAUSE path (skip_pause=False → input() called)
     # --------------------------------------------------
     def test_main_pause(self):
         """Verify that Main pause."""
-        fake_args = self._fake_args(skip_pause=None)
+        fake_args = self._fake_args(skip_pause=False)
         fake_extractor = MagicMock()
 
         with patch.object(xe, "configure_logging", return_value=MagicMock()), \

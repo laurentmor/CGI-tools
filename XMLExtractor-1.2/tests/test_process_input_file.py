@@ -36,7 +36,7 @@ class TestProcessInputFile(unittest.TestCase):
         m = mock_open(read_data="clean\n")
 
         with patch("builtins.open", m), \
-             patch("xml_extractor.clean_xml_content", side_effect=lambda x, _: x), \
+             patch("xml_extractor.clean_xml_content", side_effect=lambda x, _, __: x), \
              patch("xml_extractor.shutil.copy2"), \
              patch("xml_extractor.os.path.exists", return_value=False), \
              patch("xml_extractor.os.remove") as mock_remove:
@@ -50,7 +50,7 @@ class TestProcessInputFile(unittest.TestCase):
         m = mock_open(read_data="clean\n")
 
         with patch("builtins.open", m), \
-             patch("xml_extractor.clean_xml_content", side_effect=lambda x, _: x), \
+             patch("xml_extractor.clean_xml_content", side_effect=lambda x, _, __: x), \
              patch("xml_extractor.shutil.copy2"), \
              patch("xml_extractor.os.path.exists", return_value=True), \
              patch("xml_extractor.os.remove") as mock_remove:
@@ -64,7 +64,7 @@ class TestProcessInputFile(unittest.TestCase):
         m_read = mock_open(read_data="line1\nline2\n")
         m_write = mock_open()
 
-        def fake_clean(line, _):
+        def fake_clean(line, _, __):
             return "cleaned\n" if "line1" in line else line
 
         def open_side_effect(file, mode="r", *args, **kwargs):
@@ -84,7 +84,7 @@ class TestProcessInputFile(unittest.TestCase):
         m = mock_open(read_data="data\n")
 
         with patch("builtins.open", m), \
-             patch("xml_extractor.clean_xml_content", side_effect=lambda x, _: x), \
+             patch("xml_extractor.clean_xml_content", side_effect=lambda x, _, __: x), \
              patch("xml_extractor.shutil.copy2") as mock_copy, \
              patch("xml_extractor.os.path.exists", return_value=False):
 
