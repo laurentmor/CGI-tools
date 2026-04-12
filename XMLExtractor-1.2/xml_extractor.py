@@ -155,8 +155,9 @@ def play_sound(sound_file, mute):
         sound_file (str): Name of the sound file (e.g., 'homer_start.wav').
         mute (bool): If True, sound playback is disabled.
     """
-    if mute == False and os.path.exists(os.path.join("sounds", sound_file)):
-        winsound.PlaySound(os.path.abspath(os.path.join("sounds", sound_file)), winsound.SND_FILENAME)
+    sound_path = Path("sounds") / sound_file
+    if mute is False and sound_path.exists():
+        winsound.PlaySound(str(sound_path.resolve()), winsound.SND_FILENAME)
         return
 
 @log_exceptions({
@@ -304,19 +305,25 @@ def process_input_file_to_ensure_is_clean(input_file: str):
     Args:
         input_file (str): Path to the XML file to clean.
     """
-    backup = input_file + ".bak"  # Backup file path
-    temp = input_file + ".tmp"    # Temporary file for cleaned content
+    input_path = Path(input_file)
+    backup = input_path.with_suffix(input_path.suffix + ".bak")
+    temp = input_path.with_suffix(input_path.suffix + ".tmp")
     cleaned = False  # Flag to track if any cleaning occurred
     cleaned_lines = []  # List to hold cleaned lines
 
     # Create a backup of the original file
-    shutil.copy2(input_file, backup)
+    shutil.copy2(str(input_path), str(backup))
     logger.info(f"Backup created: {backup}")
 
+    # Precompile replacement regex once for efficiency
+    replace_regex = None
+    if replace_map:
+        replace_regex = re.compile('|'.join(map(re.escape, replace_map)))
+
     # Read the input file and clean it line by line
-    with open(input_file, 'r', encoding='utf-8', errors='ignore') as fin:
+    with input_path.open('r', encoding='utf-8', errors='ignore') as fin:
         for ligne in fin:
-            ligne_propre = clean_xml_content(ligne, replace_map)
+            ligne_propre = clean_xml_content(ligne, replace_map, replace_regex)
             if ligne_propre != ligne:
                 cleaned = True  # Mark as cleaned if line changed
             cleaned_lines.append(ligne_propre)
@@ -334,7 +341,7 @@ def process_input_file_to_ensure_is_clean(input_file: str):
             os.remove(temp)  
 
 
-def clean_xml_content(content: str, replace_map: dict) -> str:
+def clean_xml_content(content: str, replace_map: dict, replace_regex=None) -> str:
     """Clean XML content by removing invalid characters and applying replacements.
 
     Performs two main cleaning operations:
@@ -346,6 +353,7 @@ def clean_xml_content(content: str, replace_map: dict) -> str:
     Args:
         content (str): The XML content string to clean.
         replace_map (dict): Dictionary of character replacements (e.g., {'*': '-', '\x02': ''}).
+        replace_regex (Pattern, optional): Precompiled regex for replace_map.
 
     Returns:
         str: The cleaned XML content string.
@@ -361,10 +369,8 @@ def clean_xml_content(content: str, replace_map: dict) -> str:
     )
 
     # 🔥 Apply the replace_map (if present)
-    if replace_map:
-        # Compile regex for efficient replacement of multiple patterns
-        regex = re.compile('|'.join(map(re.escape, replace_map)))
-        content = regex.sub(lambda m: replace_map[m.group(0)], content)
+    if replace_map and replace_regex is not None:
+        content = replace_regex.sub(lambda m: replace_map[m.group(0)], content)
 
     return content
 
@@ -525,7 +531,7 @@ class XMLExtractor:
         if os.path.exists(self.output_dir):
             if os.path.isfile(self.output_dir):
                 # It's a file, not a directory
-                if self.test_mode == "Y":
+                if self.test_mode:
                     can_delete = 'Y'
                 else:
                     can_delete = input(f"Output path '{self.output_dir}' exists as a file. Do you want to delete it? (Y/N): ").strip().upper()
@@ -538,7 +544,7 @@ class XMLExtractor:
                     raise ValueError(f"Output path '{self.output_dir}' is a file, not a directory.")
             else:
                 # It's a directory
-                if self.test_mode == "Y":
+                if self.test_mode:
                     can_delete = 'Y'
                 else:
                     can_delete = input(f"Output directory '{self.output_dir}' already exists. Do you want to delete it? (Y/N): ").strip().upper()
@@ -613,7 +619,8 @@ class XMLExtractor:
 
                         if not self.dry_run:
                             # Write XML content to individual file
-                            with open(os.path.join(self.output_dir, file_name), "w", encoding="utf-8") as output:
+                            output_path = Path(self.output_dir) / file_name
+                            with output_path.open("w", encoding="utf-8") as output:
                                 output.write(rich_text.text.strip())
                                 file_count += 1
                                 logger.info(f"File created: {file_name}")
@@ -662,10 +669,10 @@ class XMLExtractor:
         ensure it is saved in the correct location.
 
         Returns:
-            str: The full file path for the ZIP archive.
+            Path: The full file path for the ZIP archive.
         """
-        parent= Path(self.output_dir).parent
-        return os.path.join(parent, self.output_file_name)
+        parent = Path(self.output_dir).parent
+        return parent / self.output_file_name
 
     @log_exceptions({Exception: "Error creating unprotected zip file"}, log_level="error", raise_exception=True, logger=logger)
     def create_unprotected_zip(self):
@@ -678,13 +685,13 @@ class XMLExtractor:
              Exception: For any errors during ZIP creation or file operations.
          """
          full_zip_path = self.build_zip_file_path()
-         with zipfile.ZipFile(full_zip_path, 'w', compression=zipfile.ZIP_DEFLATED) as zipf:
+         with zipfile.ZipFile(str(full_zip_path), 'w', compression=zipfile.ZIP_DEFLATED) as zipf:
             # Walk through output directory and add all files
             for root, _, files in os.walk(self.output_dir):
                 for file in files:
-                    file_path = os.path.join(root, file)
+                    file_path = Path(root) / file
                     # Add file with relative path to maintain directory structure
-                    zipf.write(file_path, os.path.relpath(file_path, self.output_dir))
+                    zipf.write(str(file_path), str(file_path.relative_to(self.output_dir)))
             logger.info(f"ZIP archive '{full_zip_path}' created successfully without password protection.")
 
 
@@ -703,13 +710,14 @@ class XMLExtractor:
         Raises:
             Exception: For errors during ZIP creation or file operations.
         """
-        full_zip_path = self.build_zip_file_path()  
-        with pyzipper.AESZipFile(full_zip_path, 'w', compression=zipfile.ZIP_DEFLATED, encryption=pyzipper.WZ_AES) as zipf:
+        full_zip_path = self.build_zip_file_path()
+        with pyzipper.AESZipFile(str(full_zip_path), 'w', compression=zipfile.ZIP_DEFLATED, encryption=pyzipper.WZ_AES) as zipf:
             zipf.setpassword(self.zip_password.encode('utf-8'))  # Set password for encryption
             # Add all files from output directory
             for root, _, files in os.walk(self.output_dir):
                 for file in files:
-                    zipf.write(os.path.join(root, file), file)  # Add with just filename (no path)
+                    file_path = Path(root) / file
+                    zipf.write(str(file_path), file)  # Add with just filename (no path)
         logger.info(f"Protected ZIP archive '{full_zip_path}' created successfully.")
 
     def create_zip_archive(self):
@@ -771,11 +779,11 @@ def main():
         if not os.path.exists(args.input_file):
             raise FileNotFoundError(f"Input file '{args.input_file}' does not exist.")
 
-        # Determine path to replacements.json based on execution context
+        # Determine path to replacements.json consistently using pathlib
         base_path = get_base_path()
-        replace_map_path = os.path.join("..", base_path, "replacements.json") if running_in_test_mode() else os.path.join(base_path, "replacements.json")
+        replace_map_path = base_path / "replacements.json"
         # Load character replacement mappings
-        replace_map = load_replace_map_from_json(replace_map_path) if replace_map_path else {"*": "-", "\x02": "", "\x1A": ""}
+        replace_map = load_replace_map_from_json(replace_map_path) if replace_map_path.exists() else {"*": "-", "\x02": "", "\x1A": ""}
         logger.info(f"Replacement map loaded from {replace_map_path} : {replace_map}")
 
         # Clean the input XML file to remove invalid characters
@@ -790,9 +798,21 @@ def main():
         zip_password = args.z[1] if args.z and len(args.z) > 1 else None
         zip_name = args.z[0] if args.z else None
         test_set_size = args.test if args.test else 10  # Default test size
+        is_test_mode = args.test is not None
 
         # Initialize XMLExtractor with all parameters
-        extractor = XMLExtractor(args.input_file, args.output_dir, zip_name, args.column_name, bool(args.z), zip_password, args.file_id_tag, args.mute, test_set_size, args.dry_run)
+        extractor = XMLExtractor(
+            args.input_file,
+            args.output_dir,
+            zip_name,
+            args.column_name,
+            bool(args.z),
+            zip_password,
+            args.file_id_tag,
+            args.mute,
+            is_test_mode,
+            args.dry_run
+        )
 
         # Perform the main extraction and saving operation
         extractor.extract_and_save_elements()
