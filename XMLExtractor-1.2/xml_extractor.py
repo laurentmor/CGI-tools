@@ -90,6 +90,7 @@ import logging
 import re
 import json
 from pathlib import Path
+from typing import Any, Dict, Optional, Pattern
 from xml.etree import ElementTree as ET
 from tests.generate_test_sets import generate
 from decorators import log_exceptions
@@ -114,7 +115,10 @@ TEST_SET_PATH_TEST_TEMPLATE = "tests/sets/set_{}.xml"
 # logger: Configured logging instance for outputting messages to console and file
 logger = None
 # replace_map: Dictionary containing character replacements for cleaning XML content, loaded from JSON
-replace_map = None
+replace_map: Optional[Dict[str, str]] = None
+# Cache the compiled regex for repeated cleanup calls when the replacement map is reused
+replace_regex_cache: Optional[Pattern] = None
+replace_map_cache: Optional[Dict[str, str]] = None
 #script global methods
 
 # Utility functions for script configuration and validation
@@ -160,7 +164,7 @@ def configure_logging() -> logging.Logger:
         logger.addHandler(out_file_handler)
     return logger
 
-def play_sound(sound_file, mute):
+def play_sound(sound_file: str, mute: bool) -> None:
     """Play a sound effect if not muted and the sound file exists.
 
     This function plays WAV sound files located in the 'sounds' directory
@@ -180,7 +184,7 @@ def play_sound(sound_file, mute):
     FileNotFoundError: "JSON file not found",
     json.JSONDecodeError: "JSON decoding failed"
 }, log_level="warning", raise_exception=False, logger=logger)
-def load_replace_map_from_json(json_path):
+def load_replace_map_from_json(json_path: str) -> Optional[Dict[str, Any]]:
     """Load a replacement map from a JSON file for XML content cleaning.
 
     Reads a JSON file containing key-value pairs for character replacements.
@@ -221,7 +225,7 @@ def validate_xml_structure(input_file):
     return True if ET.parse(input_file) else False
 
 
-def validate_arguments():
+def validate_arguments() -> argparse.Namespace:
     """Validates command-line arguments and returns them after processing.
 
     Sets up an ArgumentParser with all possible command-line options.
@@ -291,7 +295,7 @@ def validate_arguments():
     logger.info("Arguments validated successfully.")
     return args
 
-def validate_zip_password(password) -> bool:
+def validate_zip_password(password: Optional[str]) -> bool:
     """Validates the ZIP password length for security.
 
     Ensures the password is at least 5 characters long to provide
@@ -310,7 +314,7 @@ def validate_zip_password(password) -> bool:
     if password is None or len(password) < 5:
         raise ValueError("Password must be at least 5 characters long.")
     return True
-def process_input_file_to_ensure_is_clean(input_file: str):
+def process_input_file_to_ensure_is_clean(input_file: str) -> None:
     """Cleans the input XML file to ensure it contains valid XML content.
 
     Reads the input file line by line, applies character replacements using
@@ -357,7 +361,7 @@ def process_input_file_to_ensure_is_clean(input_file: str):
             os.remove(str(temp))  
 
 
-def clean_xml_content(content: str, replace_map: dict, replace_regex=None) -> str:
+def clean_xml_content(content: Optional[str], replace_map: Optional[Dict[str, str]], replace_regex: Optional[Pattern] = None) -> Optional[str]:
     """Clean XML content by removing invalid characters and applying replacements.
 
     Performs two main cleaning operations:
@@ -387,14 +391,18 @@ def clean_xml_content(content: str, replace_map: dict, replace_regex=None) -> st
     # 🔥 Apply the replace_map (if present)
     if replace_map:
         # Compile regex if not already provided (for backward compatibility)
+        global replace_regex_cache, replace_map_cache
         if replace_regex is None:
-            replace_regex = re.compile('|'.join(map(re.escape, replace_map)))
+            if replace_map_cache != replace_map or replace_regex_cache is None:
+                replace_regex_cache = re.compile('|'.join(map(re.escape, replace_map)))
+                replace_map_cache = replace_map.copy()
+            replace_regex = replace_regex_cache
         content = replace_regex.sub(lambda m: replace_map[m.group(0)], content)
 
     return content
 
 @log_exceptions({Exception: "Error validating column existence"}, log_level="error", raise_exception=True, logger=logger)
-def validate_column_exists(input_file: str, column_name: str):
+def validate_column_exists(input_file: str, column_name: str) -> bool:
     """Validates if the specified column exists in the XML file.
 
     Parses the XML file and checks for the presence of a <COLUMN> element
@@ -430,7 +438,7 @@ def validate_column_exists(input_file: str, column_name: str):
         raise ValueError(f"Error validating column '{column_name}': {e}") from e
 
 
-def get_base_path():
+def get_base_path() -> Path:
     """Get the base path for the application, handling both development and PyInstaller contexts."""
     if getattr(sys, 'frozen', False):
         return Path(sys._MEIPASS)
@@ -446,7 +454,7 @@ class XMLExtractor:
     password protection. Supports dry-run mode for testing without file creation.
     """
 
-    def __init__(self, input_file: str, output_dir: str, output_file_name: str, column_name: str, create_zip: bool, zip_password: str, file_id_tag: str, mute: bool, test_mode: bool = False, dry_run: bool = False):
+    def __init__(self, input_file: str, output_dir: str, output_file_name: Optional[str], column_name: str, create_zip: bool, zip_password: Optional[str], file_id_tag: str, mute: bool, test_mode: bool = False, dry_run: bool = False) -> None:
         """
         Initializes the XMLExtractor with the provided parameters.
 
@@ -496,7 +504,7 @@ class XMLExtractor:
         FileNotFoundError: "Output directory not found",
        Exception: "Error deleting output directory"
    }, log_level="error", raise_exception=True, logger=logger)
-    def delete_output_dir(self):
+    def delete_output_dir(self) -> None:
         """Deletes the output directory and all its contents recursively.
 
         Walks through the output directory, removing all files and subdirectories.
@@ -517,7 +525,7 @@ class XMLExtractor:
 
 
 
-    def get_message_id(self, content):
+    def get_message_id(self, content: str) -> str:
         """Extracts the message ID from the XML content using regex.
 
         Searches for the specified file_id_tag in the XML content and extracts
@@ -533,7 +541,7 @@ class XMLExtractor:
         match = re.search(rf"<{self.file_id_tag}>(.*?)</{self.file_id_tag}>", content)
         return match.group(1) if match else ""
 
-    def check_output_dir(self):
+    def check_output_dir(self) -> None:
         """Checks if the output directory exists and handles creation/deletion.
 
         If the path exists as a file, prompts to delete it. If it's a directory,
@@ -585,7 +593,7 @@ class XMLExtractor:
         ValueError: "Invalid XML structure or column name not found",
         IOError: "File handling or writing error"
     }, log_level="error", raise_exception=True)
-    def extract_and_save_elements(self):
+    def extract_and_save_elements(self) -> None:
         """Extracts XML elements from the input file and saves them as separate files.
 
         Parses the XML file using iterative parsing for memory efficiency.
@@ -664,7 +672,7 @@ class XMLExtractor:
     @log_exceptions({
        Exception: "Error counting <ROW> elements"
    }, log_level="error", raise_exception=True, logger=logger)
-    def get_row_count(self):
+    def get_row_count(self) -> int:
         """Counts the number of <ROW> elements in the input XML file.
 
         Uses iterative parsing to count rows without loading the entire file
@@ -734,7 +742,7 @@ class XMLExtractor:
                     zipf.write(str(file_path), file)  # Add with just filename (no path)
         logger.info(f"Protected ZIP archive '{full_zip_path}' created successfully.")
 
-    def create_zip_archive(self):
+    def create_zip_archive(self) -> None:
         """Creates a ZIP archive of the extracted XML files.
 
         Determines whether to create a password-protected or unprotected ZIP
@@ -770,7 +778,7 @@ class XMLExtractor:
 
 
 
-def main():
+def main() -> None:
     """Main entry point for the script.
 
     Orchestrates the entire XML extraction process:
