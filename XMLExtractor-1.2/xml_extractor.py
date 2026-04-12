@@ -261,7 +261,7 @@ def validate_arguments():
     # Ensure input file exists unless in test mode
     if args.test is None and (args.input_file is None or not os.path.isfile(args.input_file)):
         parser.print_help(sys.stderr)
-        play_sound("homer_error.wav", args.mute)
+        play_sound(SOUND_ERROR, args.mute)
         raise Exception(f"Error: an existing Input file is required in non-test mode. File '{args.input_file}' does not exist.")
 
     # Handle test mode: adjust input file and output directory paths
