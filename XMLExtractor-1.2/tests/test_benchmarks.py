@@ -73,10 +73,9 @@ class TestBenchmarks(unittest.TestCase):
     def test_bench_get_row_count_100_rows(self):
         """Verify that Bench get row count 100 rows."""
         xml_100 = BenchmarkFixtures.make_xml(100)
-        ext = make_extractor()
+        ext = make_extractor(input_file=xml_100)
         t0 = time.perf_counter()
-        with patch_iterparse(xml_100):
-            ext.get_row_count()
+        ext.get_row_count()
         elapsed = time.perf_counter() - t0
         print(f"\n[BENCH] get_row_count (100 rows): {elapsed*1000:.2f} ms")
         self.assertLess(elapsed, self.THRESHOLDS["get_row_count_100_rows"])

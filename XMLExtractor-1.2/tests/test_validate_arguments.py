@@ -1,9 +1,11 @@
 """Unit tests for validate_arguments().
 These tests cover CLI parsing, test-mode file selection, XML validation mode, and ZIP password checking."""
 import sys
+
 import unittest
 from unittest.mock import MagicMock, patch
 import xml_extractor as xe
+import xml.etree.ElementTree as ET
 
 
 class TestValidateArguments(unittest.TestCase):
@@ -64,13 +66,14 @@ class TestValidateArguments(unittest.TestCase):
     # 5. --validate with invalid XML → exit(1)
     # --------------------------------------------------
     def test_validate_xml_false(self):
-        """Verify that Validate xml false."""
+        """Verify that invalid XML structure exits with code 1."""
         with patch.object(sys, "argv", ["prog", "file.xml", "--validate"]), \
-             patch("os.path.isfile", return_value=True), \
-             patch("xml_extractor.validate_xml_structure", return_value=False), \
-             patch("sys.exit") as mock_exit:
+            patch("os.path.isfile", return_value=True), \
+            patch("xml_extractor.validate_xml_structure", side_effect=ET.ParseError("bad xml")), \
+            patch("sys.exit") as mock_exit:
             xe.validate_arguments()
-        mock_exit.assert_called_with(1)
+        mock_exit.assert_called_with(1)       
+            
 
     # --------------------------------------------------
     # 6. --validate with valid XML → exit(0)

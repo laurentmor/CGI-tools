@@ -2,82 +2,68 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased]
+---
 
-### Documentation
+## 2026-04-12 — Fix decorator, test infrastructure, and validation error handling
 
-- Added richer module-, class-, and method-level documentation to the XMLExtractor test suite.
-- Improved test maintainability by documenting every XMLExtractor unit test with narrative comments.
-- Updated README and changelog to reflect recent type annotations and regex caching improvements in `xml_extractor.py`.
-- Verified the updated XMLExtractor test suite compiles cleanly after documentation changes.
+### decorators.py
+- Changed defaults to `raise_exception=False` and `log_level="warning"` to match expected swallow-and-log behaviour
+- Added `wrapper.__wrapped__ = func` to expose the original function for testing
+- Fixed logger resolution — if `logger` is a string, resolve it as an attribute on `self` at call time (enables `logger="logger"` on instance methods)
 
-### Improvements
+### xml_extractor.py
+- Removed `@log_exceptions` from `load_replace_map_from_json` — exception handling moved to `main()` as an explicit `try/except` with a default fallback map, making the recovery logic visible to readers
+- Fixed `validate_arguments` — `validate_xml_structure` raises on failure rather than returning `False`, so the validate block now uses `try/except (ET.ParseError, FileNotFoundError)` instead of checking the return value
+- Added `_INVALID_XML_CHARS` compiled regex at module level to replace the slow character-by-character `ord()` loop in `clean_xml_content`
 
-- Normalized path handling throughout the codebase using `pathlib.Path` for consistency and cross-platform compatibility.
-- Added static type hints to `xml_extractor.py` signatures for improved readability and static analysis.
-- Fixed `test_mode` comparison logic to use boolean flags instead of string comparison (`"Y"`).
-- Cached precompiled XML replacement regex when the replacement map is reused to avoid recompiling on every clean pass.
-- Implemented streaming I/O for file cleaning to minimize memory overhead when processing large XML files.
-
-### Bug Fixes
-
-- Fixed path resolution for PyInstaller-packaged executables by introducing a `get_base_path()` function that correctly determines the base path in both development and frozen contexts.
-- Restored test suite compatibility after code quality improvements by updating mock signatures to match the modified `clean_xml_content()` function signature.
-- Fixed file operation mocking in tests by changing from `Path().open()` to `open()` for better testability.
-- Corrected main block pause logic in tests to properly trigger user input when expected.
-
-### Testing
-
-- All 112 unit tests now pass with 94.40% code coverage.
-- Verified comprehensive test suite functionality after implementing path normalization, regex precompilation, and streaming I/O improvements.
-- Improved test coverage to 97.79% with 119 tests by adding comprehensive tests for check_output_dir method and removing unused code.
-- Added tests covering all user interaction paths in directory handling, including file deletion prompts and test mode behaviors.
-
-## [Released]
-
-### Added Features
-
-- Extraction of XML elements and saving them in individual files.
-- Creation of a ZIP archive from the extracted files.
-- Password protection for ZIP archives using `pyzipper`.
-- Support for a customizable XML tag to name the files (default: `id`).
-- Addition of sounds at the beginning and end of execution (Windows only, via `winsound`).
-- Added a test mode to work with test sets.
-- XML content cleaning with a customizable replacement map.
-- Advanced validation of command-line arguments.
-- Display of progress percentage during file processing.
-- Confirmation before deleting the existing output directory.
-- Validity checks for:
-  - The input XML file
-  - The output directory
-  - The specified XML tag
-  - The column name to extract
-  - The ZIP password (minimum 5 characters)
-  - The ZIP file name
-  - The test file and its format
-- Option to disable sound effects (`--mute`).
-- Option to skip the final pause (`--skip-pause`).
-- Can now generate test sets automatically if the specified test set size does not exist
-- Simplified CLI arguments
-
-### Bug Fixes
-
-- Fixed the use of an undefined variable in error handling.
-- Fixed ZIP encoding and encryption with `pyzipper`.
-- Improved memory management using `iterparse` and explicit cleaning of XML elements.
-- Resolved a bug where the file name wasn't extracted correctly from actual XML – switched to extraction via regex.
-
-### Improvements
-
-- Optimized file processing and XML parsing performance.
-- Complete refactoring to improve code readability and maintainability.
-- Converted `print` statements to logging via `logging`.
-- Added `docstrings`, explanatory comments, and types to improve code documentation and understanding.
-- Added support for loading a JSON file for the unwanted character replacement map.
-- Enhanced robustness when reading and writing files.
+### Tests
+- `test_load_replace_map_from_json` — removed decorator re-wrapping machinery (`setUp`, `importlib.reload`, `__wrapped__`); tests now call `xe.load_replace_map_from_json` directly and assert exceptions raise instead of returning `None`
+- `test_validate_xml_false` — updated to use `side_effect=ET.ParseError` instead of `return_value=False`
+- `test_get_row_count` — removed `patch_iterparse`; tests now pass XML strings directly as `input_file` via `make_extractor(input_file=...)`
 
 ---
 
-### Author
+## 2026-04-12 — Code quality improvements and fix double XML parse
 
-This script is developed by **Laurent Morissette**.
+### Cross-platform & imports
+- Guarded `winsound` import with `try/except` — script no longer crashes on Linux/macOS
+- Removed unused `from functools import wraps`
+
+### Reliability
+- Fixed `@log_exceptions` decorator receiving `logger=None` at decoration time (logger was not yet initialized)
+- Fixed `validate_xml_structure` — removed unreachable `else False` branch, added type hint
+- Fixed `validate_zip_password` — return type changed to `None`; raises on failure instead of returning `False`
+- Removed `== True` / `== False` anti-patterns in `validate_arguments`
+- Removed commented-out dead code
+
+### Testability
+- Removed `input()` prompts from `XMLExtractor.check_output_dir` — overwrite decision now made in `main()` and passed in as `force_overwrite` parameter
+- Updated tests to pass XML strings directly as `input_file` instead of using `patch_iterparse`
+
+### Performance
+- Replaced double XML parse with a single-pass text scan in `get_row_count` — O(n) I/O, no XML overhead
+- Inline XML string input handled via `.count("<ROW>")`, no file I/O at all
+- Fixed `ZeroDivisionError` in progress calculation when `row_count` is zero
+
+### Robustness
+- `running_in_test_mode()` now reads `XML_EXTRACTOR_TEST_MODE` environment variable instead of checking `os.getcwd()`
+
+### Housekeeping
+- Moved inline changelog block to `CHANGELOG.md`
+- Fixed inconsistent indentation in `create_unprotected_zip`
+- Collapsed excessive blank lines throughout
+
+---
+
+## [Earlier] — Documentation, type hints, and streaming I/O
+
+### Documentation
+- Added module-, class-, and method-level docstrings to the XMLExtractor test suite
+- Updated README to reflect type annotation and regex caching improvements
+
+### Improvements
+- Normalized path handling throughout using `pathlib.Path`
+- Added static type hints to `xml_extractor.py` signatures
+- Fixed `test_mode` comparison logic to use boolean flags instead of string `"Y"` comparison
+- Cached precompiled XML replacement regex to avoid recompiling on every clean pass
+- Implemented streaming I/O for file cleaning to reduce memory overhead on large inputs

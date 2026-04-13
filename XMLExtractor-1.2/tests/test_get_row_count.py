@@ -12,19 +12,19 @@ class TestGetRowCount(unittest.TestCase):
     """Test get_row_count() using empty, single-row, and multi-row XML inputs to verify row counting behavior."""
     def setUp(self):
         xe.logger = logging.getLogger("test")
-        self.extractor = make_extractor()
+        self.extractor = None
 
     def test_counts_rows(self):
         """Verify that Counts rows."""
-        with patch_iterparse(MULTI_ROW_XML):
-            self.assertEqual(self.extractor.get_row_count(), 3)
+        self.extractor = make_extractor(input_file=MULTI_ROW_XML)
+        self.assertEqual(self.extractor.get_row_count(), 3)
 
     def test_empty_xml_zero_rows(self):
         """Verify that Empty xml zero rows."""
-        with patch_iterparse(EMPTY_RESULTS_XML):
-            self.assertEqual(self.extractor.get_row_count(), 0)
+        self.extractor = make_extractor(input_file=EMPTY_RESULTS_XML)
+        self.assertEqual(self.extractor.get_row_count(), 0)
 
     def test_single_row(self):
         """Verify that Single row."""
-        with patch_iterparse(SINGLE_ROW_XML):
-            self.assertEqual(self.extractor.get_row_count(), 1)
+        self.extractor = make_extractor(input_file=SINGLE_ROW_XML)
+        self.assertEqual(self.extractor.get_row_count(), 1) 

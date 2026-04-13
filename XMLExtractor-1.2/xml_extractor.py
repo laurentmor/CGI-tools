@@ -1,56 +1,7 @@
 """
-CHANGELOG:<br/>
-- Initial version: Extracts and saves XML elements from an input file.<br/>
-- Added support for creating a ZIP archive.<br/>
-- Implemented password protection for ZIP files.<br/>
-- Fixed ZIP password issue (ensured encryption using pyzipper).<br/>
-- Added an option to specify which XML tag should be used as the file name (default: "id").<br/>
-- Display an error log in Notepad if errors occur; delete it if no errors.<br/>
-- Added a sound effect at the beginning and end of execution using winsound (Windows only).<br/>
-- Implemented a proper command-line argument validation mechanism.<br/>
-- Display progress percentage after each file is processed, inside the ID processing message.<br/>
-- Optimized file handling and logging efficiency.<br/>
-- Improved XML parsing efficiency using iterparse.<br/>
-- Fixed undefined variable issue in error handling.<br/>
-- Optimized ZIP file compression using pyzipper for password protection.<br/>
-- Ensured ZIP files are properly encrypted when a password is provided.<br/>
-- Fixed memory management issue by properly clearing XML elements after processing.<br/>
-- Improved error handling for better debugging and logging.<br/>
-- Added test mode functionality to process test sets instead of actual files.<br/>
-- Added a prompt to confirm deletion of existing files in the output directory.<br/>
-- Added a check to ensure the password is at least 5 characters long.<br/>
-- Added a check to ensure the input file exists before processing.<br/>
-- Added a check to ensure the output directory exists and is not empty before processing.<br/>
-- Added a check to ensure the input file is a valid XML file before processing.<br/>
-- Added a check to ensure the specified column name exists in the XML file before processing.<br/>
-- Added a check to ensure the specified file ID tag exists in the XML file before processing.<br/>
-- Added a check to ensure the specified output directory is writable before processing.<br/>
-- Added a check to ensure the specified ZIP file name is valid before processing.<br/>
-- Added a check to ensure the specified ZIP password is valid before processing.<br/>
-- Added a mute option to disable sound effects for tests runs.<br/>
-- Added a skip pause option to skip the pause at the end of the script execution.<br/>
-- Added a check to ensure the specified test set number is valid before processing.<br/>
-- Added a check to ensure the specified test set file exists before processing.<br/>
-- Added a check to ensure the specified test set file is a valid XML file before processing.<br/>
-- Added a function to clean the XML content by removing unwanted characters.<br/>
-- Removed action="store_true" for mute flag to avoid confusion with the default value as it was preventing sounds from playing after arguments were validated.<br/>
-- refactored the code to improve readability and maintainability.<br/>
-- Added docstrings to functions for better documentation.<br/>
-- Added type hints to function signatures for better clarity.<br/>
-- Added comments to explain the purpose of each function and its parameters.<br/>
-- refactored the code to use propper logging instead of print statements for better debugging and error handling.<br/>
-- File name fetching is bugged on real data - using regex instead of XML
-- Added a function to load the replacement map from a JSON file.<br/>
-- Refactored the code to improve readability and maintainability.<br/>
-- Added a function to validate the ZIP password length.<br/>
-- Added a function to validate the XML structure of the input file.<br/>
-- Added a function to validate the existence of the specified column in the XML file.<br/>
-- Refactored the code to improve error handling and logging.<br/>
-- Added a function to check if the script is running in test mode.<br/>
-- Refactored CLI argument validation to improve readability and maintainability.<br/>
-- Added a check to generate the test set if it does not exist.<br/>
-- Refactored the code to fix bug in the XML parsing logic.<br/>
-- Cleaned Class XMLExtractor to improve readability and maintainability.<br/>
+See README.md for instructions and documentation.
+See CHANGELOG.md for version history and changes.
+Version 1.3 - 2026-04-12     
 """
 
 """
@@ -77,7 +28,6 @@ Usage:
 """
 
 # Import necessary modules for the script's functionality
-from functools import wraps
 import os
 import sys
 import argparse
@@ -85,7 +35,12 @@ import time
 import zipfile
 import pyzipper # type: ignore
 import shutil
-import winsound
+# Replace the bare import
+try:
+    import winsound
+    WINSOUND_AVAILABLE = True
+except ImportError:
+    WINSOUND_AVAILABLE = False
 import logging
 import re
 import json
@@ -177,13 +132,10 @@ def play_sound(sound_file: str, mute: bool) -> None:
     """
     sound_path = Path("sounds") / sound_file
     if mute is False and os.path.exists(str(sound_path)):
-        winsound.PlaySound(str(sound_path.resolve()), winsound.SND_FILENAME)
-        return
+        if WINSOUND_AVAILABLE:
+            winsound.PlaySound(str(sound_path.resolve()), winsound.SND_FILENAME)
+    return
 
-@log_exceptions({
-    FileNotFoundError: "JSON file not found",
-    json.JSONDecodeError: "JSON decoding failed"
-}, log_level="warning", raise_exception=False, logger=logger)
 def load_replace_map_from_json(json_path: str) -> Optional[Dict[str, Any]]:
     """Load a replacement map from a JSON file for XML content cleaning.
 
@@ -198,14 +150,21 @@ def load_replace_map_from_json(json_path: str) -> Optional[Dict[str, Any]]:
     Returns:
         dict: Dictionary with replacement mappings, or None if loading fails.
     """
-    with open(json_path, 'r', encoding='utf-8') as file:
-        return json.load(file)
+    try:
+        with open(json_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+        logger.warning(f"Could not load replacement map: {e} - using default map.")
+    return {"*": "-", "\x02": "", "\x1A": ""}
+
+
+
 
 @log_exceptions({
     FileNotFoundError: "XML file not found",
     ET.ParseError: "XML parsing failed"
 }, log_level="warning", raise_exception=True, logger=logger)
-def validate_xml_structure(input_file):
+def validate_xml_structure(input_file:str) -> bool:
     """Validates the XML structure of the input file.
 
     Attempts to parse the XML file using ElementTree. If parsing succeeds,
@@ -221,8 +180,10 @@ def validate_xml_structure(input_file):
     Raises:
         ET.ParseError: If the XML is malformed.
         FileNotFoundError: If the input file does not exist.
+
     """
-    return True if ET.parse(input_file) else False
+    ET.parse(input_file)  # Attempt to parse the XML file; will raise if invalid            
+    return True 
 
 
 def validate_arguments() -> argparse.Namespace:
@@ -280,12 +241,15 @@ def validate_arguments() -> argparse.Namespace:
             logger.info(f"Test set file '{args.input_file}' generated.")
 
     # If validation only is requested, validate XML and exit
-    if args.validate and validate_xml_structure(args.input_file) == False:
-        logger.error("Error: Invalid XML structure.")
-        sys.exit(1)
-    if args.validate and validate_xml_structure(args.input_file) == True:
-        logger.info("XML structure is valid.")
-        sys.exit(0)
+    
+    if args.validate:
+        try:
+           validate_xml_structure(args.input_file)
+           logger.info("XML structure is valid.")
+           sys.exit(0)
+        except Exception as e:  
+            logger.error(f"XML structure validation failed: {e}")
+            sys.exit(1)   
 
     # Validate ZIP password if ZIP creation is requested and password is provided
     if args.z and len(args.z) > 1 and validate_zip_password(args.z[1]) == False:
@@ -485,21 +449,6 @@ class XMLExtractor:
         self.dry_run = dry_run
         self.zip_filename = None
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @log_exceptions({
         FileNotFoundError: "Output directory not found",
        Exception: "Error deleting output directory"
@@ -642,9 +591,11 @@ class XMLExtractor:
                         file_name = f"{xml_id}.xml"
                         # Calculate and display progress
                         processed_rows += 1
-                        progress_percentage = (processed_rows / row_count) * 100
-                        logger.info(f"Processing {self.file_id_tag}: {xml_id} ({progress_percentage:.2f}%)")
-
+                        if row_count:
+                            progress_percentage = (processed_rows / row_count) * 100
+                            logger.info(f"Processing {self.file_id_tag}: {xml_id} ({progress_percentage:.2f}%)")
+                        else:
+                            logger.info(f"Processing {self.file_id_tag}: {xml_id}")
                         if not self.dry_run:
                             # Write XML content to individual file
                             output_path = Path(self.output_dir) / file_name
@@ -681,14 +632,13 @@ class XMLExtractor:
         Returns:
             int: The total number of <ROW> elements found in the XML file.
         """
-        logger.info(f"Counting <ROW> elements in XML file: {self.input_file}")
-        row_count = 0
-        # Iterate through all 'end' events for ROW elements
-        for event, elem in ET.iterparse(self.input_file, events=("end",)):
-               if elem.tag == "ROW":
-                   row_count += 1
-               elem.clear()  # Clear element to free memory
-        return row_count
+        logger.info(f"Counting <ROW> elements in: {self.input_file[:60]}")
+        if self.input_file.strip().startswith("<"):
+            return self.input_file.count("<ROW>")
+        with open(self.input_file, 'r', encoding='utf-8', errors='ignore') as f:
+            return sum(1 for line in f if '<ROW>' in line)
+        
+        
     @log_exceptions({Exception: "Error creating unprotected zip file"}, log_level="error", raise_exception=True, logger=logger)
     def create_unprotected_zip(self, zip_filename: str = None):
          """Creates a plain ZIP archive without password protection.
@@ -807,8 +757,8 @@ def main() -> None:
         base_path = get_base_path()
         replace_map_path = base_path / REPLACEMENT_MAP_FILE
         # Load character replacement mappings
-        replace_map = load_replace_map_from_json(replace_map_path) if replace_map_path.exists() else {"*": "-", "\x02": "", "\x1A": ""}
-        logger.info(f"Replacement map loaded from {replace_map_path} : {replace_map}")
+        replace_map = load_replace_map_from_json(replace_map_path) 
+        logger.info(f"Replacement map loaded  : {replace_map}")
 
         # Clean the input XML file to remove invalid characters
         process_input_file_to_ensure_is_clean(args.input_file)
