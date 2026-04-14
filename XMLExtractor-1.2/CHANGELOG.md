@@ -46,7 +46,7 @@ All notable changes to this project will be documented in this file.
 - Fixed `ZeroDivisionError` in progress calculation when `row_count` is zero
 
 ### Robustness
-- `running_in_test_mode()` now reads `XML_EXTRACTOR_TEST_MODE` environment variable instead of checking `os.getcwd()`
+- `running_in_test_runner_context()` now reads `XML_EXTRACTOR_TEST_MODE` environment variable instead of checking `os.getcwd()`
 
 ### Housekeeping
 - Moved inline changelog block to `CHANGELOG.md`

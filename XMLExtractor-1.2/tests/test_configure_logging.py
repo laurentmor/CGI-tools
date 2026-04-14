@@ -1,6 +1,7 @@
 """Unit tests for configure_logging().
 These tests verify logger creation and correct log filename selection across normal and test mode."""
 import logging
+import os
 import unittest
 from unittest.mock import MagicMock, patch
 import xml_extractor as xe
@@ -27,7 +28,7 @@ class TestConfigureLogging(unittest.TestCase):
             m.setLevel = MagicMock()
             return m
 
-        with patch("os.getcwd", return_value="/tests"), \
+        with  patch.dict(os.environ, {"XML_EXTRACTOR_TEST_MODE": "true"}), \
              patch("logging.FileHandler", side_effect=fake_fh):
             log = logging.getLogger("xml_extractor")
             log.handlers.clear()

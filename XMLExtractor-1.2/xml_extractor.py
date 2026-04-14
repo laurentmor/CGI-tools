@@ -78,17 +78,18 @@ replace_map_cache: Optional[Dict[str, str]] = None
 
 # Utility functions for script configuration and validation
 
-def running_in_test_mode() -> bool:
-    """Check if the script is running in a test directory context.
+def running_in_test_runner_context() -> bool:
+    """Check if the script is running in a test environment.
 
-    This function determines if the current working directory contains 'test',
-    which indicates the script is being run in a testing environment. This affects
-    logging file names, test set paths, and other behaviors.
+Reads the XML_EXTRACTOR_TEST_MODE environment variable. Set it to 'true'
+in your test runner to enable test-specific behaviour (log file names,
+test set paths, etc.).
 
-    Returns:
-        bool: True if 'test' is in the current working directory path, False otherwise.
-    """
-    return TEST_MODE_INDICATOR in os.getcwd()
+Returns:
+    bool: True if XML_EXTRACTOR_TEST_MODE=true, False otherwise.
+"""
+    return os.environ.get("XML_EXTRACTOR_TEST_MODE", "").lower() == "true"
+
 
 def configure_logging() -> logging.Logger:
     """Configures the logger for the script with console and file handlers.
@@ -112,7 +113,7 @@ def configure_logging() -> logging.Logger:
         logger.addHandler(console_handler)
 
         # File handler; log file name changes based on test mode
-        log_file_name = LOG_FILE_TEST_NAME if running_in_test_mode() else LOG_FILE_NAME
+        log_file_name = LOG_FILE_TEST_NAME if running_in_test_runner_context() else LOG_FILE_NAME
         out_file_handler = logging.FileHandler(log_file_name, mode="a", encoding="utf-8")
         out_file_handler.setFormatter(formatter)
         out_file_handler.setLevel(logging.INFO)
@@ -233,7 +234,7 @@ def validate_arguments() -> argparse.Namespace:
     # Handle test mode: adjust input file and output directory paths
     if args.test:
         # Adjust test set path depending on whether script is run from runner or pure CLI
-        args.input_file = TEST_SET_PATH_TEMPLATE.format(args.test) if running_in_test_mode() else TEST_SET_PATH_TEST_TEMPLATE.format(args.test)
+        args.input_file = TEST_SET_PATH_TEMPLATE.format(args.test) if running_in_test_runner_context() else TEST_SET_PATH_TEST_TEMPLATE.format(args.test)
         args.output_dir = "tests-results"
         logger.info(f"Test mode enabled. Using test set: {args.input_file}")
         if not os.path.isfile(args.input_file):

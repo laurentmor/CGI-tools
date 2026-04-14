@@ -45,7 +45,7 @@ class TestValidateArguments(unittest.TestCase):
         """Verify that test mode file exists."""
         with patch.object(sys, "argv", ["prog", "--test", "5"]), \
              patch("os.path.isfile", return_value=True), \
-             patch("xml_extractor.running_in_test_mode", return_value=True):
+             patch("xml_extractor.running_in_test_runner_context", return_value=True):
             args = xe.validate_arguments()
         self.assertIn("sets/set_5.xml", args.input_file)
         self.assertEqual(args.output_dir, "tests-results")
@@ -57,7 +57,7 @@ class TestValidateArguments(unittest.TestCase):
         """Verify that test mode generate called."""
         with patch.object(sys, "argv", ["prog", "--test", "5"]), \
              patch("os.path.isfile", return_value=False), \
-             patch("xml_extractor.running_in_test_mode", return_value=True), \
+             patch("xml_extractor.running_in_test_runner_context", return_value=True), \
              patch("xml_extractor.generate") as mock_generate:
             xe.validate_arguments()
         mock_generate.assert_called_once()

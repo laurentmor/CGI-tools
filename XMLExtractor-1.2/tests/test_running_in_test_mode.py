@@ -1,19 +1,16 @@
-"""Unit tests for running_in_test_mode().
+"""Unit tests for running_in_test_runner_context().
 These tests verify whether the current working directory indicates a test-mode execution."""
+import os
 import unittest
 from unittest.mock import patch
 import xml_extractor as xe
 
 
 class TestRunningInTestMode(unittest.TestCase):
+    def test_running_in_test_mode_true(self):
+        with patch.dict(os.environ, {"XML_EXTRACTOR_TEST_MODE": "true"}):
+            self.assertTrue(xe.running_in_test_runner_context())
 
-    """Verify test-mode detection based on the current working directory."""
-    def test_returns_true_when_test_in_cwd(self):
-        """Verify that Returns true when test in cwd."""
-        with patch("os.getcwd", return_value="/home/user/tests/run"):
-            self.assertTrue(xe.running_in_test_mode())
-
-    def test_returns_false_when_test_not_in_cwd(self):
-        """Verify that Returns false when test not in cwd."""
-        with patch("os.getcwd", return_value="/home/user/project"):
-            self.assertFalse(xe.running_in_test_mode())
+    def test_running_in_test_mode_false(self):
+        with patch.dict(os.environ, {"XML_EXTRACTOR_TEST_MODE": ""}):
+            self.assertFalse(xe.running_in_test_runner_context())

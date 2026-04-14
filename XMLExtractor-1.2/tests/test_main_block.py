@@ -31,7 +31,7 @@ class TestMainBlock(unittest.TestCase):
         with patch.object(xe, "configure_logging", return_value=MagicMock()), \
              patch.object(xe, "validate_arguments", return_value=fake_args), \
              patch.object(xe.os.path, "exists", return_value=True), \
-             patch.object(xe, "running_in_test_mode", return_value=False), \
+             patch.object(xe, "running_in_test_runner_context", return_value=False), \
              patch.object(xe, "load_replace_map_from_json", return_value={}), \
              patch.object(xe, "process_input_file_to_ensure_is_clean"), \
              patch.object(xe, "validate_column_exists"), \
@@ -95,7 +95,7 @@ class TestMainBlock(unittest.TestCase):
         with patch.object(xe, "configure_logging", return_value=MagicMock()), \
              patch.object(xe, "validate_arguments", return_value=fake_args), \
              patch.object(xe.os.path, "exists", return_value=True), \
-             patch.object(xe, "running_in_test_mode", return_value=False), \
+             patch.object(xe, "running_in_test_runner_context", return_value=False), \
              patch.object(xe, "load_replace_map_from_json", return_value={}), \
              patch.object(xe, "process_input_file_to_ensure_is_clean"), \
              patch.object(xe, "validate_column_exists"), \
@@ -120,7 +120,7 @@ class TestMainBlock(unittest.TestCase):
         with patch.object(xe, "configure_logging", return_value=MagicMock()), \
              patch.object(xe, "validate_arguments", return_value=fake_args), \
              patch.object(xe.os.path, "exists", return_value=True), \
-             patch.object(xe, "running_in_test_mode", return_value=False), \
+             patch.object(xe, "running_in_test_runner_context", return_value=False), \
              patch.object(xe, "load_replace_map_from_json", return_value={}), \
              patch.object(xe, "process_input_file_to_ensure_is_clean"), \
              patch.object(xe, "validate_column_exists"), \
