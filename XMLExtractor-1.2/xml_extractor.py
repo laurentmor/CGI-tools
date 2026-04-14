@@ -130,11 +130,12 @@ def play_sound(sound_file: str, mute: bool) -> None:
         sound_file (str): Name of the sound file (e.g., 'homer_start.wav').
         mute (bool): If True, sound playback is disabled.
     """
+    if mute or not WINSOUND_AVAILABLE:
+        return
     sound_path = Path("sounds") / sound_file
-    if mute is False and os.path.exists(str(sound_path)):
-        if WINSOUND_AVAILABLE:
-            winsound.PlaySound(str(sound_path.resolve()), winsound.SND_FILENAME)
-    return
+    if sound_path.exists():
+        winsound.PlaySound(str(sound_path.resolve()), winsound.SND_FILENAME)
+        return
 
 def load_replace_map_from_json(json_path: str) -> Optional[Dict[str, Any]]:
     """Load a replacement map from a JSON file for XML content cleaning.
@@ -259,7 +260,7 @@ def validate_arguments() -> argparse.Namespace:
     logger.info("Arguments validated successfully.")
     return args
 
-def validate_zip_password(password: Optional[str]) -> bool:
+def validate_zip_password(password: Optional[str]) -> None:
     """Validates the ZIP password length for security.
 
     Ensures the password is at least 5 characters long to provide
@@ -270,14 +271,20 @@ def validate_zip_password(password: Optional[str]) -> bool:
         password (str): The password string to validate.
 
     Returns:
-        bool: True if password is valid (length >= 5), raises ValueError otherwise.
-
+        None
     Raises:
-        ValueError: If password is None or shorter than 5 characters.
+      ValueError if password is invalid.
+
+    
     """
-    if password is None or len(password) < 5:
-        raise ValueError("Password must be at least 5 characters long.")
-    return True
+    if password is None:
+        logger.error("Password is required for ZIP encryption.")
+        raise ValueError("Password is required for ZIP encryption.")
+    if len(password) < MIN_PASSWORD_LENGTH:
+        logger.error(f"Password must be at least {MIN_PASSWORD_LENGTH} characters long.")
+        raise ValueError(f"Password must be at least {MIN_PASSWORD_LENGTH} characters long.")
+    return 
+
 def process_input_file_to_ensure_is_clean(input_file: str) -> None:
     """Cleans the input XML file to ensure it contains valid XML content.
 

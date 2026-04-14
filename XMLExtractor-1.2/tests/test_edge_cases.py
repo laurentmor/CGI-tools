@@ -26,7 +26,7 @@ class TestEdgeCases(unittest.TestCase):
 
     def test_validate_zip_password_unicode(self):
         """Verify that Validate zip password unicode."""
-        self.assertTrue(xe.validate_zip_password("pässwörd123"))
+        self.assertIsNone(xe.validate_zip_password("pässwörd123"))
 
     def test_extractor_column_name_stored(self):
         """Verify that Extractor column name stored."""

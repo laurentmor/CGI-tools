@@ -9,11 +9,11 @@ class TestValidateZipPassword(unittest.TestCase):
     """Verify ZIP password validation rules and error conditions."""
     def test_valid_password(self):
         """Verify that Valid password."""
-        self.assertTrue(xe.validate_zip_password("secret123"))
+        self.assertIsNone(xe.validate_zip_password("secret123"))
 
     def test_exactly_five_chars(self):
         """Verify that Exactly five chars."""
-        self.assertTrue(xe.validate_zip_password("abcde"))
+        self.assertIsNone(xe.validate_zip_password("abcde"))
 
     def test_too_short_raises(self):
         """Verify that Too short raises."""

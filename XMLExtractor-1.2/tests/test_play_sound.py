@@ -12,12 +12,12 @@ class TestPlaySound(unittest.TestCase):
     # 1. Sound played — nominal case
     # --------------------------------------------------
     def test_play_sound_called(self):
-        """Verify that Play sound called."""
-        with patch("os.path.exists", return_value=True), \
-             patch("winsound.PlaySound") as mock_play:
+        """Verify that play_sound calls winsound.PlaySound when not muted and file exists."""
+        with patch("xml_extractor.WINSOUND_AVAILABLE", True), \
+            patch("xml_extractor.winsound") as mock_winsound, \
+            patch("pathlib.Path.exists", return_value=True):
             xe.play_sound("test.wav", mute=False)
-        mock_play.assert_called_once()
-
+        mock_winsound.PlaySound.assert_called_once()
     # --------------------------------------------------
     # 2. File absent → nothing played
     # --------------------------------------------------
