@@ -48,7 +48,7 @@ jobs:
             -v \
             --tb=short
 
-      # Upload coverage seulement une fois (plus propre)
+      # Upload UNE seule fois pour éviter conflit
       - name: Upload coverage artifact
         if: matrix.python-version == '3.12'
         uses: actions/upload-artifact@v4
@@ -56,7 +56,7 @@ jobs:
           name: coverage-report
           path: coverage.xml
 
-      # Optionnel : Codecov
+      # Optionnel (si tu utilises Codecov)
       - name: Upload to Codecov
         if: matrix.python-version == '3.12'
         uses: codecov/codecov-action@v4

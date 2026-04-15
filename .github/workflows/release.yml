@@ -17,30 +17,23 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # important pour historique
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # ✅ Install git-cliff (robuste, sans Docker)
-      - name: Install git-cliff
-        run: |
-          wget https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-x86_64-unknown-linux-gnu.tar.gz
-          file git-cliff-x86_64-unknown-linux-gnu.tar.gz
-          tar -xzf git-cliff-x86_64-unknown-linux-gnu.tar.gz
-          sudo mv git-cliff-*/git-cliff /usr/local/bin/
-
-      # 📜 Generate changelog
+      # 📜 Generate changelog (simple & fiable)
       - name: Generate CHANGELOG.md
-        run: git cliff -o ../CHANGELOG.md
+        run: |
+          git log --pretty=format:"- %s (%h)" > ../CHANGELOG.md
 
-      # 📦 Create ZIP
+      # 📦 Create ZIP package
       - name: Create ZIP
         run: zip -r XMLExtractor-${{ github.ref_name }}.zip .
 
-      # 🚀 Create Release
+      # 🚀 Create GitHub Release
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
