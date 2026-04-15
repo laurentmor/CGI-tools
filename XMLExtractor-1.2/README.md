@@ -3,6 +3,15 @@
 
 This Python tool extracts, cleans, validates, and exports XML content from SQL Developer export files. It now uses `xml_extractor.py` as the primary script entry point and supports advanced capabilities like ZIP compression, password protection, logging, test mode, and invalid XML character replacement.
 
+![Tests](https://github.com/laurentmor/CGI-tools/actions/workflows/tests.yml/badge.svg)
+![Coverage](https://codecov.io/gh/laurentmor/CGI-tools/branch/main/graph/badge.svg)
+![GitHub release](https://img.shields.io/github/v/release/laurentmor/CGI-tools)
+![Downloads](https://img.shields.io/github/downloads/laurentmor/CGI-tools/total)
+![Python](https://img.shields.io/badge/python-3.10%20|%203.11%20|%203.12-blue)
+![License](https://img.shields.io/github/license/laurentmor/CGI-tools)
+![Last commit](https://img.shields.io/github/last-commit/laurentmor/CGI-tools)
+![Stars](https://img.shields.io/github/stars/laurentmor/CGI-tools?style=social)
+
 ## Features
 
 - ✅ Extracts XML content from a specified column in an SQL Developer export.
