@@ -1,0 +1,59 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # ex: v1.2.0
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: XMLExtractor-1.2
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 🔥 nécessaire pour le changelog
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # 🔧 Install git-cliff (changelog auto)
+      - name: Install git-cliff
+        run: |
+          curl -sSL https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-x86_64-unknown-linux-gnu.tar.gz | tar -xz
+          sudo mv git-cliff-*/git-cliff /usr/local/bin/
+
+      # 📜 Generate changelog
+      - name: Generate CHANGELOG.md
+        run: git cliff -o ../CHANGELOG.md
+
+      # 💾 Commit du changelog (optionnel mais propre)
+      - name: Commit CHANGELOG
+        run: |
+          cd ..
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add CHANGELOG.md
+          git commit -m "chore: update changelog" || echo "No changes"
+          git push
+
+      # 📦 Create ZIP package
+      - name: Create ZIP
+        run: |
+          zip -r XMLExtractor-${{ github.ref_name }}.zip .
+
+      # 🚀 Create GitHub Release
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          body_path: CHANGELOG.md
+          files: XMLExtractor-1.2/XMLExtractor-${{ github.ref_name }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
