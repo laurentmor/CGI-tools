@@ -33,7 +33,7 @@ jobs:
 
       - name: Run tests
         run: |
-          pytest tests/ \
+          pytest  XMLExtractor-1.2/tests/ \
             --cov=xml_extractor \
             --cov=decorators \
             --cov-report=term-missing \
