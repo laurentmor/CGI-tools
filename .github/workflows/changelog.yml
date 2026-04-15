@@ -13,20 +13,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # IMPORTANT pour historique git
+          fetch-depth: 0  # important pour historique complet
 
-      - name: Install git-cliff
+      # 📜 Generate changelog basé sur commits
+      - name: Generate CHANGELOG.md
         run: |
-          curl -sSL https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-x86_64-unknown-linux-gnu.tar.gz | tar -xz
-          sudo mv git-cliff-*/git-cliff /usr/local/bin/
+          echo "# Changelog" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          echo "## ${{ github.ref_name }}" >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          git log --pretty=format:"- %s (%h)" >> CHANGELOG.md
 
-      - name: Generate changelog
-        run: git cliff -o CHANGELOG.md
-
-      - name: Commit changelog
+      # 💾 Commit (seulement si changement)
+      - name: Commit CHANGELOG
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add CHANGELOG.md
-          git commit -m "chore: update changelog" || echo "No changes"
+          git diff --cached --quiet || git commit -m "chore: update changelog"
           git push
