@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*.*.*'  # ex: v1.2.0
+      - 'v*.*.*'
 
 jobs:
   release:
@@ -17,39 +17,28 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # 🔥 nécessaire pour le changelog
+          fetch-depth: 0
 
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      # 🔧 Install git-cliff (changelog auto)
+      # ✅ FIX: install propre
       - name: Install git-cliff
-        run: |
-          curl -sSL https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-x86_64-unknown-linux-gnu.tar.gz | tar -xz
-          sudo mv git-cliff-*/git-cliff /usr/local/bin/
+        uses: orhun/git-cliff-action@v2
+        with:
+          version: latest
 
       # 📜 Generate changelog
       - name: Generate CHANGELOG.md
         run: git cliff -o ../CHANGELOG.md
 
-      # 💾 Commit du changelog (optionnel mais propre)
-      - name: Commit CHANGELOG
-        run: |
-          cd ..
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add CHANGELOG.md
-          git commit -m "chore: update changelog" || echo "No changes"
-          git push
-
-      # 📦 Create ZIP package
+      # 📦 Create ZIP
       - name: Create ZIP
-        run: |
-          zip -r XMLExtractor-${{ github.ref_name }}.zip .
+        run: zip -r XMLExtractor-${{ github.ref_name }}.zip .
 
-      # 🚀 Create GitHub Release
+      # 🚀 Release
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
