@@ -24,11 +24,13 @@ jobs:
         with:
           python-version: "3.11"
 
-      # ✅ FIX: install propre
+      # ✅ Install git-cliff (robuste, sans Docker)
       - name: Install git-cliff
-        uses: orhun/git-cliff-action@v2
-        with:
-          version: latest
+        run: |
+          wget https://github.com/orhun/git-cliff/releases/latest/download/git-cliff-x86_64-unknown-linux-gnu.tar.gz
+          file git-cliff-x86_64-unknown-linux-gnu.tar.gz
+          tar -xzf git-cliff-x86_64-unknown-linux-gnu.tar.gz
+          sudo mv git-cliff-*/git-cliff /usr/local/bin/
 
       # 📜 Generate changelog
       - name: Generate CHANGELOG.md
@@ -38,7 +40,7 @@ jobs:
       - name: Create ZIP
         run: zip -r XMLExtractor-${{ github.ref_name }}.zip .
 
-      # 🚀 Release
+      # 🚀 Create Release
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
