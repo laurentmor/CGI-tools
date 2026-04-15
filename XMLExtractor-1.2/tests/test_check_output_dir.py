@@ -30,14 +30,7 @@ class TestCheckOutputDir(unittest.TestCase):
         mock_exists.assert_not_called()
         mock_mkdirs.assert_not_called()
 
-    def test_test_mode_auto_deletes(self):
-        """Verify that test mode auto deletes."""
-        ext = make_extractor(test_mode="Y")
-        with patch("os.path.exists", return_value=True), \
-             patch.object(ext, "delete_output_dir") as mock_del, \
-             patch("os.makedirs"):
-            ext.check_output_dir()
-        mock_del.assert_called_once()
+    
 
     def test_dir_exists_user_says_no_appends(self):
         """Verify that Directory exists user says no appends."""

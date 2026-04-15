@@ -32,10 +32,10 @@ import os
 import sys
 import argparse
 import time
+import traceback
 import zipfile
 import pyzipper # type: ignore
 import shutil
-# Replace the bare import
 try:
     import winsound
     WINSOUND_AVAILABLE = True
@@ -47,7 +47,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict, Optional, Pattern
 from xml.etree import ElementTree as ET
-from tests.generate_test_sets import generate
+
 from decorators import log_exceptions
 #
 # Constants
@@ -56,15 +56,12 @@ DEFAULT_FILE_ID_TAG = "MessageID"
 DEFAULT_OUTPUT_DIR = "xmls"
 DEFAULT_TEST_SIZE = 10
 MIN_PASSWORD_LENGTH = 5
-TEST_MODE_INDICATOR = "test"
 SOUND_START = "homer_start.wav"
 SOUND_DONE = "homer_done.wav"
 SOUND_ERROR = "homer_error.wav"
 LOG_FILE_NAME = "script.log"
 LOG_FILE_TEST_NAME = "script-test.log"
 REPLACEMENT_MAP_FILE = "replacements.json"
-TEST_SET_PATH_TEMPLATE = "sets/set_{}.xml"
-TEST_SET_PATH_TEST_TEMPLATE = "tests/sets/set_{}.xml"
 
 # Global variables used throughout the script
 # logger: Configured logging instance for outputting messages to console and file
@@ -75,20 +72,6 @@ replace_map: Optional[Dict[str, str]] = None
 replace_regex_cache: Optional[Pattern] = None
 replace_map_cache: Optional[Dict[str, str]] = None
 #script global methods
-
-# Utility functions for script configuration and validation
-
-def running_in_test_runner_context() -> bool:
-    """Check if the script is running in a test environment.
-
-Reads the XML_EXTRACTOR_TEST_MODE environment variable. Set it to 'true'
-in your test runner to enable test-specific behaviour (log file names,
-test set paths, etc.).
-
-Returns:
-    bool: True if XML_EXTRACTOR_TEST_MODE=true, False otherwise.
-"""
-    return os.environ.get("XML_EXTRACTOR_TEST_MODE", "").lower() == "true"
 
 
 def configure_logging() -> logging.Logger:
@@ -112,8 +95,8 @@ def configure_logging() -> logging.Logger:
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
 
-        # File handler; log file name changes based on test mode
-        log_file_name = LOG_FILE_TEST_NAME if running_in_test_runner_context() else LOG_FILE_NAME
+        
+        log_file_name =  LOG_FILE_NAME
         out_file_handler = logging.FileHandler(log_file_name, mode="a", encoding="utf-8")
         out_file_handler.setFormatter(formatter)
         out_file_handler.setLevel(logging.INFO)
@@ -207,10 +190,8 @@ def validate_arguments() -> argparse.Namespace:
     parser.add_argument("input_file", nargs="?", help="Input XML file (optional if --test is used)")
     parser.add_argument("output_dir", nargs="?", help=f"Output directory for XML files (optional) (default: {DEFAULT_OUTPUT_DIR})", default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--column-name", default=DEFAULT_COLUMN_NAME, help=f"Column name to extract XML from (default {DEFAULT_COLUMN_NAME})")
-    parser.add_argument(     "--z", nargs="+",  metavar=("zip_name", "[zip_password]"), help="Create a zip file. Optionally provide a password.")
+    parser.add_argument("--z", nargs="+",  metavar=("zip_name", "[zip_password]"), help="Create a zip file. Optionally provide a password.")
     parser.add_argument("--file-id-tag", default=DEFAULT_FILE_ID_TAG, help=f"XML tag to use as the file name (default: '{DEFAULT_FILE_ID_TAG}')")
-    parser.add_argument("--test", nargs="?", type=int,const=DEFAULT_TEST_SIZE,default=None, help=f"Optional test size. Defaults to {DEFAULT_TEST_SIZE} if used without value.")
-
     parser.add_argument("--skip-pause", action="store_true", help="Skip pause at the end of execution", default=False)
     parser.add_argument("--mute", action="store_true",  help="Mute sound effects during execution ")
     parser.add_argument('--dry-run', help='Simulate script execution',action="store_true")
@@ -220,28 +201,17 @@ def validate_arguments() -> argparse.Namespace:
     args = parser.parse_args()
 
     # Check if script is run without arguments and not in test mode; show help and exit
-    if len(sys.argv) == 1 and args.test is None:
+    if len(sys.argv) == 1:
         logger.info("No arguments provided. Showing help message.")
         parser.print_help(sys.stderr)
         sys.exit(1)
-
-    # Ensure input file exists unless in test mode
-    if args.test is None and (args.input_file is None or not os.path.isfile(args.input_file)):
+    
+    # Ensure input file exists
+    if (args.input_file is None or not Path(args.input_file).exists()) :
         parser.print_help(sys.stderr)
         play_sound(SOUND_ERROR, args.mute)
         raise Exception(f"Error: an existing Input file is required in non-test mode. File '{args.input_file}' does not exist.")
-
-    # Handle test mode: adjust input file and output directory paths
-    if args.test:
-        # Adjust test set path depending on whether script is run from runner or pure CLI
-        args.input_file = TEST_SET_PATH_TEMPLATE.format(args.test) if running_in_test_runner_context() else TEST_SET_PATH_TEST_TEMPLATE.format(args.test)
-        args.output_dir = "tests-results"
-        logger.info(f"Test mode enabled. Using test set: {args.input_file}")
-        if not os.path.isfile(args.input_file):
-            logger.warning(f"Error: Test set file '{args.input_file}' does not exist. Generating it now.")
-            generate("./tests", args.test)  # Generate the test set if it does not exist already
-            logger.info(f"Test set file '{args.input_file}' generated.")
-
+  
     # If validation only is requested, validate XML and exit
     
     if args.validate:
@@ -257,7 +227,6 @@ def validate_arguments() -> argparse.Namespace:
     if args.z and len(args.z) > 1 and validate_zip_password(args.z[1]) == False:
         sys.exit(1)
 
-    ##XMLExtractor.validate_column_exists(args.input_file, args.column_name)
     logger.info("Arguments validated successfully.")
     return args
 
@@ -426,7 +395,7 @@ class XMLExtractor:
     password protection. Supports dry-run mode for testing without file creation.
     """
 
-    def __init__(self, input_file: str, output_dir: str, output_file_name: Optional[str], column_name: str, create_zip: bool, zip_password: Optional[str], file_id_tag: str, mute: bool, test_mode: bool = False, dry_run: bool = False) -> None:
+    def __init__(self, input_file: str, output_dir: str, output_file_name: Optional[str], column_name: str, create_zip: bool, zip_password: Optional[str], file_id_tag: str, mute: bool, dry_run: bool = False) -> None:
         """
         Initializes the XMLExtractor with the provided parameters.
 
@@ -442,7 +411,7 @@ class XMLExtractor:
             zip_password (str): Password for ZIP encryption (if applicable).
             file_id_tag (str): XML tag name used to generate unique file names.
             mute (bool): If True, disables sound effects.
-            test_mode (bool): If True, enables test-specific behaviors.
+            .
             dry_run (bool): If True, simulates operations without creating files.
         """
         self.input_file = input_file
@@ -453,7 +422,6 @@ class XMLExtractor:
         self.zip_password = zip_password
         self.file_id_tag = file_id_tag
         self.mute = mute
-        self.test_mode = test_mode
         self.dry_run = dry_run
         self.zip_filename = None
 
@@ -515,11 +483,8 @@ class XMLExtractor:
         can_delete = 'N'  # Default to not delete
         if os.path.exists(self.output_dir):
             if os.path.isfile(self.output_dir):
-                # It's a file, not a directory
-                if self.test_mode:
-                    can_delete = 'Y'
-                else:
-                    can_delete = input(f"Output path '{self.output_dir}' exists as a file. Do you want to delete it? (Y/N): ").strip().upper()
+                
+                can_delete = input(f"Output path '{self.output_dir}' exists as a file. Do you want to delete it? (Y/N): ").strip().upper()
                 if can_delete == 'Y':
                     os.remove(self.output_dir)  # Remove the file
                     os.makedirs(self.output_dir, exist_ok=True)  # Create directory
@@ -528,11 +493,8 @@ class XMLExtractor:
                     logger.error(f"Output path '{self.output_dir}' is a file. Cannot proceed.")
                     raise ValueError(f"Output path '{self.output_dir}' is a file, not a directory.")
             else:
-                # It's a directory
-                if self.test_mode:
-                    can_delete = 'Y'
-                else:
-                    can_delete = input(f"Output directory '{self.output_dir}' already exists. Do you want to delete it? (Y/N): ").strip().upper()
+               
+                can_delete = input(f"Output directory '{self.output_dir}' already exists. Do you want to delete it? (Y/N): ").strip().upper()
                 if can_delete == 'Y':
                     self.delete_output_dir()  # Delete existing directory
                     os.makedirs(self.output_dir, exist_ok=True)  # Recreate it
@@ -725,17 +687,6 @@ class XMLExtractor:
             self.create_unprotected_zip(zip_filename)
 
 
-
-
-
-
-
-
-
-
-
-
-
 def main() -> None:
     """Main entry point for the script.
 
@@ -779,9 +730,7 @@ def main() -> None:
         # Extract ZIP parameters from arguments
         zip_password = args.z[1] if args.z and len(args.z) > 1 else None
         zip_name = args.z[0] if args.z else None
-        test_set_size = args.test if args.test else DEFAULT_TEST_SIZE  # Default test size
-        is_test_mode = args.test is not None
-
+        
         # Initialize XMLExtractor with all parameters
         extractor = XMLExtractor(
             args.input_file,
@@ -792,7 +741,6 @@ def main() -> None:
             zip_password,
             args.file_id_tag,
             args.mute,
-            is_test_mode,
             args.dry_run
         )
 
@@ -810,6 +758,8 @@ def main() -> None:
     except Exception as e:
         logger.error(f"Unexpected error: {e}")
         logger.error("Script execution failed.")
+        logger.exception("Stack trace for debugging: traceback details above.")
+        traceback.print_exc()  # Print stack trace to console for debugging
         play_sound(SOUND_ERROR, "N")  # Play error sound (force on)
         sys.exit(1)
 

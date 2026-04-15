@@ -79,7 +79,6 @@ def make_extractor(**overrides):
         zip_password=None,
         file_id_tag="MessageID",
         mute=True,
-        test_mode=False,
         dry_run=False,
     )
     defaults.update(overrides)
