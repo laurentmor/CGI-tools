@@ -50,3 +50,4 @@ jobs:
         with:
           name: coverage-report-${{ matrix.python-version }}  # ✅ fix conflit
           path: coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
