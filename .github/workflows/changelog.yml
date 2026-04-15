@@ -13,22 +13,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # important pour historique complet
+          fetch-depth: 0
 
-      # 📜 Generate changelog basé sur commits
       - name: Generate CHANGELOG.md
         run: |
           echo "# Changelog" > CHANGELOG.md
           echo "" >> CHANGELOG.md
           echo "## ${{ github.ref_name }}" >> CHANGELOG.md
           echo "" >> CHANGELOG.md
-          git log --pretty=format:"- %s (%h)" >> CHANGELOG.md
+          git log $(git describe --tags --abbrev=0 HEAD^)..HEAD --pretty=format:"- %s (%h)" >> CHANGELOG.md
 
-      # 💾 Commit (seulement si changement)
-      - name: Commit CHANGELOG
-        run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
-          git add CHANGELOG.md
-          git diff --cached --quiet || git commit -m "chore: update changelog"
-          git push
+      - name: Upload changelog artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: changelog
+          path: CHANGELOG.md
