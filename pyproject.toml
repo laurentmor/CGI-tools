@@ -1,12 +1,12 @@
-[tool.semantic_release]
-version_variable = "xml_extractor/__init__.py:__version__"
-branch = "main"
-changelog_file = "CHANGELOG.md"
+[project]
+name = "xml-extractor"
+version = "0.0.0"
+description = "XML extraction tool"
+authors = [
+    { name = "Laurent Morissette-Fournier", email = "laurent.morissette-fournier@domain.com" }
+]
+dependencies = [
+    "lxml",
+    "pytest"
+]
 
-[tool.semantic_release.commit_parser_options]
-allowed_tags = ["feat", "fix", "perf", "refactor", "docs"]
-minor_tags = ["feat"]
-patch_tags = ["fix", "perf"]
-
-[tool.semantic_release.changelog]
-exclude_commit_patterns = ["^chore", "^ci"]

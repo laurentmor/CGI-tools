@@ -1,0 +1,16 @@
+{
+  "release-type": "python",
+  "include-component-in-tag": false,
+  "changelog-sections": [
+    { "type": "feat", "section": "🚀 Features" },
+    { "type": "fix", "section": "🐛 Bug Fixes" },
+    { "type": "perf", "section": "⚡ Performance" },
+    { "type": "docs", "section": "📚 Documentation" },
+    { "type": "chore", "section": "🧹 Maintenance" },
+    { "type": "refactor", "section": "♻️ Refactoring" },
+    { "type": "test", "section": "🧪 Tests" }
+  ],
+  "skip-github-release": false,
+  "draft": false,
+  "prerelease": false
+}
