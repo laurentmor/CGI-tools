@@ -15,6 +15,8 @@ This Python tool extracts, cleans, validates, and exports XML content from SQL D
 ## Features
 
 
+
+
 - ✅ Extracts XML content from a specified column in an SQL Developer export.
 - 🔒 Optionally compresses extracted files into a password-protected ZIP archive.
 - 🧼 Cleans invalid XML characters and optionally applies a user-defined replacement map.
