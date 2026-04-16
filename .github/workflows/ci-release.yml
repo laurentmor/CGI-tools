@@ -1,4 +1,4 @@
-name: CI + Semantic Release
+name: CI + Release Please
 
 on:
   push:
@@ -6,15 +6,17 @@ on:
   pull_request:
     branches: [ main ]
 
-# Fine-grained permissions required by python-semantic-release:
-#   contents: write  → push version bump commit + tag
-#   pull-requests: write → post release notes / PR comments
 permissions:
   contents: write
   pull-requests: write
+  issues: write
 
+# -------------------------------------------------------------------
 jobs:
-  # ---------------------------------------------------------------------------
+
+  # =========================
+  # 🧪 TESTS + COVERAGE
+  # =========================
   test:
     name: Tests & Coverage
     runs-on: ubuntu-latest
@@ -34,7 +36,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install deps
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install pytest pytest-cov pyzipper
@@ -44,97 +46,30 @@ jobs:
           pytest tests/ \
             --cov=xml_extractor \
             --cov=decorators \
-            --cov-report=term \
-            --cov-report=xml
+            --cov-report=xml \
+            --cov-report=term
 
-      # Upload coverage artifact once (Python 3.12 only)
-      - name: Upload coverage
-        if: matrix.python-version == '3.12'
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          # path is relative to the repo root, not working-directory
-          path: XMLExtractor-1.2/coverage.xml
-
-      - name: Upload to Codecov
+      # Upload coverage for Codecov (recommended)
+      - name: Upload coverage to Codecov
         if: matrix.python-version == '3.12'
         uses: codecov/codecov-action@v4
         with:
-          files: coverage.xml
+          files: XMLExtractor-1.2/coverage.xml
+          fail_ci_if_error: true
 
-  # ---------------------------------------------------------------------------
-  release:
-    name: Semantic Release
+  # =========================
+  # 🤖 RELEASE PLEASE
+  # =========================
+  release-please:
+    name: Release Please
     runs-on: ubuntu-latest
     needs: test
-    # Only run on direct pushes to main, not on PRs
+
     if: github.event_name == 'push'
 
-    defaults:
-      run:
-        # semantic-release must run from the repo root so it can read
-        # pyproject.toml. Do NOT set working-directory here.
-        working-directory: .
-
     steps:
-      - name: Checkout full history
-        uses: actions/checkout@v4
+      - name: Run Release Please
+        uses: google-github-actions/release-please-action@v4
         with:
-          fetch-depth: 0
-          # Use GITHUB_TOKEN so semantic-release can push the version
-          # bump commit and tag back to main.
           token: ${{ secrets.GITHUB_TOKEN }}
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install semantic-release
-        run: pip install python-semantic-release
-
-      # Download the coverage artifact into the repo root
-      - name: Download coverage
-        uses: actions/download-artifact@v4
-        with:
-          name: coverage-report
-          path: .   # lands at repo root as coverage.xml
-
-      # Extract coverage percentage from the XML report
-      - name: Extract coverage %
-        id: coverage
-        run: |
-          COVERAGE=$(grep -oP 'line-rate="\K[0-9.]+' coverage.xml | head -1)
-          PERCENT=$(echo "$COVERAGE * 100" | bc | cut -d'.' -f1)
-          echo "percent=$PERCENT" >> $GITHUB_OUTPUT
-
-      # Create version bump commit, tag, and GitHub Release.
-      # Pass the token both as an env var (read by the library) AND via
-      # --token (passed to the CLI) to guarantee it is picked up regardless
-      # of how the runner inherits environment variables.
-      # --skip-build avoids the "can't upload dists" warning: there is no
-      # build step in this pipeline, so no dist/ directory is ever produced.
-      # If you add a build step in the future, remove --skip-build and add
-      # the build command before this step.
-      - name: Semantic Release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release --token ${{ secrets.GITHUB_TOKEN }} publish --skip-build
-
-      # Append the coverage badge to the release notes that semantic-release
-      # already created (append_body: true preserves the generated changelog).
-      - name: Get latest tag
-        id: tag
-        run: echo "tag=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
-
-      - name: Append Coverage to Release Notes
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.tag.outputs.tag }}
-          append_body: true   # keeps the changelog; adds our block at the end
-          body: |
-
-            ---
-            📊 **Coverage:** ${{ steps.coverage.outputs.percent }}%
-            🤖 Generated with python-semantic-release
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          

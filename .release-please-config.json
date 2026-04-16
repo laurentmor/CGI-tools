@@ -1,6 +1,13 @@
 {
   "release-type": "python",
   "include-component-in-tag": false,
+  "packages":{
+    ".": {
+      "release-type": "python",
+      "package-name": "xml-extractor"
+      
+    }
+  }, 
   "changelog-sections": [
     { "type": "feat", "section": "🚀 Features" },
     { "type": "fix", "section": "🐛 Bug Fixes" },
@@ -13,4 +20,5 @@
   "skip-github-release": false,
   "draft": false,
   "prerelease": false
+  
 }
