@@ -108,12 +108,17 @@ jobs:
           echo "percent=$PERCENT" >> $GITHUB_OUTPUT
 
       # Create version bump commit, tag, and GitHub Release.
-      # GITHUB_TOKEN (not GH_TOKEN) is the variable python-semantic-release
-      # reads by default.
+      # Pass the token both as an env var (read by the library) AND via
+      # --token (passed to the CLI) to guarantee it is picked up regardless
+      # of how the runner inherits environment variables.
+      # --skip-build avoids the "can't upload dists" warning: there is no
+      # build step in this pipeline, so no dist/ directory is ever produced.
+      # If you add a build step in the future, remove --skip-build and add
+      # the build command before this step.
       - name: Semantic Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: semantic-release publish
+        run: semantic-release --token ${{ secrets.GITHUB_TOKEN }} publish --skip-build
 
       # Append the coverage badge to the release notes that semantic-release
       # already created (append_body: true preserves the generated changelog).
@@ -132,4 +137,4 @@ jobs:
             📊 **Coverage:** ${{ steps.coverage.outputs.percent }}%
             🤖 Generated with python-semantic-release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
