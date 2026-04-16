@@ -66,16 +66,16 @@ class TestValidateArguments(unittest.TestCase):
 
     # --------------------------------------------------
     # 7. Invalid ZIP password → exit(1)
-    # --------------------------------------------------
+        # --------------------------------------------------
     def test_invalid_zip_password(self):
-        """Verify that Invalid zip password."""
+        """Verify that an invalid zip password raises ValueError."""
         with patch.object(sys, "argv", ["prog", "file.xml", "--z", "archive.zip", "123"]), \
-             patch("xml_extractor.Path.exists", return_value=True), \
-             patch("xml_extractor.validate_zip_password", return_value=False), \
-             patch("sys.exit") as mock_exit:
-            xe.validate_arguments()
-        mock_exit.assert_called_with(1)
+            patch("xml_extractor.Path.exists", return_value=True):
 
+            with self.assertRaises(ValueError) as context:
+                xe.validate_arguments()
+
+            self.assertIn("Password must be at least", str(context.exception))
     # --------------------------------------------------
     # 8. Valid ZIP password → args returned
     # --------------------------------------------------

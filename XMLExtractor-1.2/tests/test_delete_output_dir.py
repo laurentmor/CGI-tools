@@ -16,14 +16,7 @@ class TestDeleteOutputDir(unittest.TestCase):
     def test_removes_files_and_dir(self):
         """Verify that Removes files and directory."""
         ext = make_extractor(output_dir="out")
-        walk_result = [
-            ("out", ["sub"], ["f1.xml", "f2.xml"]),
-            ("out/sub", [], ["f3.xml"]),
-        ]
-        with patch("os.walk", return_value=iter(walk_result)), \
-             patch("os.remove") as mock_remove, \
-             patch("os.rmdir") as mock_rmdir:
+        with patch("xml_extractor.shutil.rmtree") as mock_rmtree:
             ext.delete_output_dir()
 
-        self.assertEqual(mock_remove.call_count, 3)
-        self.assertGreaterEqual(mock_rmdir.call_count, 1)
+        mock_rmtree.assert_called_once_with("out")

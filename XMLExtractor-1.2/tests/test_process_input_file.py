@@ -84,10 +84,10 @@ class TestProcessInputFile(unittest.TestCase):
         m = mock_open(read_data="data\n")
 
         with patch("builtins.open", m), \
-             patch("xml_extractor.clean_xml_content", side_effect=lambda x, _, __: x), \
-             patch("xml_extractor.shutil.copy2") as mock_copy, \
-             patch("xml_extractor.os.path.exists", return_value=False):
+         patch("xml_extractor.clean_xml_content", return_value="cleaned\n"), \
+         patch("xml_extractor.shutil.copy2") as mock_copy, \
+         patch("xml_extractor.os.replace"), \
+         patch("xml_extractor.os.path.exists", return_value=False):
+         xe.process_input_file_to_ensure_is_clean("file.xml")
 
-            xe.process_input_file_to_ensure_is_clean("file.xml")
-
-            mock_copy.assert_called_once_with("file.xml", "file.xml.bak")
+        mock_copy.assert_called_once_with("file.xml", "file.xml.bak")

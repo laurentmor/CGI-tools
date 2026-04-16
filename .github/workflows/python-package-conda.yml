@@ -1,27 +1,29 @@
+# This workflow runs Python tests using pytest on multiple Python versions (3.10, 3.11, 3.12) whenever code is pushed to the main or develop branches, or when a pull request is opened against those branches. It also uploads the test coverage report as an artifact and optionally sends it to Codecov if a token is provided.  
+#
 name: Python Tests
-
+# The workflow is triggered on pushes to the main and develop branches, as well as on pull requests targeting those branches.
 on:
   push:
     branches: [ main, develop ]
   pull_request:
     branches: [ main, develop ]
-
+# The job named "test" runs on the latest Ubuntu environment and uses a matrix strategy to test against multiple Python versions (3.10, 3.11, 3.12).
 jobs:
   test:
     runs-on: ubuntu-latest
-
+# The matrix strategy allows the same set of steps to be executed for each specified Python version, ensuring compatibility across versions.
     strategy:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
-
+# The defaults section sets the working directory for all run steps to "XMLExtractor-1.2", which is where the code and tests are located.
     defaults:
       run:
         working-directory: XMLExtractor-1.2  # ✅ déplacé au bon endroit
-
+# The steps section defines the sequence of actions to be performed for each job. It includes checking out the code, setting up Python, installing dependencies, running tests, and uploading coverage reports.
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-
+#
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
