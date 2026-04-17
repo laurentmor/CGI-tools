@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/laurentmor/CGI-tools/compare/v0.1.0...v0.1.1) (2026-04-17)
+
+
+### 🧹 Maintenance
+
+* remove unused tool ([7d27540](https://github.com/laurentmor/CGI-tools/commit/7d27540402c2939a767cb85b39d2b3a0125793ab))
+
 ## 0.1.0 (2026-04-16)
 
 
