@@ -1,5 +1,7 @@
 name: CI + Release Please
-
+env:
+  # Important: force JavaScript actions to use Node 24 (required for release-please v4)
+    FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 on:
   push:
     branches: [ main ]
