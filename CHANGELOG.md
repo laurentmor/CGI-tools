@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0](https://github.com/laurentmor/CGI-tools/compare/v0.1.4...v0.2.0) (2026-04-17)
+
+
+### 🚀 Features
+
+* add header job ([fdf16ac](https://github.com/laurentmor/CGI-tools/commit/fdf16acf46bfd617499cc0ec8fd233b6d02a368f))
+
+
+### 🧹 Maintenance
+
+* add SPDX license headers ([d62da4c](https://github.com/laurentmor/CGI-tools/commit/d62da4c2c302d3b9281878c8fe7d704651eecb1f))
+
 ## [0.1.4](https://github.com/laurentmor/CGI-tools/compare/v0.1.3...v0.1.4) (2026-04-17)
 
 
