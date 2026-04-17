@@ -9,7 +9,9 @@ This Python tool extracts, cleans, validates, and exports XML content from SQL D
 ![Downloads](https://img.shields.io/github/downloads/laurentmor/CGI-tools/total)
 ![Python](https://img.shields.io/badge/python-3.10%20|%203.11%20|%203.12-blue)
 ![License](https://img.shields.io/github/license/laurentmor/CGI-tools)
+![Lint](https://github.com/laurentmor/CGI-tools/actions/workflows/ci-release.yml/badge.svg)
 ![Last commit](https://img.shields.io/github/last-commit/laurentmor/CGI-tools)
+
 ![Stars](https://img.shields.io/github/stars/laurentmor/CGI-tools?style=social)
 
 ## Features

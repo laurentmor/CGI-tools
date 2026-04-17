@@ -62,6 +62,7 @@ jobs:
           fail_ci_if_error: true
 
   
+  
   # =========================
   # 📝 ADD SPDX LICENSE HEADERS
   # =========================
@@ -109,6 +110,43 @@ jobs:
           git add .
           git diff --cached --quiet || git commit -m "chore: add SPDX license headers"
           git push
+
+  # =========================
+  # 🧹 LINT & AUTO-FIX
+  # =========================
+  
+  
+  lint:
+    name: Lint & Auto-Fix
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && !contains(github.event.head_commit.message, 'auto-fix lint')
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Ruff
+        run: pip install ruff
+
+      - name: Auto-fix lint issues
+        run: ruff check XMLExtractor-1.2 --fix
+
+      - name: Format code
+        run: ruff format XMLExtractor-1.2
+
+      - name: Commit fixes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git diff --cached --quiet || git commit -m "chore: auto-fix lint (ruff)"
+          git push
+  
+  
+  
   # =========================
   # 🤖 RELEASE PLEASE
   # =========================
