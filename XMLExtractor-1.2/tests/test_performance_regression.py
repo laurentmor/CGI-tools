@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Performance regression tests for core helper functions.
 These tests compare relative timings on the current machine to avoid brittle absolute thresholds."""
 import logging

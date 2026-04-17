@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 import logging
 from functools import wraps
 # Decorator to log exceptions based on a provided mapping of exception types to log messages.

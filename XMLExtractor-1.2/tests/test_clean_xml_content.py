@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for clean_xml_content().
 These tests ensure invalid XML characters are removed and replacement rules are applied correctly."""
 import unittest

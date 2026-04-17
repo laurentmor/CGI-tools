@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for create_protected_zip().
 These tests cover password handling, nested directory traversal, and error propagation during protected ZIP creation."""
 import logging

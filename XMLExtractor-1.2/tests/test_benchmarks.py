@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Benchmark tests for XMLExtractor helper functions.
 These tests measure performance to detect regressions while staying tolerant of slower machines."""
 import logging

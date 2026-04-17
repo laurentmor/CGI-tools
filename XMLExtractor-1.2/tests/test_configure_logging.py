@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for configure_logging().
 These tests verify logger creation and correct log filename selection across normal and test mode."""
 import logging

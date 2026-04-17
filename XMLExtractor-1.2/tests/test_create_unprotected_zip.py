@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for create_unprotected_zip().
 These tests assert correct ZIP creation behavior, compression mode, and file inclusion."""
 import logging

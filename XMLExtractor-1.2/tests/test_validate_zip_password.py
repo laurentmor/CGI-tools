@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for validate_zip_password().
 These tests verify the password rules and ensure invalid values raise the expected exceptions."""
 import unittest

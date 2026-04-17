@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for process_input_file_to_ensure_is_clean().
 These tests cover file cleaning, temporary backup handling, and replacement semantics."""
 import unittest

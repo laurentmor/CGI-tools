@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Regression tests for edge-case behavior across XML cleaning, ZIP password validation, and XMLExtractor settings.
 They ensure the extractor handles unusual input without crashing."""
 import logging

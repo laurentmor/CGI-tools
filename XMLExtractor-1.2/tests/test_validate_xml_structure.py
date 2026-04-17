@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for validate_xml_structure().
 These tests verify XML parsing success, malformed XML errors, and missing file behavior."""
 import unittest

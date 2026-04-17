@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for xml_extractor.main() and the module entry-point guard.
 These tests verify CLI flow, error handling, ZIP options, and the __main__ execution path."""
 

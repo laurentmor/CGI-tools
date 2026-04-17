@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for XMLExtractor initialization.
 These tests verify that constructor arguments are stored correctly and defaults are applied."""
 import unittest

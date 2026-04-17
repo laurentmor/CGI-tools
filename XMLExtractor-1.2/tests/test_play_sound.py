@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for play_sound().
 These tests verify that sounds play only when a file exists and mute mode is disabled."""
 import unittest

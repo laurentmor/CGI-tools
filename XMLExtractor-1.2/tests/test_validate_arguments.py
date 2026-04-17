@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for validate_arguments().
 These tests cover CLI parsing, test-mode file selection, XML validation mode, and ZIP password checking."""
 import sys

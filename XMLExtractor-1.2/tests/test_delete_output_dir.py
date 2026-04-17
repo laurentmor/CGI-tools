@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for delete_output_dir().
 These tests confirm that files and directories are removed safely from the output tree."""
 import logging
