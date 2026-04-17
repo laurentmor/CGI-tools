@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for validate_column_exists().
 These tests ensure the required XML column tag exists and that missing values are handled correctly."""
 import unittest

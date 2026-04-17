@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for the log_exceptions decorator.
 These tests verify exception mapping, logger resolution, and wrapper metadata preservation."""
 import types

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests covering the full extraction pipeline end-to-end.
 These tests simulate export.xml parsing, file creation, and optional ZIP generation entirely in memory."""
 import logging

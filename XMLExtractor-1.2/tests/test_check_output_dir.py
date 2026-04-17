@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for check_output_dir().
 These tests cover creating the output directory, dry-run skipping, and cleaning up when running in test mode."""
 import logging

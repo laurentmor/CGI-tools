@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for extract_and_save_elements().
 These tests exercise the row extraction pipeline, invalid input handling, dry-run behavior, and ZIP triggering."""
 import unittest

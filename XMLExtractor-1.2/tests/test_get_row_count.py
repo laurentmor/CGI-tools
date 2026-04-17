@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for get_row_count().
 They verify that row counting works correctly for empty XML, a single row, and multiple rows."""
 import logging

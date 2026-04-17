@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for create_zip_archive().
 These tests verify that archive creation selects protected or unprotected ZIP workflows correctly."""
 import logging

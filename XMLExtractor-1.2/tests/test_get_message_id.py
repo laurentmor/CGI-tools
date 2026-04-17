@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 """Unit tests for get_message_id().
 These tests cover extracting a message ID from XML, handling missing tags, custom tags, and nested XML content."""
 import unittest
