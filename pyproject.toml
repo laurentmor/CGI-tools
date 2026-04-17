@@ -1,6 +1,6 @@
 [project]
 name = "xml-extractor"
-version = "0.1.3"
+version = "0.1.4"
 description = "XML extraction tool"
 authors = [
     { name = "Laurent Morissette-Fournier", email = "laurent.morissette-fournier@domain.com" }

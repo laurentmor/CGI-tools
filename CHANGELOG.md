@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.4](https://github.com/laurentmor/CGI-tools/compare/v0.1.3...v0.1.4) (2026-04-17)
+
+
+### 🧹 Maintenance
+
+* update checkout version ([fbb416b](https://github.com/laurentmor/CGI-tools/commit/fbb416b3e6af3e897334ad6a60c2b80c972ce48d))
+
 ## [0.1.3](https://github.com/laurentmor/CGI-tools/compare/v0.1.2...v0.1.3) (2026-04-17)
 
 
