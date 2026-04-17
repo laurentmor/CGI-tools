@@ -61,6 +61,54 @@ jobs:
           files: coverage.xml   # 🔥 corrigé
           fail_ci_if_error: true
 
+  
+  # =========================
+  # 📝 ADD SPDX LICENSE HEADERS
+  # =========================
+  license:
+    name: Add SPDX License Headers
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'push'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add SPDX headers
+        run: |
+          for file in $(find XMLExtractor-1.2 -name "*.py"); do
+            if ! grep -q "SPDX-License-Identifier" "$file"; then
+              echo "Updating $file"
+
+              # Préserver shebang si présent
+              first_line=$(head -n 1 "$file")
+
+              if [[ "$first_line" == "#!"* ]]; then
+                tail -n +2 "$file" > tmpfile
+                echo "# SPDX-License-Identifier: MIT" > "$file"
+                echo "# SPDX-FileCopyrightText: 2026 Laurent Morissette" >> "$file"
+                echo "" >> "$file"
+                echo "$first_line" >> "$file"
+                cat tmpfile >> "$file"
+                rm tmpfile
+              else
+                tmpfile=$(mktemp)
+                echo "# SPDX-License-Identifier: MIT" > "$tmpfile"
+                echo "# SPDX-FileCopyrightText: 2026 Laurent Morissette" >> "$tmpfile"
+                echo "" >> "$tmpfile"
+                cat "$file" >> "$tmpfile"
+                mv "$tmpfile" "$file"
+              fi
+            fi
+          done
+
+      - name: Commit changes (if any)
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add .
+          git diff --cached --quiet || git commit -m "chore: add SPDX license headers"
+          git push
   # =========================
   # 🤖 RELEASE PLEASE
   # =========================
@@ -76,6 +124,7 @@ jobs:
         with:
           fetch-depth: 0   # 🔥 requis pour les tags
 
+      
       - name: Run Release Please
         uses: googleapis/release-please-action@v4
         with:
