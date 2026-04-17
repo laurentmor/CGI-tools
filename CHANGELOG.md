@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/laurentmor/CGI-tools/compare/v0.1.1...v0.1.2) (2026-04-17)
+
+
+### 🐛 Bug Fixes
+
+* clean workfow ([455f69d](https://github.com/laurentmor/CGI-tools/commit/455f69de2a3cb5655d11187dca0de7a844ecbad6))
+
 ## [0.1.1](https://github.com/laurentmor/CGI-tools/compare/v0.1.0...v0.1.1) (2026-04-17)
 
 
