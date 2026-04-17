@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.3](https://github.com/laurentmor/CGI-tools/compare/v0.1.2...v0.1.3) (2026-04-17)
+
+
+### 🐛 Bug Fixes
+
+* Node version freeze ([ab5109a](https://github.com/laurentmor/CGI-tools/commit/ab5109aa1badb0503243e37efc5ee14f49945275))
+* Node version freeze ([b67926f](https://github.com/laurentmor/CGI-tools/commit/b67926f12989b29ea080a510aaf656b66bb5f29e))
+
 ## [0.1.2](https://github.com/laurentmor/CGI-tools/compare/v0.1.1...v0.1.2) (2026-04-17)
 
 
