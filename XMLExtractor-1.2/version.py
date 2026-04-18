@@ -7,9 +7,7 @@ def get_version() -> str:
         return version("xml-extractor")
     except PackageNotFoundError:
         try:
-            return subprocess.check_output(
-                ["git", "describe", "--tags"], text=True
-            ).strip()
+            return subprocess.check_output(["git", "describe", "--tags"], text=True).strip()
         except Exception:
             return "dev"
 
