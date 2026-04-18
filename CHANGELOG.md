@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/laurentmor/CGI-tools/compare/v0.3.2...v0.3.3) (2026-04-18)
+
+
+### 🧹 Maintenance
+
+* fix workflow name so bage will work ([546069a](https://github.com/laurentmor/CGI-tools/commit/546069a66d2547b119dcbe5b99f23fe058f4c9c8))
+
 ## [0.3.2](https://github.com/laurentmor/CGI-tools/compare/v0.3.1...v0.3.2) (2026-04-18)
 
 
