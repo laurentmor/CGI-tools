@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/laurentmor/CGI-tools/compare/v0.3.0...v0.3.1) (2026-04-18)
+
+
+### 🧹 Maintenance
+
+* configure ruff version ([527eb7f](https://github.com/laurentmor/CGI-tools/commit/527eb7f5591109e4dbeb165be205f2af681f0117))
+
 ## [0.3.0](https://github.com/laurentmor/CGI-tools/compare/v0.2.0...v0.3.0) (2026-04-18)
 
 
