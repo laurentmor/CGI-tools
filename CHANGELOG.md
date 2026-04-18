@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.3.2](https://github.com/laurentmor/CGI-tools/compare/v0.3.1...v0.3.2) (2026-04-18)
+
+
+### 🐛 Bug Fixes
+
+* streamline version look up ([6325be2](https://github.com/laurentmor/CGI-tools/commit/6325be2a432b544712b61d9d45c6a93f868f0245))
+* streamline version look up ([700246b](https://github.com/laurentmor/CGI-tools/commit/700246b7bc4bfab0ff13a2be6f75c962b440058b))
+* streamline version look up to match current ([c4579d1](https://github.com/laurentmor/CGI-tools/commit/c4579d17be77ef97ee717929e3f39567e59117d0))
+* Update version handling and command-line version output ([10432a8](https://github.com/laurentmor/CGI-tools/commit/10432a8d0642db43e320751add5880f8fe3ea628))
+
+
+### 🧹 Maintenance
+
+* add SPDX license headers ([43d4932](https://github.com/laurentmor/CGI-tools/commit/43d4932fb76404bbe21e73094f97329b644fe291))
+* auto-fix lint (ruff) ([39b330d](https://github.com/laurentmor/CGI-tools/commit/39b330df33c7f42000eb51277817bcce95b786a7))
+
 ## [0.3.1](https://github.com/laurentmor/CGI-tools/compare/v0.3.0...v0.3.1) (2026-04-18)
 
 
