@@ -57,7 +57,7 @@ from version import __version__
 ##
 
 # ---------------------------------------------------------------------------
-# Constants and defaults
+# Constants and defaults configuration
 # ---------------------------------------------------------------------------
 DEFAULT_COLUMN_NAME = "RICH_TEXT_NCLOB"
 DEFAULT_FILE_ID_TAG = "MessageID"
