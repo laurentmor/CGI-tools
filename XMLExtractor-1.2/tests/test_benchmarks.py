@@ -7,12 +7,14 @@ import logging
 import time
 import unittest
 from unittest.mock import MagicMock, patch
+
 import xml_extractor as xe
-from tests.fixtures import make_extractor, patch_iterparse, REPLACE_MAP
+from tests.fixtures import REPLACE_MAP, make_extractor, patch_iterparse
 
 
 class BenchmarkFixtures:
-    """Benchmark helper functions under reasonable thresholds to catch performance regressions early."""
+    """Benchmark helper functions under reasonable thresholds to catch performance regressions early
+        Provides methods to generate XML strings with a specified number of rows for testing."""
 
     @staticmethod
     def make_xml(n_rows: int) -> str:
@@ -39,7 +41,10 @@ class BenchmarkFixtures:
 
 
 class TestBenchmarks(unittest.TestCase):
-    """Benchmark helper functions under reasonable thresholds to catch performance regressions early."""
+    """Benchmark helper functions under reasonable thresholds to catch performance regressions early
+    Benchmarks are not strict performance tests but rather sanity checks to detect 
+    significant regressions
+    while allowing for variability across different machines and environments."""
 
     THRESHOLDS = {
         "clean_xml_1000_lines": 0.5,    # seconds

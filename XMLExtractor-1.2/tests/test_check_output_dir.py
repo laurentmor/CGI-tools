@@ -6,6 +6,7 @@ These tests cover creating the output directory, dry-run skipping, and cleaning 
 import logging
 import unittest
 from unittest.mock import patch
+
 import xml_extractor as xe
 from tests.fixtures import make_extractor
 
@@ -32,7 +33,7 @@ class TestCheckOutputDir(unittest.TestCase):
             ext.check_output_dir()
         mock_exists.assert_not_called()
         mock_mkdirs.assert_not_called()
-
+ 
     
 
     def test_dir_exists_user_says_no_appends(self):

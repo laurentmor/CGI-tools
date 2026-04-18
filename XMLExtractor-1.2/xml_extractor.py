@@ -28,22 +28,24 @@ Usage:
     for programmatic use in other applications.
 """
 
-import os
-import sys
 import argparse
+import os
+import shutil
+import sys
 import time
 import traceback
 import zipfile
+
 import pyzipper  # type: ignore
-import shutil
+
 try:
     import winsound
     WINSOUND_AVAILABLE = True
 except ImportError:
     WINSOUND_AVAILABLE = False
+import json
 import logging
 import re
-import json
 from pathlib import Path
 from typing import Any, Dict, Optional, Pattern
 from xml.etree import ElementTree as ET
@@ -642,9 +644,11 @@ class XMLExtractor:
             int: The total number of <ROW> elements found in the XML file.
         """
         logger.info(f"Counting <ROW> elements in: {self.input_file[:60]}")
-        if self.input_file.strip().startswith("<"):#For test mode with XML string input, count occurrences directly without file I/O
+        if self.input_file.strip().startswith("<"):#For test mode with XML string input, 
+            # count occurrences directly without file I/O
             return self.input_file.count("<ROW>")
-        # For file input, read line by line to count <ROW> occurrences without loading entire file into memory
+        # For file input, read line by line to count <ROW> occurrences without loading entire file 
+        # into memory
         with open(self.input_file, 'r', encoding='utf-8', errors='ignore') as f:
             return sum(1 for line in f if '<ROW>' in line)
         

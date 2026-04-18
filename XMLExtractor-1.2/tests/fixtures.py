@@ -25,7 +25,8 @@ SINGLE_ROW_XML = """\
 <?xml version='1.0' encoding='UTF8'?>
 <RESULTS>
   <ROW>
-    <COLUMN NAME="RICH_TEXT_NCLOB"><![CDATA[<Proponix><Header><MessageID>MSG001</MessageID></Header></Proponix>]]></COLUMN>
+    <COLUMN NAME="RICH_TEXT_NCLOB"><![CDATA[<Proponix><Header><MessageID>MSG001</MessageID></Header>
+    </Proponix>]]></COLUMN>
   </ROW>
 </RESULTS>"""
 
@@ -33,13 +34,16 @@ MULTI_ROW_XML = """\
 <?xml version='1.0' encoding='UTF8'?>
 <RESULTS>
   <ROW>
-    <COLUMN NAME="RICH_TEXT_NCLOB"><![CDATA[<Proponix><Header><MessageID>MSG001</MessageID></Header></Proponix>]]></COLUMN>
+    <COLUMN NAME="RICH_TEXT_NCLOB"><![CDATA[<Proponix><Header><MessageID>MSG001</MessageID></Header>
+    </Proponix>]]></COLUMN>
   </ROW>
   <ROW>
-    <COLUMN NAME="RICH_TEXT_NCLOB"><![CDATA[<Proponix><Header><MessageID>MSG002</MessageID></Header></Proponix>]]></COLUMN>
+    <COLUMN NAME="RICH_TEXT_NCLOB"><![CDATA[<Proponix><Header><MessageID>MSG002</MessageID>
+    </Header></Proponix>]]></COLUMN>
   </ROW>
   <ROW>
-    <COLUMN NAME="RICH_TEXT_NCLOB"><![CDATA[<Proponix><Header><MessageID>MSG003</MessageID></Header></Proponix>]]></COLUMN>
+    <COLUMN NAME="RICH_TEXT_NCLOB"><![CDATA[<Proponix><Header><MessageID>MSG003</MessageID></Header>
+    </Proponix>]]></COLUMN>
   </ROW>
 </RESULTS>"""
 
