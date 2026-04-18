@@ -3,20 +3,24 @@
 
 """Unit tests for validate_column_exists().
 These tests ensure the required XML column tag exists and that missing values are handled correctly."""
+
 import unittest
 from unittest.mock import patch
 from xml.etree import ElementTree as ET
+
 import xml_extractor as xe
 from tests.fixtures import SINGLE_ROW_XML
 
 
 class TestValidateColumnExists(unittest.TestCase):
-
     """Verify XML column existence checks and error handling for missing tags."""
+
     def test_column_found_in_file(self):
         """Verify that Column found in file."""
-        with patch("os.path.exists", return_value=True), \
-             patch("xml_extractor.ET.parse") as mock_parse:
+        with (
+            patch("os.path.exists", return_value=True),
+            patch("xml_extractor.ET.parse") as mock_parse,
+        ):
             ET.ElementTree(ET.fromstring(SINGLE_ROW_XML))
             root = ET.fromstring("<RESULTS><COLUMN NAME='RICH_TEXT_NCLOB'/></RESULTS>")
             mock_parse.return_value.getroot = lambda: root
@@ -25,8 +29,10 @@ class TestValidateColumnExists(unittest.TestCase):
 
     def test_column_not_found_raises(self):
         """Verify that Column not found raises."""
-        with patch("os.path.exists", return_value=True), \
-             patch("xml_extractor.ET.parse") as mock_parse:
+        with (
+            patch("os.path.exists", return_value=True),
+            patch("xml_extractor.ET.parse") as mock_parse,
+        ):
             root = ET.fromstring("<RESULTS><COLUMN NAME='OTHER'/></RESULTS>")
             mock_parse.return_value.getroot = lambda: root
             with self.assertRaises((ValueError, Exception)):

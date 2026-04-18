@@ -3,13 +3,15 @@
 
 """Unit tests for get_message_id().
 These tests cover extracting a message ID from XML, handling missing tags, custom tags, and nested XML content."""
+
 import unittest
+
 from tests.fixtures import make_extractor
 
 
 class TestGetMessageId(unittest.TestCase):
-
     """Test get_message_id() extraction logic for standard IDs, missing IDs, custom tags, and nested content."""
+
     def setUp(self):
         self.extractor = make_extractor()
 

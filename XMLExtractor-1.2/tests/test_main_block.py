@@ -12,13 +12,19 @@ import xml_extractor as xe
 
 
 class TestMainBlock(unittest.TestCase):
-
     """Verify main entrypoint behavior, CLI handling, and __main__ guard execution."""
+
     def _fake_args(self, **overrides):
         defaults = dict(
-            input_file="file.xml", output_dir="out", column_name="COL",
-            z=None, file_id_tag="MessageID", mute=False,
-            test=None, dry_run=False, skip_pause=True,
+            input_file="file.xml",
+            output_dir="out",
+            column_name="COL",
+            z=None,
+            file_id_tag="MessageID",
+            mute=False,
+            test=None,
+            dry_run=False,
+            skip_pause=True,
         )
         defaults.update(overrides)
         return MagicMock(**defaults)
@@ -31,17 +37,18 @@ class TestMainBlock(unittest.TestCase):
         fake_args = self._fake_args(skip_pause=True)
         fake_extractor = MagicMock()
 
-        with patch.object(xe, "configure_logging", return_value=MagicMock()), \
-             patch.object(xe, "validate_arguments", return_value=fake_args), \
-             patch.object(xe.os.path, "exists", return_value=True), \
-             patch.object(xe, "load_replace_map_from_json", return_value={}), \
-             patch.object(xe, "process_input_file_to_ensure_is_clean"), \
-             patch.object(xe, "validate_column_exists"), \
-             patch.object(xe, "play_sound"), \
-             patch.object(xe, "XMLExtractor", return_value=fake_extractor), \
-             patch.object(xe.time, "time", side_effect=itertools.count(0)), \
-             patch.object(xe.sys, "exit", side_effect=SystemExit) as mock_exit:
-
+        with (
+            patch.object(xe, "configure_logging", return_value=MagicMock()),
+            patch.object(xe, "validate_arguments", return_value=fake_args),
+            patch.object(xe.os.path, "exists", return_value=True),
+            patch.object(xe, "load_replace_map_from_json", return_value={}),
+            patch.object(xe, "process_input_file_to_ensure_is_clean"),
+            patch.object(xe, "validate_column_exists"),
+            patch.object(xe, "play_sound"),
+            patch.object(xe, "XMLExtractor", return_value=fake_extractor),
+            patch.object(xe.time, "time", side_effect=itertools.count(0)),
+            patch.object(xe.sys, "exit", side_effect=SystemExit) as mock_exit,
+        ):
             with self.assertRaises(SystemExit):
                 xe.main()
 
@@ -55,12 +62,13 @@ class TestMainBlock(unittest.TestCase):
         """Verify that Main file not found."""
         fake_args = self._fake_args()
 
-        with patch.object(xe, "configure_logging", return_value=MagicMock()), \
-             patch.object(xe, "validate_arguments", return_value=fake_args), \
-             patch.object(xe.os.path, "exists", return_value=False), \
-             patch.object(xe, "play_sound"), \
-             patch.object(xe.sys, "exit", side_effect=SystemExit) as mock_exit:
-
+        with (
+            patch.object(xe, "configure_logging", return_value=MagicMock()),
+            patch.object(xe, "validate_arguments", return_value=fake_args),
+            patch.object(xe.os.path, "exists", return_value=False),
+            patch.object(xe, "play_sound"),
+            patch.object(xe.sys, "exit", side_effect=SystemExit) as mock_exit,
+        ):
             with self.assertRaises(SystemExit):
                 xe.main()
 
@@ -73,14 +81,16 @@ class TestMainBlock(unittest.TestCase):
         """Verify that Main exception."""
         fake_args = self._fake_args()
 
-        with patch.object(xe, "configure_logging", return_value=MagicMock()), \
-             patch.object(xe, "validate_arguments", return_value=fake_args), \
-             patch.object(xe.os.path, "exists", return_value=True), \
-             patch.object(xe, "process_input_file_to_ensure_is_clean",
-                          side_effect=Exception("boom")), \
-             patch.object(xe, "play_sound"), \
-             patch.object(xe.sys, "exit", side_effect=SystemExit) as mock_exit:
-
+        with (
+            patch.object(xe, "configure_logging", return_value=MagicMock()),
+            patch.object(xe, "validate_arguments", return_value=fake_args),
+            patch.object(xe.os.path, "exists", return_value=True),
+            patch.object(
+                xe, "process_input_file_to_ensure_is_clean", side_effect=Exception("boom")
+            ),
+            patch.object(xe, "play_sound"),
+            patch.object(xe.sys, "exit", side_effect=SystemExit) as mock_exit,
+        ):
             with self.assertRaises(SystemExit):
                 xe.main()
 
@@ -94,17 +104,18 @@ class TestMainBlock(unittest.TestCase):
         fake_args = self._fake_args(z=["archive.zip", "pass123"], skip_pause=True)
         fake_extractor = MagicMock()
 
-        with patch.object(xe, "configure_logging", return_value=MagicMock()), \
-             patch.object(xe, "validate_arguments", return_value=fake_args), \
-             patch.object(xe.os.path, "exists", return_value=True), \
-             patch.object(xe, "load_replace_map_from_json", return_value={}), \
-             patch.object(xe, "process_input_file_to_ensure_is_clean"), \
-             patch.object(xe, "validate_column_exists"), \
-             patch.object(xe, "play_sound"), \
-             patch.object(xe, "XMLExtractor", return_value=fake_extractor), \
-             patch.object(xe.time, "time", side_effect=itertools.count(0)), \
-             patch.object(xe.sys, "exit", side_effect=SystemExit):
-
+        with (
+            patch.object(xe, "configure_logging", return_value=MagicMock()),
+            patch.object(xe, "validate_arguments", return_value=fake_args),
+            patch.object(xe.os.path, "exists", return_value=True),
+            patch.object(xe, "load_replace_map_from_json", return_value={}),
+            patch.object(xe, "process_input_file_to_ensure_is_clean"),
+            patch.object(xe, "validate_column_exists"),
+            patch.object(xe, "play_sound"),
+            patch.object(xe, "XMLExtractor", return_value=fake_extractor),
+            patch.object(xe.time, "time", side_effect=itertools.count(0)),
+            patch.object(xe.sys, "exit", side_effect=SystemExit),
+        ):
             with self.assertRaises(SystemExit):
                 xe.main()
 
@@ -118,18 +129,19 @@ class TestMainBlock(unittest.TestCase):
         fake_args = self._fake_args(skip_pause=False)
         fake_extractor = MagicMock()
 
-        with patch.object(xe, "configure_logging", return_value=MagicMock()), \
-             patch.object(xe, "validate_arguments", return_value=fake_args), \
-             patch.object(xe.os.path, "exists", return_value=True), \
-             patch.object(xe, "load_replace_map_from_json", return_value={}), \
-             patch.object(xe, "process_input_file_to_ensure_is_clean"), \
-             patch.object(xe, "validate_column_exists"), \
-             patch.object(xe, "play_sound"), \
-             patch.object(xe, "XMLExtractor", return_value=fake_extractor), \
-             patch.object(xe.time, "time", side_effect=itertools.count(0)), \
-             patch("builtins.input") as mock_input, \
-             patch.object(xe.sys, "exit", side_effect=SystemExit):
-
+        with (
+            patch.object(xe, "configure_logging", return_value=MagicMock()),
+            patch.object(xe, "validate_arguments", return_value=fake_args),
+            patch.object(xe.os.path, "exists", return_value=True),
+            patch.object(xe, "load_replace_map_from_json", return_value={}),
+            patch.object(xe, "process_input_file_to_ensure_is_clean"),
+            patch.object(xe, "validate_column_exists"),
+            patch.object(xe, "play_sound"),
+            patch.object(xe, "XMLExtractor", return_value=fake_extractor),
+            patch.object(xe.time, "time", side_effect=itertools.count(0)),
+            patch("builtins.input") as mock_input,
+            patch.object(xe.sys, "exit", side_effect=SystemExit),
+        ):
             with self.assertRaises(SystemExit):
                 xe.main()
 
@@ -152,6 +164,7 @@ class TestMainGuard(unittest.TestCase):
         finally:
             xe.__name__ = original_name
 
-        self.assertEqual(ctx.exception.code, 42,
-                         "guard should call main() which raises SystemExit(42)")
+        self.assertEqual(
+            ctx.exception.code, 42, "guard should call main() which raises SystemExit(42)"
+        )
         mock_main.assert_called_once()

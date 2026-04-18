@@ -3,16 +3,18 @@
 
 """Unit tests for delete_output_dir().
 These tests confirm that files and directories are removed safely from the output tree."""
+
 import logging
 import unittest
 from unittest.mock import patch
+
 import xml_extractor as xe
 from tests.fixtures import make_extractor
 
 
 class TestDeleteOutputDir(unittest.TestCase):
-
     """Verify delete_output_dir() removes output files and directories safely and completely."""
+
     def setUp(self):
         xe.logger = logging.getLogger("test")
 

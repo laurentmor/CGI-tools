@@ -40,6 +40,7 @@ import pyzipper  # type: ignore
 
 try:
     import winsound
+
     WINSOUND_AVAILABLE = True
 except ImportError:
     WINSOUND_AVAILABLE = False
@@ -84,6 +85,7 @@ replace_map: Optional[Dict[str, str]] = None
 # Logging
 # ---------------------------------------------------------------------------
 
+
 def configure_logging() -> logging.Logger:
     """Configure the logger for the script with console and file handlers.
 
@@ -120,6 +122,7 @@ def configure_logging() -> logging.Logger:
 # Sound
 # ---------------------------------------------------------------------------
 
+
 def play_sound(sound_file: str, mute: bool) -> None:
     """Play a sound effect if not muted and the sound file exists.
 
@@ -142,6 +145,7 @@ def play_sound(sound_file: str, mute: bool) -> None:
 # Replacement map
 # ---------------------------------------------------------------------------
 
+
 def load_replace_map_from_json(json_path: str) -> Dict[str, Any]:
     """Load a replacement map from a JSON file for XML content cleaning.
 
@@ -160,12 +164,13 @@ def load_replace_map_from_json(json_path: str) -> Dict[str, Any]:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as e:
         logger.warning(f"Could not load replacement map: {e} - using default map.")
-    return {"*": "-", "\x02": "", "\x1A": ""}
+    return {"*": "-", "\x02": "", "\x1a": ""}
 
 
 # ---------------------------------------------------------------------------
 # XML validation
 # ---------------------------------------------------------------------------
+
 
 @log_exceptions(
     {FileNotFoundError: "XML file not found", ET.ParseError: "XML parsing failed"},
@@ -197,6 +202,7 @@ def validate_xml_structure(input_file: str) -> bool:
 # Argument handling
 # ---------------------------------------------------------------------------
 
+
 def validate_arguments() -> argparse.Namespace:
     """Validate command-line arguments and return them after processing.
 
@@ -211,9 +217,7 @@ def validate_arguments() -> argparse.Namespace:
         SystemExit: If arguments are invalid or required files are missing.
     """
     logger.info("Validating CLI arguments")
-    parser = argparse.ArgumentParser(
-        description="Generate XML files based on SQLDEV export."
-    )
+    parser = argparse.ArgumentParser(description="Generate XML files based on SQLDEV export.")
     parser.add_argument(
         "input_file",
         nargs="?",
@@ -282,8 +286,7 @@ def validate_arguments() -> argparse.Namespace:
         parser.print_help(sys.stderr)
         play_sound(SOUND_ERROR, args.mute)
         raise FileNotFoundError(
-            f"Error: an existing input file is required. "
-            f"File '{args.input_file}' does not exist."
+            f"Error: an existing input file is required. File '{args.input_file}' does not exist."
         )
 
     # If validation only is requested, validate XML and exit
@@ -323,18 +326,15 @@ def validate_zip_password(password: Optional[str]) -> bool:
         logger.error("Password is required for ZIP encryption.")
         raise ValueError("Password is required for ZIP encryption.")
     if len(password) < MIN_PASSWORD_LENGTH:
-        logger.error(
-            f"Password must be at least {MIN_PASSWORD_LENGTH} characters long."
-        )
-        raise ValueError(
-            f"Password must be at least {MIN_PASSWORD_LENGTH} characters long."
-        )
+        logger.error(f"Password must be at least {MIN_PASSWORD_LENGTH} characters long.")
+        raise ValueError(f"Password must be at least {MIN_PASSWORD_LENGTH} characters long.")
     return True
 
 
 # ---------------------------------------------------------------------------
 # XML cleaning
 # ---------------------------------------------------------------------------
+
 
 def process_input_file_to_ensure_is_clean(input_file: str) -> None:
     """Clean the input XML file to ensure it contains only valid XML characters.
@@ -411,9 +411,7 @@ def clean_xml_content(
 
     # Remove all invalid XML characters
     # Valid XML chars: tab (9), LF (10), CR (13), and any char with ord >= 32
-    content = "".join(
-        ch for ch in content if ord(ch) in (9, 10, 13) or ord(ch) >= 32
-    )
+    content = "".join(ch for ch in content if ord(ch) in (9, 10, 13) or ord(ch) >= 32)
 
     # Apply the replace_map when present
     if replace_map:
@@ -427,6 +425,7 @@ def clean_xml_content(
 # ---------------------------------------------------------------------------
 # Column validation
 # ---------------------------------------------------------------------------
+
 
 @log_exceptions(
     {Exception: "Error validating column existence"},
@@ -473,6 +472,7 @@ def validate_column_exists(input_file: str, column_name: str) -> bool:
 # Utilities
 # ---------------------------------------------------------------------------
 
+
 def get_base_path() -> Path:
     """Return the base path, handling both development and PyInstaller contexts."""
     if getattr(sys, "frozen", False):
@@ -483,6 +483,7 @@ def get_base_path() -> Path:
 # ---------------------------------------------------------------------------
 # XMLExtractor
 # ---------------------------------------------------------------------------
+
 
 class XMLExtractor:
     """Extract XML elements from an input file and save them as separate files.
@@ -568,28 +569,30 @@ class XMLExtractor:
 
         if os.path.exists(self.output_dir):
             if os.path.isfile(self.output_dir):
-                answer = input(
-                    f"Output path '{self.output_dir}' exists as a file. "
-                    "Do you want to delete it? (Y/N): "
-                ).strip().upper()
+                answer = (
+                    input(
+                        f"Output path '{self.output_dir}' exists as a file. "
+                        "Do you want to delete it? (Y/N): "
+                    )
+                    .strip()
+                    .upper()
+                )
                 if answer == "Y":
                     os.remove(self.output_dir)
                     os.makedirs(self.output_dir, exist_ok=True)
-                    logger.info(
-                        f"Removed file and created output directory '{self.output_dir}'."
-                    )
+                    logger.info(f"Removed file and created output directory '{self.output_dir}'.")
                 else:
-                    logger.error(
-                        f"Output path '{self.output_dir}' is a file. Cannot proceed."
-                    )
-                    raise ValueError(
-                        f"Output path '{self.output_dir}' is a file, not a directory."
-                    )
+                    logger.error(f"Output path '{self.output_dir}' is a file. Cannot proceed.")
+                    raise ValueError(f"Output path '{self.output_dir}' is a file, not a directory.")
             else:
-                answer = input(
-                    f"Output directory '{self.output_dir}' already exists. "
-                    "Do you want to delete it? (Y/N): "
-                ).strip().upper()
+                answer = (
+                    input(
+                        f"Output directory '{self.output_dir}' already exists. "
+                        "Do you want to delete it? (Y/N): "
+                    )
+                    .strip()
+                    .upper()
+                )
                 if answer == "Y":
                     self.delete_output_dir()
                     os.makedirs(self.output_dir, exist_ok=True)
@@ -619,9 +622,7 @@ class XMLExtractor:
         Returns:
             str: The extracted message ID, or an empty string if not found.
         """
-        match = re.search(
-            rf"<{self.file_id_tag}>(.*?)</{self.file_id_tag}>", content
-        )
+        match = re.search(rf"<{self.file_id_tag}>(.*?)</{self.file_id_tag}>", content)
         return match.group(1) if match else ""
 
     # ------------------------------------------------------------------
@@ -644,14 +645,13 @@ class XMLExtractor:
             int: The total number of <ROW> elements found in the XML file.
         """
         logger.info(f"Counting <ROW> elements in: {self.input_file[:60]}")
-        if self.input_file.strip().startswith("<"):#For test mode with XML string input, 
+        if self.input_file.strip().startswith("<"):  # For test mode with XML string input,
             # count occurrences directly without file I/O
             return self.input_file.count("<ROW>")
-        # For file input, read line by line to count <ROW> occurrences without loading entire file 
+        # For file input, read line by line to count <ROW> occurrences without loading entire file
         # into memory
-        with open(self.input_file, 'r', encoding='utf-8', errors='ignore') as f:
-            return sum(1 for line in f if '<ROW>' in line)
-        
+        with open(self.input_file, "r", encoding="utf-8", errors="ignore") as f:
+            return sum(1 for line in f if "<ROW>" in line)
 
     # ------------------------------------------------------------------
     # Main extraction
@@ -710,25 +710,18 @@ class XMLExtractor:
                         if row_count:
                             progress_pct = (processed_rows / row_count) * 100
                             logger.info(
-                                f"Processing {self.file_id_tag}: {xml_id} "
-                                f"({progress_pct:.2f}%)"
+                                f"Processing {self.file_id_tag}: {xml_id} ({progress_pct:.2f}%)"
                             )
                         else:
-                            logger.info(
-                                f"Processing {self.file_id_tag}: {xml_id}"
-                            )
+                            logger.info(f"Processing {self.file_id_tag}: {xml_id}")
                         if not self.dry_run:
                             output_path = Path(self.output_dir) / file_name
-                            with open(
-                                str(output_path), "w", encoding="utf-8"
-                            ) as output:
+                            with open(str(output_path), "w", encoding="utf-8") as output:
                                 output.write(rich_text.text.strip())
                                 file_count += 1
                                 logger.info(f"File created: {file_name}")
                         else:
-                            logger.info(
-                                f"Dry run: File would be created: {file_name}"
-                            )
+                            logger.info(f"Dry run: File would be created: {file_name}")
 
                 elem.clear()
 
@@ -765,9 +758,7 @@ class XMLExtractor:
         if not zip_filename:
             zip_filename = self.zip_filename or f"{self.output_file_name}.zip"
         full_zip_path = Path(self.output_dir).parent / zip_filename
-        with zipfile.ZipFile(
-            str(full_zip_path), "w", compression=zipfile.ZIP_DEFLATED
-        ) as zipf:
+        with zipfile.ZipFile(str(full_zip_path), "w", compression=zipfile.ZIP_DEFLATED) as zipf:
             for root, _, files in os.walk(self.output_dir):
                 for file in files:
                     file_path = Path(root) / file
@@ -799,9 +790,7 @@ class XMLExtractor:
             Exception: For errors during ZIP creation or file operations.
         """
         if not zip_filename:
-            zip_filename = (
-                self.zip_filename or f"{self.output_file_name}-protected.zip"
-            )
+            zip_filename = self.zip_filename or f"{self.output_file_name}-protected.zip"
         full_zip_path = Path(self.output_dir).parent / zip_filename
         with pyzipper.AESZipFile(
             str(full_zip_path),
@@ -823,9 +812,7 @@ class XMLExtractor:
         based on the presence of a password.  Skips if dry-run is enabled.
         """
         if self.dry_run:
-            logger.info(
-                f"[Dry-run] No zip named {self.output_file_name} will be created."
-            )
+            logger.info(f"[Dry-run] No zip named {self.output_file_name} will be created.")
             return
 
         if self.zip_password:
@@ -841,6 +828,7 @@ class XMLExtractor:
 # ---------------------------------------------------------------------------
 # Entry point
 # ---------------------------------------------------------------------------
+
 
 def main() -> None:
     """Main entry point for the script.
@@ -865,9 +853,7 @@ def main() -> None:
         # for the case where main() is called programmatically without going
         # through validate_arguments.
         if not os.path.exists(args.input_file):
-            raise FileNotFoundError(
-                f"Input file '{args.input_file}' does not exist."
-            )
+            raise FileNotFoundError(f"Input file '{args.input_file}' does not exist.")
 
         base_path = get_base_path()
         replace_map_path = base_path / REPLACEMENT_MAP_FILE

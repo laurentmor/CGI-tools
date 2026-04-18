@@ -3,11 +3,13 @@
 
 """Performance regression tests for core helper functions.
 These tests compare relative timings on the current machine to avoid brittle absolute thresholds."""
+
 import logging
 import timeit
 import unittest
+
 import xml_extractor as xe
-from tests.fixtures import make_extractor, REPLACE_MAP
+from tests.fixtures import REPLACE_MAP, make_extractor
 
 
 class TestPerformanceRegression(unittest.TestCase):
@@ -39,8 +41,7 @@ class TestPerformanceRegression(unittest.TestCase):
         raw = timeit.repeat(lambda: dummy, number=n or self.N, repeat=reps or self.REPS)
         return max(self._median(raw) / (n or self.N) * 1e6, 0.05)
 
-    def _assert_relative(self, fn, max_multiplier: float, label: str,
-                         n=None, reps=None):
+    def _assert_relative(self, fn, max_multiplier: float, label: str, n=None, reps=None):
         baseline = self._baseline_us(n, reps)
         actual_us = self._median_us_per_call(fn, n, reps)
         ratio = actual_us / baseline
@@ -49,9 +50,10 @@ class TestPerformanceRegression(unittest.TestCase):
             f"(baseline {baseline:.3f} µs, ratio {ratio:.1f}×, limit {max_multiplier}×)"
         )
         self.assertLess(
-            ratio, max_multiplier,
+            ratio,
+            max_multiplier,
             f"{label} too slow: {actual_us:.2f} µs/call is "
-            f"{ratio:.1f}× baseline (limit {max_multiplier}×)"
+            f"{ratio:.1f}× baseline (limit {max_multiplier}×)",
         )
 
     # ------------------------------------------------------------------
@@ -60,7 +62,7 @@ class TestPerformanceRegression(unittest.TestCase):
 
     def test_clean_xml_relative_speed(self):
         """Verify that Clean xml relative speed."""
-        content = "Hello * World \x02 End\x1A"
+        content = "Hello * World \x02 End\x1a"
         self._assert_relative(
             lambda: xe.clean_xml_content(content, REPLACE_MAP),
             max_multiplier=200,
@@ -88,7 +90,7 @@ class TestPerformanceRegression(unittest.TestCase):
 
     def test_clean_xml_scales_linearly(self):
         """Verify that Clean xml scales linearly."""
-        lines_100 = [f"Line {i} * \x02 \x1A\n" for i in range(100)]
+        lines_100 = [f"Line {i} * \x02 \x1a\n" for i in range(100)]
         lines_1000 = lines_100 * 10
 
         def run_100():
@@ -104,7 +106,8 @@ class TestPerformanceRegression(unittest.TestCase):
         ratio = t_1000 / t_100 if t_100 > 0 else 1
         print(f"\n[PERF] linear scaling ratio (×10 input): {ratio:.2f}×")
         self.assertLess(
-            ratio, 20,
+            ratio,
+            20,
             f"clean_xml_content scaling ratio {ratio:.2f}× exceeds 20× "
-            f"(t_100={t_100*1000:.2f}ms, t_1000={t_1000*1000:.2f}ms)"
+            f"(t_100={t_100 * 1000:.2f}ms, t_1000={t_1000 * 1000:.2f}ms)",
         )

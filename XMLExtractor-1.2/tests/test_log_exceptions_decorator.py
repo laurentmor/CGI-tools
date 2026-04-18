@@ -3,9 +3,11 @@
 
 """Unit tests for the log_exceptions decorator.
 These tests verify exception mapping, logger resolution, and wrapper metadata preservation."""
+
 import types
 import unittest
 from unittest.mock import MagicMock
+
 from tests.fixtures import load_real_log_exceptions
 
 log_exceptions = load_real_log_exceptions()
@@ -25,6 +27,7 @@ class TestLogExceptionsDecorator(unittest.TestCase):
 
     def test_no_exception_returns_value(self):
         """Verify that No exception returns value."""
+
         @log_exceptions({ValueError: "bad value"})
         def good():
             return 42
@@ -66,6 +69,7 @@ class TestLogExceptionsDecorator(unittest.TestCase):
 
     def test_unmapped_exception_propagates(self):
         """Verify that Unmapped exception propagates."""
+
         @log_exceptions({ValueError: "val"})
         def bad():
             raise RuntimeError("unhandled")
@@ -75,6 +79,7 @@ class TestLogExceptionsDecorator(unittest.TestCase):
 
     def test_wraps_preserves_function_name(self):
         """Verify that Wraps preserves function name."""
+
         @log_exceptions({ValueError: "v"})
         def my_function():
             pass

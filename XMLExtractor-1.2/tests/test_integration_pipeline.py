@@ -3,10 +3,12 @@
 
 """Unit tests covering the full extraction pipeline end-to-end.
 These tests simulate export.xml parsing, file creation, and optional ZIP generation entirely in memory."""
+
 import logging
 import os
 import unittest
 from unittest.mock import MagicMock, patch
+
 import xml_extractor as xe
 from tests.fixtures import make_extractor, patch_iterparse
 
@@ -36,8 +38,9 @@ class TestIntegrationPipeline(unittest.TestCase):
 
     def test_all_three_messages_extracted(self):
         """Verify that All three messages extracted."""
-        ext = make_extractor(input_file="export.xml", output_dir="xmls",
-                             output_file_name="archive", create_zip=False)
+        ext = make_extractor(
+            input_file="export.xml", output_dir="xmls", output_file_name="archive", create_zip=False
+        )
         handle = MagicMock()
         handle.__enter__ = lambda s: s
         handle.__exit__ = MagicMock(return_value=False)
@@ -49,10 +52,12 @@ class TestIntegrationPipeline(unittest.TestCase):
                 opened_files.append(path)
             return handle
 
-        with patch_iterparse(self.EXPORT_XML), \
-             patch.object(ext, "check_output_dir"), \
-             patch.object(ext, "create_zip_archive"), \
-             patch("builtins.open", side_effect=tracked_open):
+        with (
+            patch_iterparse(self.EXPORT_XML),
+            patch.object(ext, "check_output_dir"),
+            patch.object(ext, "create_zip_archive"),
+            patch("builtins.open", side_effect=tracked_open),
+        ):
             ext.extract_and_save_elements()
 
         names = {os.path.basename(p) for p in opened_files}
@@ -68,10 +73,12 @@ class TestIntegrationPipeline(unittest.TestCase):
         handle.__exit__ = MagicMock(return_value=False)
         handle.write = MagicMock()
 
-        with patch_iterparse(self.EXPORT_XML), \
-             patch("builtins.open", return_value=handle), \
-             patch.object(ext, "check_output_dir"), \
-             patch.object(ext, "create_zip_archive") as mock_zip:
+        with (
+            patch_iterparse(self.EXPORT_XML),
+            patch("builtins.open", return_value=handle),
+            patch.object(ext, "check_output_dir"),
+            patch.object(ext, "create_zip_archive") as mock_zip,
+        ):
             ext.extract_and_save_elements()
 
         mock_zip.assert_called_once()

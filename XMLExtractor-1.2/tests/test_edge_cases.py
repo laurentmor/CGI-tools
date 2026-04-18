@@ -3,16 +3,18 @@
 
 """Regression tests for edge-case behavior across XML cleaning, ZIP password validation, and XMLExtractor settings.
 They ensure the extractor handles unusual input without crashing."""
+
 import logging
 import unittest
 from unittest.mock import MagicMock, patch
+
 import xml_extractor as xe
-from tests.fixtures import make_extractor, patch_iterparse, REPLACE_MAP
+from tests.fixtures import make_extractor, patch_iterparse
 
 
 class TestEdgeCases(unittest.TestCase):
-
     """Validate edge-case behavior for XML cleaning, zip password validation, and extractor configuration values."""
+
     def setUp(self):
         xe.logger = logging.getLogger("test")
 
@@ -53,10 +55,12 @@ class TestEdgeCases(unittest.TestCase):
             handle.write = lambda data: written.update({path: data})
             return handle
 
-        with patch_iterparse(xml), \
-             patch("builtins.open", side_effect=fake_open), \
-             patch.object(ext, "check_output_dir"), \
-             patch.object(ext, "create_zip_archive"):
+        with (
+            patch_iterparse(xml),
+            patch("builtins.open", side_effect=fake_open),
+            patch.object(ext, "check_output_dir"),
+            patch.object(ext, "create_zip_archive"),
+        ):
             ext.extract_and_save_elements()
 
         self.assertEqual(len(written), 0)

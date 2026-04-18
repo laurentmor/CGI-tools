@@ -3,15 +3,17 @@
 
 """Unit tests for validate_xml_structure().
 These tests verify XML parsing success, malformed XML errors, and missing file behavior."""
+
 import unittest
 from unittest.mock import MagicMock, patch
 from xml.etree import ElementTree as ET
+
 import xml_extractor as xe
 
 
 class TestValidateXmlStructure(unittest.TestCase):
-
     """Verify XML structure validation handles parse errors and missing files."""
+
     def test_valid_xml_file(self):
         """Verify that Valid xml file."""
         with patch("xml_extractor.ET.parse", return_value=MagicMock()):

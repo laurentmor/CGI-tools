@@ -3,15 +3,17 @@
 
 """Unit tests for extract_and_save_elements().
 These tests exercise the row extraction pipeline, invalid input handling, dry-run behavior, and ZIP triggering."""
+
 import unittest
 from unittest.mock import MagicMock, mock_open, patch
+
 import xml_extractor as xe
 from tests.fixtures import make_extractor
 
 
 class TestExtractAndSave(unittest.TestCase):
-
     """Test extract_and_save_elements() for XML extraction flow, file writing, and zip handling under edge cases."""
+
     def setUp(self):
         xe.logger = MagicMock()
 
@@ -30,9 +32,11 @@ class TestExtractAndSave(unittest.TestCase):
         """Verify that Invalid root."""
         ext = make_extractor()
         context = iter([("start", MagicMock(tag="WRONG"))])
-        with patch("xml_extractor.ET.iterparse", return_value=context), \
-             patch.object(ext, "get_row_count", return_value=1), \
-             patch.object(ext, "check_output_dir"):
+        with (
+            patch("xml_extractor.ET.iterparse", return_value=context),
+            patch.object(ext, "get_row_count", return_value=1),
+            patch.object(ext, "check_output_dir"),
+        ):
             with self.assertRaises(ValueError):
                 ext.extract_and_save_elements()
 
@@ -43,9 +47,11 @@ class TestExtractAndSave(unittest.TestCase):
         """Verify that No rows."""
         ext = make_extractor()
         context = iter([("start", MagicMock(tag="RESULTS"))])
-        with patch("xml_extractor.ET.iterparse", return_value=context), \
-             patch.object(ext, "get_row_count", return_value=0), \
-             patch.object(ext, "check_output_dir"):
+        with (
+            patch("xml_extractor.ET.iterparse", return_value=context),
+            patch.object(ext, "get_row_count", return_value=0),
+            patch.object(ext, "check_output_dir"),
+        ):
             ext.extract_and_save_elements()  # must not raise
 
     # --------------------------------------------------
@@ -58,9 +64,11 @@ class TestExtractAndSave(unittest.TestCase):
         row = self._make_elem("ROW")
         row.find.return_value = None
         context = iter([("start", root), ("end", row)])
-        with patch("xml_extractor.ET.iterparse", return_value=context), \
-             patch.object(ext, "get_row_count", return_value=1), \
-             patch.object(ext, "check_output_dir"):
+        with (
+            patch("xml_extractor.ET.iterparse", return_value=context),
+            patch.object(ext, "get_row_count", return_value=1),
+            patch.object(ext, "check_output_dir"),
+        ):
             ext.extract_and_save_elements()  # must not raise
 
     # --------------------------------------------------
@@ -73,9 +81,11 @@ class TestExtractAndSave(unittest.TestCase):
         row = self._make_elem("ROW")
         row.find.return_value = MagicMock(text=None)
         context = iter([("start", root), ("end", row)])
-        with patch("xml_extractor.ET.iterparse", return_value=context), \
-             patch.object(ext, "get_row_count", return_value=1), \
-             patch.object(ext, "check_output_dir"):
+        with (
+            patch("xml_extractor.ET.iterparse", return_value=context),
+            patch.object(ext, "get_row_count", return_value=1),
+            patch.object(ext, "check_output_dir"),
+        ):
             ext.extract_and_save_elements()  # must not raise
 
     # --------------------------------------------------
@@ -88,10 +98,12 @@ class TestExtractAndSave(unittest.TestCase):
         row = self._make_elem("ROW")
         row.find.return_value = MagicMock(text="data")
         context = iter([("start", root), ("end", row)])
-        with patch("xml_extractor.ET.iterparse", return_value=context), \
-             patch.object(ext, "get_row_count", return_value=1), \
-             patch.object(ext, "get_message_id", return_value=""), \
-             patch.object(ext, "check_output_dir"):
+        with (
+            patch("xml_extractor.ET.iterparse", return_value=context),
+            patch.object(ext, "get_row_count", return_value=1),
+            patch.object(ext, "get_message_id", return_value=""),
+            patch.object(ext, "check_output_dir"),
+        ):
             ext.extract_and_save_elements()  # must not raise
 
     # --------------------------------------------------
@@ -105,11 +117,13 @@ class TestExtractAndSave(unittest.TestCase):
         row.find.return_value = MagicMock(text=" <xml>data</xml> ")
         context = iter([("start", root), ("end", row)])
         m = mock_open()
-        with patch("xml_extractor.ET.iterparse", return_value=context), \
-             patch.object(ext, "get_row_count", return_value=1), \
-             patch.object(ext, "get_message_id", return_value="123"), \
-             patch.object(ext, "check_output_dir"), \
-             patch("builtins.open", m):
+        with (
+            patch("xml_extractor.ET.iterparse", return_value=context),
+            patch.object(ext, "get_row_count", return_value=1),
+            patch.object(ext, "get_message_id", return_value="123"),
+            patch.object(ext, "check_output_dir"),
+            patch("builtins.open", m),
+        ):
             ext.extract_and_save_elements()
         m().write.assert_called_once_with("<xml>data</xml>")
 
@@ -123,11 +137,13 @@ class TestExtractAndSave(unittest.TestCase):
         row = self._make_elem("ROW")
         row.find.return_value = MagicMock(text="data")
         context = iter([("start", root), ("end", row)])
-        with patch("xml_extractor.ET.iterparse", return_value=context), \
-             patch.object(ext, "get_row_count", return_value=1), \
-             patch.object(ext, "get_message_id", return_value="123"), \
-             patch.object(ext, "check_output_dir"), \
-             patch("builtins.open") as mock_open_file:
+        with (
+            patch("xml_extractor.ET.iterparse", return_value=context),
+            patch.object(ext, "get_row_count", return_value=1),
+            patch.object(ext, "get_message_id", return_value="123"),
+            patch.object(ext, "check_output_dir"),
+            patch("builtins.open") as mock_open_file,
+        ):
             ext.extract_and_save_elements()
         mock_open_file.assert_not_called()
 
@@ -138,9 +154,11 @@ class TestExtractAndSave(unittest.TestCase):
         """Verify that Create zip called."""
         ext = make_extractor(create_zip=True)
         context = iter([("start", MagicMock(tag="RESULTS"))])
-        with patch("xml_extractor.ET.iterparse", return_value=context), \
-             patch.object(ext, "get_row_count", return_value=0), \
-             patch.object(ext, "check_output_dir"), \
-             patch.object(ext, "create_zip_archive") as mock_zip:
+        with (
+            patch("xml_extractor.ET.iterparse", return_value=context),
+            patch.object(ext, "get_row_count", return_value=0),
+            patch.object(ext, "check_output_dir"),
+            patch.object(ext, "create_zip_archive") as mock_zip,
+        ):
             ext.extract_and_save_elements()
         mock_zip.assert_called_once()

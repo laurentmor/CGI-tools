@@ -67,13 +67,14 @@ EMPTY_RESULTS_XML = """\
 
 INVALID_XML = "<<not xml at all>>"
 
-DIRTY_XML_CONTENT = "Hello\x02World\x1AEnd"
+DIRTY_XML_CONTENT = "Hello\x02World\x1aEnd"
 
-REPLACE_MAP = {"*": "-", "\x02": "", "\x1A": ""}
+REPLACE_MAP = {"*": "-", "\x02": "", "\x1a": ""}
 
 # ---------------------------------------------------------------------------
 # Factory helper
 # ---------------------------------------------------------------------------
+
 
 def make_extractor(**overrides):
     """Return an XMLExtractor with safe defaults; no filesystem access needed."""
@@ -96,6 +97,7 @@ def make_extractor(**overrides):
 # iterparse patch helper
 # ---------------------------------------------------------------------------
 
+
 @contextmanager
 def patch_iterparse(xml_string: str):
     """Replace ET.iterparse so it parses *xml_string* instead of a real file.
@@ -106,10 +108,7 @@ def patch_iterparse(xml_string: str):
     _real_iterparse = ET.iterparse
 
     def fake_iterparse(source, events=None):
-        return _real_iterparse(
-            io.BytesIO(xml_string.encode()),
-            events=events or ("end",)
-        )
+        return _real_iterparse(io.BytesIO(xml_string.encode()), events=events or ("end",))
 
     with patch("xml_extractor.ET.iterparse", side_effect=fake_iterparse):
         yield
@@ -118,6 +117,7 @@ def patch_iterparse(xml_string: str):
 # ---------------------------------------------------------------------------
 # Real log_exceptions loader
 # ---------------------------------------------------------------------------
+
 
 def load_real_log_exceptions():
     """Load and return log_exceptions from decorators.py.
@@ -129,8 +129,8 @@ def load_real_log_exceptions():
          next to xml_extractor.py at the project root).
     """
     candidates = [
-        _pathlib.Path(__file__).parent / "decorators.py",           # tests/decorators.py
-        _pathlib.Path(__file__).parent.parent / "decorators.py",    # project_root/decorators.py
+        _pathlib.Path(__file__).parent / "decorators.py",  # tests/decorators.py
+        _pathlib.Path(__file__).parent.parent / "decorators.py",  # project_root/decorators.py
     ]
     for path in candidates:
         if path.exists():
@@ -140,6 +140,5 @@ def load_real_log_exceptions():
             return _mod.log_exceptions
 
     raise FileNotFoundError(
-        "decorators.py not found in any of: "
-        + ", ".join(str(p) for p in candidates)
+        "decorators.py not found in any of: " + ", ".join(str(p) for p in candidates)
     )

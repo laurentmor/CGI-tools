@@ -3,16 +3,22 @@
 
 """Unit tests for get_row_count().
 They verify that row counting works correctly for empty XML, a single row, and multiple rows."""
+
 import logging
 import unittest
+
 import xml_extractor as xe
-from tests.fixtures import make_extractor, patch_iterparse
-from tests.fixtures import MULTI_ROW_XML, SINGLE_ROW_XML, EMPTY_RESULTS_XML
+from tests.fixtures import (
+    EMPTY_RESULTS_XML,
+    MULTI_ROW_XML,
+    SINGLE_ROW_XML,
+    make_extractor,
+)
 
 
 class TestGetRowCount(unittest.TestCase):
-
     """Test get_row_count() using empty, single-row, and multi-row XML inputs to verify row counting behavior."""
+
     def setUp(self):
         xe.logger = logging.getLogger("test")
         self.extractor = None
@@ -30,4 +36,4 @@ class TestGetRowCount(unittest.TestCase):
     def test_single_row(self):
         """Verify that Single row."""
         self.extractor = make_extractor(input_file=SINGLE_ROW_XML)
-        self.assertEqual(self.extractor.get_row_count(), 1) 
+        self.assertEqual(self.extractor.get_row_count(), 1)

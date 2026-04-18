@@ -3,16 +3,18 @@
 
 """Unit tests for create_protected_zip().
 These tests cover password handling, nested directory traversal, and error propagation during protected ZIP creation."""
+
 import logging
 import unittest
 from unittest.mock import MagicMock, patch
+
 import xml_extractor as xe
 from tests.fixtures import make_extractor
 
 
 class TestCreateProtectedZip(unittest.TestCase):
-
     """Verify protected ZIP creation includes password setup, nested directories, and robust error handling."""
+
     def setUp(self):
         xe.logger = logging.getLogger("test")
 
@@ -31,8 +33,10 @@ class TestCreateProtectedZip(unittest.TestCase):
         fake_zip = self._make_fake_zip()
         walk_data = [("out", [], ["a.xml", "b.xml"])]
 
-        with patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip), \
-             patch("xml_extractor.os.walk", return_value=iter(walk_data)):
+        with (
+            patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
+            patch("xml_extractor.os.walk", return_value=iter(walk_data)),
+        ):
             ext.create_protected_zip("archive.zip")
 
         fake_zip.setpassword.assert_called_once_with(b"secret123")
@@ -46,8 +50,10 @@ class TestCreateProtectedZip(unittest.TestCase):
         ext = make_extractor(zip_password="secret123", output_dir="out")
         fake_zip = self._make_fake_zip()
 
-        with patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip), \
-             patch("xml_extractor.os.walk", return_value=iter([("out", [], [])])):
+        with (
+            patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
+            patch("xml_extractor.os.walk", return_value=iter([("out", [], [])])),
+        ):
             ext.create_protected_zip("archive.zip")
 
         fake_zip.write.assert_not_called()
@@ -61,8 +67,10 @@ class TestCreateProtectedZip(unittest.TestCase):
         fake_zip = self._make_fake_zip()
         walk_data = [("out", ["sub"], ["a.xml"]), ("out/sub", [], ["b.xml"])]
 
-        with patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip), \
-             patch("xml_extractor.os.walk", return_value=iter(walk_data)):
+        with (
+            patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
+            patch("xml_extractor.os.walk", return_value=iter(walk_data)),
+        ):
             ext.create_protected_zip("archive.zip")
 
         self.assertEqual(fake_zip.write.call_count, 2)
@@ -75,8 +83,10 @@ class TestCreateProtectedZip(unittest.TestCase):
         ext = make_extractor(zip_password="pässwörd", output_dir="out")
         fake_zip = self._make_fake_zip()
 
-        with patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip), \
-             patch("xml_extractor.os.walk", return_value=iter([("out", [], [])])):
+        with (
+            patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
+            patch("xml_extractor.os.walk", return_value=iter([("out", [], [])])),
+        ):
             ext.create_protected_zip("archive.zip")
 
         fake_zip.setpassword.assert_called_once_with("pässwörd".encode("utf-8"))
@@ -100,8 +110,10 @@ class TestCreateProtectedZip(unittest.TestCase):
         fake_zip = self._make_fake_zip()
         fake_zip.write.side_effect = IOError("write error")
 
-        with patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip), \
-             patch("xml_extractor.os.walk", return_value=iter([("out", [], ["a.xml"])])):
+        with (
+            patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
+            patch("xml_extractor.os.walk", return_value=iter([("out", [], ["a.xml"])])),
+        ):
             with self.assertRaises(IOError):
                 ext.create_protected_zip("archive.zip")
 
@@ -113,9 +125,11 @@ class TestCreateProtectedZip(unittest.TestCase):
         ext = make_extractor(zip_password="secret123", output_dir="out")
         fake_zip = self._make_fake_zip()
 
-        with patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip), \
-             patch("xml_extractor.os.walk", return_value=iter([("out", [], [])])), \
-             patch("xml_extractor.logger.info") as mock_log:
+        with (
+            patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
+            patch("xml_extractor.os.walk", return_value=iter([("out", [], [])])),
+            patch("xml_extractor.logger.info") as mock_log,
+        ):
             ext.create_protected_zip("archive.zip")
 
         mock_log.assert_called()

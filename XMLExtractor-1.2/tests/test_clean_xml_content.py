@@ -3,14 +3,16 @@
 
 """Unit tests for clean_xml_content().
 These tests ensure invalid XML characters are removed and replacement rules are applied correctly."""
+
 import unittest
+
 import xml_extractor as xe
 from tests.fixtures import REPLACE_MAP
 
 
 class TestCleanXmlContent(unittest.TestCase):
-
     """Verify XML content cleaning removes control characters and applies replacement rules correctly."""
+
     def test_empty_string_passthrough(self):
         """Verify that Empty string passthrough."""
         self.assertEqual(xe.clean_xml_content("", REPLACE_MAP), "")
@@ -21,9 +23,9 @@ class TestCleanXmlContent(unittest.TestCase):
 
     def test_control_chars_removed(self):
         """Verify that Control chars removed."""
-        result = xe.clean_xml_content("A\x02B\x1AC", REPLACE_MAP)
+        result = xe.clean_xml_content("A\x02B\x1aC", REPLACE_MAP)
         self.assertNotIn("\x02", result)
-        self.assertNotIn("\x1A", result)
+        self.assertNotIn("\x1a", result)
 
     def test_asterisk_replaced(self):
         """Verify that Asterisk replaced."""

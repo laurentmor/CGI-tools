@@ -64,8 +64,8 @@ if "pyzipper" not in sys.modules:
 # ---------------------------------------------------------------------------
 if "tests" not in sys.modules:
     _conftest_dir = _pathlib.Path(__file__).parent
-    _tests_init   = _conftest_dir / "tests" / "__init__.py"
-    _tests_dir    = str(_tests_init.parent)
+    _tests_init = _conftest_dir / "tests" / "__init__.py"
+    _tests_dir = str(_tests_init.parent)
 
     _spec = _ilu.spec_from_file_location(
         "tests",
@@ -93,6 +93,7 @@ if "decorators" not in sys.modules:
     def _noop_log_exceptions(*args, **kwargs):
         def decorator(fn):
             return fn
+
         return decorator
 
     _dec.log_exceptions = _noop_log_exceptions

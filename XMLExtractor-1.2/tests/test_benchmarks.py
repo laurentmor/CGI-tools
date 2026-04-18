@@ -3,6 +3,7 @@
 
 """Benchmark tests for XMLExtractor helper functions.
 These tests measure performance to detect regressions while staying tolerant of slower machines."""
+
 import logging
 import time
 import unittest
@@ -14,15 +15,15 @@ from tests.fixtures import REPLACE_MAP, make_extractor, patch_iterparse
 
 class BenchmarkFixtures:
     """Benchmark helper functions under reasonable thresholds to catch performance regressions early
-        Provides methods to generate XML strings with a specified number of rows for testing."""
+    Provides methods to generate XML strings with a specified number of rows for testing."""
 
     @staticmethod
     def make_xml(n_rows: int) -> str:
         rows = "\n".join(
-            f'  <ROW>\n'
+            f"  <ROW>\n"
             f'    <COLUMN NAME="RICH_TEXT_NCLOB">'
-            f'<![CDATA[<Proponix><Header><MessageID>MSG{i:08d}</MessageID></Header></Proponix>]]>'
-            f'</COLUMN>\n  </ROW>'
+            f"<![CDATA[<Proponix><Header><MessageID>MSG{i:08d}</MessageID></Header></Proponix>]]>"
+            f"</COLUMN>\n  </ROW>"
             for i in range(n_rows)
         )
         return f"<?xml version='1.0' encoding='UTF8'?>\n<RESULTS>\n{rows}\n</RESULTS>"
@@ -31,10 +32,10 @@ class BenchmarkFixtures:
     def make_dirty_xml(n_rows: int) -> str:
         """XML with control characters to stress-test the cleaner."""
         rows = "\n".join(
-            f'  <ROW>\n'
+            f"  <ROW>\n"
             f'    <COLUMN NAME="RICH_TEXT_NCLOB">'
-            f'<![CDATA[<Root>\x02<MessageID>MSG{i:08d}</MessageID>\x1A</Root>]]>'
-            f'</COLUMN>\n  </ROW>'
+            f"<![CDATA[<Root>\x02<MessageID>MSG{i:08d}</MessageID>\x1a</Root>]]>"
+            f"</COLUMN>\n  </ROW>"
             for i in range(n_rows)
         )
         return f"<?xml version='1.0' encoding='UTF8'?>\n<RESULTS>\n{rows}\n</RESULTS>"
@@ -42,12 +43,12 @@ class BenchmarkFixtures:
 
 class TestBenchmarks(unittest.TestCase):
     """Benchmark helper functions under reasonable thresholds to catch performance regressions early
-    Benchmarks are not strict performance tests but rather sanity checks to detect 
+    Benchmarks are not strict performance tests but rather sanity checks to detect
     significant regressions
     while allowing for variability across different machines and environments."""
 
     THRESHOLDS = {
-        "clean_xml_1000_lines": 0.5,    # seconds
+        "clean_xml_1000_lines": 0.5,  # seconds
         "get_message_id_10000": 0.5,
         "get_row_count_100_rows": 1.0,
         "extract_10_rows": 1.0,
@@ -59,12 +60,12 @@ class TestBenchmarks(unittest.TestCase):
 
     def test_bench_clean_xml_1000_lines(self):
         """Verify that Bench clean xml 1000 lines."""
-        lines = [f"Line {i} with * and \x02 and \x1A\n" for i in range(1000)]
+        lines = [f"Line {i} with * and \x02 and \x1a\n" for i in range(1000)]
         t0 = time.perf_counter()
         for line in lines:
             xe.clean_xml_content(line, REPLACE_MAP)
         elapsed = time.perf_counter() - t0
-        print(f"\n[BENCH] clean_xml_content 1000 lines: {elapsed*1000:.2f} ms")
+        print(f"\n[BENCH] clean_xml_content 1000 lines: {elapsed * 1000:.2f} ms")
         self.assertLess(elapsed, self.THRESHOLDS["clean_xml_1000_lines"])
 
     def test_bench_get_message_id_10000_calls(self):
@@ -75,7 +76,7 @@ class TestBenchmarks(unittest.TestCase):
         for _ in range(10_000):
             ext.get_message_id(content)
         elapsed = time.perf_counter() - t0
-        print(f"\n[BENCH] get_message_id ×10 000: {elapsed*1000:.2f} ms")
+        print(f"\n[BENCH] get_message_id ×10 000: {elapsed * 1000:.2f} ms")
         self.assertLess(elapsed, self.THRESHOLDS["get_message_id_10000"])
 
     def test_bench_get_row_count_100_rows(self):
@@ -85,7 +86,7 @@ class TestBenchmarks(unittest.TestCase):
         t0 = time.perf_counter()
         ext.get_row_count()
         elapsed = time.perf_counter() - t0
-        print(f"\n[BENCH] get_row_count (100 rows): {elapsed*1000:.2f} ms")
+        print(f"\n[BENCH] get_row_count (100 rows): {elapsed * 1000:.2f} ms")
         self.assertLess(elapsed, self.THRESHOLDS["get_row_count_100_rows"])
 
     def test_bench_extract_10_rows(self):
@@ -104,11 +105,13 @@ class TestBenchmarks(unittest.TestCase):
         handle.write = MagicMock()
 
         t0 = time.perf_counter()
-        with patch_iterparse(xml_string), \
-             patch("builtins.open", return_value=handle), \
-             patch.object(ext, "check_output_dir"), \
-             patch.object(ext, "create_zip_archive"):
+        with (
+            patch_iterparse(xml_string),
+            patch("builtins.open", return_value=handle),
+            patch.object(ext, "check_output_dir"),
+            patch.object(ext, "create_zip_archive"),
+        ):
             ext.extract_and_save_elements()
         elapsed = time.perf_counter() - t0
-        print(f"\n[BENCH] {label}: {elapsed*1000:.2f} ms")
+        print(f"\n[BENCH] {label}: {elapsed * 1000:.2f} ms")
         self.assertLess(elapsed, self.THRESHOLDS[label])

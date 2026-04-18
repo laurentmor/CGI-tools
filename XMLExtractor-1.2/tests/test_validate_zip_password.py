@@ -3,13 +3,15 @@
 
 """Unit tests for validate_zip_password().
 These tests verify the password rules and ensure invalid values raise the expected exceptions."""
+
 import unittest
+
 import xml_extractor as xe
 
 
 class TestValidateZipPassword(unittest.TestCase):
-
     """Verify ZIP password validation rules and error conditions."""
+
     def test_valid_password(self):
         """Verify that Valid password."""
         self.assertTrue(xe.validate_zip_password("secret123"))
