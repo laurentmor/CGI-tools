@@ -1,6 +1,8 @@
 [project]
 name = "xml-extractor"
-version = "0.3.0"
+
+dynamic = ["version"]
+
 description = "XML extraction tool"
 authors = [
     { name = "Laurent Morissette-Fournier", email = "laurent.morissette-fournier@domain.com" }
@@ -19,3 +21,6 @@ ignore = [
     "E501",  # Line too long (handled by black)
    
 ]
+[tool.setuptools_scm] 
+version_scheme = "post-release"
+local_scheme = "no-local-version"
