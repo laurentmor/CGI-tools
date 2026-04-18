@@ -47,17 +47,13 @@ except ImportError:
 import json
 import logging
 import re
-from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from typing import Any, Dict, Optional, Pattern
 from xml.etree import ElementTree as ET
 
 from decorators import log_exceptions
+from version import __version__
 
-try:
-    __version__ = version("xml-extractor")
-except PackageNotFoundError:
-    __version__ = "0.0.0"  # fallback en dev
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
@@ -274,7 +270,7 @@ def validate_arguments() -> argparse.Namespace:
     parser.add_argument(
         "--version",
         action="version",
-        version="%(prog)s {__version__} by Laurent Morissette - Generate XML files based on SQLDEV export.",
+        version=f"%(prog)s {__version__} by Laurent Morissette - Generate XML files based on SQLDEV export.",
         help="Show version information",
     )
 
