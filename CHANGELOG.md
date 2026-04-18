@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://github.com/laurentmor/CGI-tools/compare/v0.2.0...v0.3.0) (2026-04-18)
+
+
+### 🚀 Features
+
+* add lint job ([a026da9](https://github.com/laurentmor/CGI-tools/commit/a026da9bbd8a806eee687c599d6f112a6f290589))
+
+
+### 🧹 Maintenance
+
+* auto-fix lint (ruff) ([d2c218c](https://github.com/laurentmor/CGI-tools/commit/d2c218cd98743ed7ba9cb353e838b84b8daabcd8))
+* configure ruff ([d747f4c](https://github.com/laurentmor/CGI-tools/commit/d747f4c6fe68638eb962dfd8fbf96f38c0804fa3))
+
 ## [0.2.0](https://github.com/laurentmor/CGI-tools/compare/v0.1.4...v0.2.0) (2026-04-17)
 
 
