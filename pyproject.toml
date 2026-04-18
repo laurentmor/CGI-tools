@@ -1,7 +1,7 @@
 [project]
 name = "xml-extractor"
-version = ["1.2.6"]
-dynamic = ["version"]
+version = "1.2.6"
+
 
 description = "XML extraction tool"
 authors = [
@@ -21,6 +21,3 @@ ignore = [
     "E501",  # Line too long (handled by black)
    
 ]
-[tool.setuptools_scm] 
-version_scheme = "post-release"
-local_scheme = "no-local-version"
