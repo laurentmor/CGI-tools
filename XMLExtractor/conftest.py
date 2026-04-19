@@ -83,8 +83,8 @@ if "tests.generate_test_sets" not in sys.modules:
 
 # ---------------------------------------------------------------------------
 # decorators  -- no-op stub so xml_extractor can be imported without the real
-#                decorators.py being on the path.  Individual test classes load
-#                the real decorators.py explicitly via importlib when they need
+#                logging_decorators.py being on the path.  Individual test classes load
+#                the real logging_decorators.py explicitly via importlib when they need
 #                to test actual decorator behaviour.
 # ---------------------------------------------------------------------------
 if "decorators" not in sys.modules:

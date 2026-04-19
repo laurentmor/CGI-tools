@@ -19,7 +19,7 @@ class TestValidateColumnExists(unittest.TestCase):
         """Verify that Column found in file."""
         with (
             patch("os.path.exists", return_value=True),
-            patch("xml_extractor.ET.parse") as mock_parse,
+            patch("xml_extractor.xml_extractor.ET.parse") as mock_parse,
         ):
             ET.ElementTree(ET.fromstring(SINGLE_ROW_XML))
             root = ET.fromstring("<RESULTS><COLUMN NAME='RICH_TEXT_NCLOB'/></RESULTS>")
@@ -31,7 +31,7 @@ class TestValidateColumnExists(unittest.TestCase):
         """Verify that Column not found raises."""
         with (
             patch("os.path.exists", return_value=True),
-            patch("xml_extractor.ET.parse") as mock_parse,
+            patch("xml_extractor.xml_extractor.ET.parse") as mock_parse,
         ):
             root = ET.fromstring("<RESULTS><COLUMN NAME='OTHER'/></RESULTS>")
             mock_parse.return_value.getroot = lambda: root

@@ -34,8 +34,8 @@ class TestCreateProtectedZip(unittest.TestCase):
         walk_data = [("out", [], ["a.xml", "b.xml"])]
 
         with (
-            patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
-            patch("xml_extractor.os.walk", return_value=iter(walk_data)),
+            patch("xml_extractor.xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
+            patch("xml_extractor.xml_extractor.os.walk", return_value=iter(walk_data)),
         ):
             ext.create_protected_zip("archive.zip")
 
@@ -51,8 +51,8 @@ class TestCreateProtectedZip(unittest.TestCase):
         fake_zip = self._make_fake_zip()
 
         with (
-            patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
-            patch("xml_extractor.os.walk", return_value=iter([("out", [], [])])),
+            patch("xml_extractor.xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
+            patch("xml_extractor.xml_extractor.os.walk", return_value=iter([("out", [], [])])),
         ):
             ext.create_protected_zip("archive.zip")
 
@@ -68,8 +68,8 @@ class TestCreateProtectedZip(unittest.TestCase):
         walk_data = [("out", ["sub"], ["a.xml"]), ("out/sub", [], ["b.xml"])]
 
         with (
-            patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
-            patch("xml_extractor.os.walk", return_value=iter(walk_data)),
+            patch("xml_extractor.xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
+            patch("xml_extractor.xml_extractor.os.walk", return_value=iter(walk_data)),
         ):
             ext.create_protected_zip("archive.zip")
 
@@ -84,8 +84,8 @@ class TestCreateProtectedZip(unittest.TestCase):
         fake_zip = self._make_fake_zip()
 
         with (
-            patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
-            patch("xml_extractor.os.walk", return_value=iter([("out", [], [])])),
+            patch("xml_extractor.xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
+            patch("xml_extractor.xml_extractor.os.walk", return_value=iter([("out", [], [])])),
         ):
             ext.create_protected_zip("archive.zip")
 
@@ -97,7 +97,7 @@ class TestCreateProtectedZip(unittest.TestCase):
     def test_exception_in_zipfile_reraised(self):
         """Verify that Exception in zipfile reraised."""
         ext = make_extractor(zip_password="secret123", output_dir="out")
-        with patch("xml_extractor.pyzipper.AESZipFile", side_effect=IOError("zip error")):
+        with patch("xml_extractor.xml_extractor.pyzipper.AESZipFile", side_effect=IOError("zip error")):
             with self.assertRaises(IOError):
                 ext.create_protected_zip("archive.zip")
 
@@ -111,8 +111,8 @@ class TestCreateProtectedZip(unittest.TestCase):
         fake_zip.write.side_effect = IOError("write error")
 
         with (
-            patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
-            patch("xml_extractor.os.walk", return_value=iter([("out", [], ["a.xml"])])),
+            patch("xml_extractor.xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
+            patch("xml_extractor.xml_extractor.os.walk", return_value=iter([("out", [], ["a.xml"])])),
         ):
             with self.assertRaises(IOError):
                 ext.create_protected_zip("archive.zip")
@@ -126,9 +126,9 @@ class TestCreateProtectedZip(unittest.TestCase):
         fake_zip = self._make_fake_zip()
 
         with (
-            patch("xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
-            patch("xml_extractor.os.walk", return_value=iter([("out", [], [])])),
-            patch("xml_extractor.logger.info") as mock_log,
+            patch("xml_extractor.xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
+            patch("xml_extractor.xml_extractor.os.walk", return_value=iter([("out", [], [])])),
+            patch("xml_extractor.xml_extractor.logger.info") as mock_log,
         ):
             ext.create_protected_zip("archive.zip")
 

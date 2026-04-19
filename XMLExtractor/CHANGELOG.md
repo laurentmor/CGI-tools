@@ -6,7 +6,7 @@ All notable changes to this project will be documented in this file.
 
 ## 2026-04-12 — Fix decorator, test infrastructure, and validation error handling
 
-### decorators.py
+### logging_decorators.py
 - Changed defaults to `raise_exception=False` and `log_level="warning"` to match expected swallow-and-log behaviour
 - Added `wrapper.__wrapped__ = func` to expose the original function for testing
 - Fixed logger resolution — if `logger` is a string, resolve it as an attribute on `self` at call time (enables `logger="logger"` on instance methods)

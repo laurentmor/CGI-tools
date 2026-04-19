@@ -46,7 +46,12 @@ def log_exceptions(error_map, log_level="warning", raise_exception=False, logger
             try:
                 return func(*args, **kwargs)
             except tuple(error_map.keys()) as e:
-                getattr(_logger, log_level)(f"{error_map[type(e)]}: {e}")
+                # Use isinstance so subclasses (e.g. OSError matching Exception) resolve correctly
+                msg = next(
+                    (v for k, v in error_map.items() if isinstance(e, k)),
+                    str(e),
+                )
+                getattr(_logger, log_level)(f"{msg}: {e}")
                 if raise_exception:
                     raise
 

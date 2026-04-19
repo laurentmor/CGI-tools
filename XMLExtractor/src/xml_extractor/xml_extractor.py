@@ -51,8 +51,8 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Pattern
 from xml.etree import ElementTree as ET
 
-from decorators import log_exceptions
-from version import __version__
+from .logging_decorators import log_exceptions
+from .version import __version__
 
 ##
 
