@@ -6,10 +6,10 @@ A collection of Python utilities and support packages for XML extraction, SQL ex
 
 This repository contains multiple standalone toolsets:
 
-- `XMLExtractor-1.2/`
+- `XMLExtractor/`
   - A complete XML extraction tool for SQL Developer export files.
   - Supports XML cleaning, validation, output file generation, optional ZIP creation, password-protected archives, and test-mode execution.
-  - Includes a full pytest suite under `XMLExtractor-1.2/tests/`.
+  - Includes a full pytest suite under `XMLExtractor/tests/`.
 
 - `AccountingEntryClassUpdater/`
   - A small utility for updating accounting entry classes from SQL export data.
@@ -21,7 +21,7 @@ This repository contains multiple standalone toolsets:
 
 ## Key Project Details
 
-### XMLExtractor-1.2 (tool version 1.3)
+### XMLExtractor (tool version 1.3)
 
 This is the most feature-rich project in the repo.
 
@@ -34,7 +34,7 @@ This is the most feature-rich project in the repo.
 #### Quick start
 
 ```bash
-cd XMLExtractor-1.2
+cd XMLExtractor
 install-deps.bat
 python xml_extractor.py <input_file> <output_dir> [options]
 ```
@@ -42,7 +42,7 @@ python xml_extractor.py <input_file> <output_dir> [options]
 #### Run tests
 
 ```bash
-cd XMLExtractor-1.2
+cd XMLExtractor
 pytest
 ```
 
