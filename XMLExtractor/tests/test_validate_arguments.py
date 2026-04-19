@@ -9,14 +9,14 @@ import unittest
 import xml.etree.ElementTree as ET
 from unittest.mock import MagicMock, patch
 
-import xml_extractor as xe
+import xml_extractor as xe  # type: ignore
 
 
 class TestValidateArguments(unittest.TestCase):
     """Verify CLI arguments parsing, file validation, test-mode behavior, and zip password validation."""
 
     def setUp(self):
-        import xml_extractor.xml_extractor as xe_mod
+        import xml_extractor.xml_extractor as xe_mod  # type: ignore
         xe_mod.logger = MagicMock()
 
     # --------------------------------------------------

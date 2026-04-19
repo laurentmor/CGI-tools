@@ -1,8 +1,18 @@
+import importlib.util as _ilu
+import io
+import pathlib as _pathlib
+import sys
+from contextlib import contextmanager
+from unittest.mock import patch
+from xml.etree import ElementTree as ET
+
+import xml_extractor as xe  # type: ignore
+
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2026 Laurent Morissette
 
 # Now import works reliably
-import xml_extractor as xe
+
 """
 fixtures.py
 ===========
@@ -12,15 +22,8 @@ test modules.
 
 
 # Now import works reliably
-import xml_extractor as xe
-import sys
-import importlib.util as _ilu
-import io
-import pathlib as _pathlib
 
-from contextlib import contextmanager
-from unittest.mock import patch
-from xml.etree import ElementTree as ET
+
 
 # ---------------------------------------------------------------------------
 # Ensure src/ is in PYTHONPATH (CRITICAL FIX)
@@ -32,8 +35,6 @@ SRC_DIR = ROOT_DIR / "src"
 if str(SRC_DIR) not in sys.path:
     sys.path.insert(0, str(SRC_DIR))
 
-# Now import works reliably
-import xml_extractor as xe
 
 # ---------------------------------------------------------------------------
 # XML payloads

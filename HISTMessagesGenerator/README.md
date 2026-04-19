@@ -13,7 +13,7 @@ A Python tool for generating historical message files from SQL export data.
 
 - `HISTMessagesGenerator.py` — main script for generating message outputs
 - `ProductClassResolver.py` — resolves product class mappings
-- `decorators.py` — shared decorators used by the project
+- `logging_decorators.py` — shared decorators used by the project
 - `export.xml` — sample XML export file for input testing
 - `test_hist_messages_generator.py` — sample unit test coverage
 - `HISTMessagesGenerator.log` — example log output from execution

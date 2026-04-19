@@ -8,7 +8,7 @@ import logging
 import unittest
 from unittest.mock import MagicMock, patch
 
-import xml_extractor as xe
+import xml_extractor as xe  # type: ignore
 
 
 class TestConfigureLogging(unittest.TestCase):

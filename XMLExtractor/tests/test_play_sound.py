@@ -7,7 +7,7 @@ These tests verify that sounds play only when a file exists and mute mode is dis
 import unittest
 from unittest.mock import patch
 
-import xml_extractor as xe
+import xml_extractor as xe  # type: ignore
 
 
 class TestPlaySound(unittest.TestCase):

@@ -1,75 +1,92 @@
-# Re-export everything tests touch via `import xml_extractor as xe`
-# Functions and module-level variables
-# Re-export the internal modules that tests patch via patch("xml_extractor.<mod>.<attr>")
-# pyzipper is imported at the top of xml_extractor.py; re-export so tests can
-# patch "xml_extractor.pyzipper.AESZipFile"
-from .xml_extractor import (
-    DEFAULT_COLUMN_NAME,
-    DEFAULT_FILE_ID_TAG,
-    DEFAULT_OUTPUT_DIR,
-    ET,  # xml.etree.ElementTree — patched as xml_extractor.ET.parse / .iterparse
-    LOG_FILE_NAME,
-    MIN_PASSWORD_LENGTH,
-    SOUND_DONE,
-    SOUND_ERROR,
-    SOUND_START,
-    WINSOUND_AVAILABLE,
-    Path,  # patched as xml_extractor.Path.exists
-    XMLExtractor,
-    clean_xml_content,
-    configure_logging,
-    load_replace_map_from_json,
-    logger,
-    main,
-    os,  # patched as xml_extractor.os.path.exists / .remove / .walk / .replace
-    play_sound,
-    process_input_file_to_ensure_is_clean,
-    pyzipper,  # type: ignore
-    re,  # accessed via xe.re
-    replace_map,
-    shutil,  # patched as xml_extractor.shutil.rmtree / .copy2
-    sys,  # patched as xml_extractor.sys
-    time,  # patched as xml_extractor.time
-    validate_arguments,
-    validate_column_exists,
-    validate_xml_structure,
-    validate_zip_password,
-)
+# __init__.py
+#
+# Re-exports every public symbol from the submodule so that
+#   import xml_extractor as xe; xe.clean_xml_content(...)
+# works for tests and library consumers.
+#
+# RuntimeWarning guard
+# --------------------
+# When Python runs `python -m xml_extractor.xml_extractor`, runpy calls
+# __import__("xml_extractor") which executes this file BEFORE running the
+# submodule.  At that point sys.argv[0] has already been set to the full
+# path of xml_extractor.py (by runpy._get_module_details → alter_argv).
+#
+# If __init__.py then does `from .xml_extractor import ...`, it loads the
+# submodule into sys.modules.  runpy detects the collision and fires:
+#   RuntimeWarning: 'xml_extractor.xml_extractor' found in sys.modules ...
+#
+# Fix: check sys.argv[0] before importing.  When the script is being run
+# directly, argv[0] will be the path to xml_extractor.py — skip the import.
 
-# winsound may be a stub from conftest; re-export so tests can patch
-# "xml_extractor.winsound"
-try:
-    from .xml_extractor import winsound  # type: ignore
-except ImportError:
-    import sys as _sys
-    import types as _types
-    if "winsound" in _sys.modules:
-        winsound = _sys.modules["winsound"]
-    else:
-        winsound = _types.ModuleType("winsound")
+import pathlib as _pl
+import sys as _sys
 
-__all__ = [
-    "XMLExtractor",
-    "clean_xml_content",
-    "configure_logging",
-    "load_replace_map_from_json",
-    "main",
-    "play_sound",
-    "process_input_file_to_ensure_is_clean",
-    "validate_arguments",
-    "validate_column_exists",
-    "validate_xml_structure",
-    "validate_zip_password",
-    "logger",
-    "replace_map",
-    "WINSOUND_AVAILABLE",
-    "ET",
-    "os",
-    "shutil",
-    "sys",
-    "time",
-    "Path",
-    "re",
-    "pyzipper",
-    "winsound",
-]
+_argv0_stem = _pl.Path(_sys.argv[0]).stem if _sys.argv else ""
+_is_script  = _argv0_stem == "xml_extractor"
+
+if not _is_script:
+    from .xml_extractor import (
+        #DEFAULT_COLUMN_NAME,
+        #DEFAULT_FILE_ID_TAG,
+        #DEFAULT_OUTPUT_DIR,
+        # Internal modules tests patch via patch("xml_extractor.<mod>.<attr>")
+        ET,
+        #LOG_FILE_NAME,
+        #MIN_PASSWORD_LENGTH,
+        #SOUND_DONE,
+        #SOUND_ERROR,
+        #SOUND_START,
+        WINSOUND_AVAILABLE,
+        Path,
+        XMLExtractor,
+        clean_xml_content,
+        configure_logging,
+        load_replace_map_from_json,
+        logger,
+        main,
+        os,
+        play_sound,
+        process_input_file_to_ensure_is_clean,
+        pyzipper,  # type: ignore
+        re,
+        replace_map,
+        shutil,
+        sys,
+        time,
+        validate_arguments,
+        validate_column_exists,
+        validate_xml_structure,
+        validate_zip_password,
+    )
+
+    try:
+        from .xml_extractor import winsound  # type: ignore
+    except ImportError:
+        import types as _types
+        winsound = _sys.modules.get("winsound") or _types.ModuleType("winsound")
+
+    __all__ = [
+        "XMLExtractor",
+        "clean_xml_content",
+        "configure_logging",
+        "load_replace_map_from_json",
+        "main",
+        "play_sound",
+        "process_input_file_to_ensure_is_clean",
+        "validate_arguments",
+        "validate_column_exists",
+        "validate_xml_structure",
+        "validate_zip_password",
+        "logger",
+        "replace_map",
+        "WINSOUND_AVAILABLE",
+        "ET",
+        "os",
+        "shutil",
+        "sys",
+        "time",
+        "Path",
+        "re",
+        "pyzipper",
+        "winsound",
+    ]

@@ -8,8 +8,8 @@ import itertools
 import unittest
 from unittest.mock import MagicMock, patch
 
-import xml_extractor as xe
-import xml_extractor.xml_extractor as xe_mod  # submodule — patch targets live here
+import xml_extractor as xe  # type: ignore
+import xml_extractor.xml_extractor as xe_mod  # type: ignore # submodule — patch targets live here
 
 
 class TestMainBlock(unittest.TestCase):
