@@ -15,7 +15,7 @@ class TestProcessInputFile(unittest.TestCase):
     """Verify that input files are cleaned, backed up, and replaced correctly when necessary."""
 
     def setUp(self):
-        import xml_extractor.xml_extractor as xe_mod # type: ignore
+        import xml_extractor.xml_extractor as xe_mod  # type: ignore
         xe_mod.logger = MagicMock()
         xe.replace_map = REPLACE_MAP
 

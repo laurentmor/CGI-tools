@@ -34,3 +34,4 @@ venv/
 export.xml
 sql_statements.sql
 XMLExtractor-1.2/output/xml_extractor.exe
+.coverage

@@ -8,7 +8,7 @@ import unittest
 from unittest.mock import patch
 from xml.etree import ElementTree as ET
 
-import xml_extractor as xe
+import xml_extractor as xe  # type: ignore
 from tests.fixtures import SINGLE_ROW_XML
 
 
