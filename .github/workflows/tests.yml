@@ -30,7 +30,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: XMLExtractor-1.2
+        working-directory: XMLExtractor
 
     steps:
       - uses: actions/checkout@v4
@@ -77,7 +77,7 @@ jobs:
 
       - name: Add SPDX headers
         run: |
-          for file in $(find XMLExtractor-1.2 -name "*.py"); do
+          for file in $(find XMLExtractor -name "*.py"); do
             if ! grep -q "SPDX-License-Identifier" "$file"; then
               echo "Updating $file"
 
@@ -132,10 +132,10 @@ jobs:
         run: pip install ruff
 
       - name: Auto-fix lint issues
-        run: ruff check XMLExtractor-1.2 --fix
+        run: ruff check XMLExtractor --fix
 
       - name: Format code
-        run: ruff format XMLExtractor-1.2
+        run: ruff format XMLExtractor
 
       - name: Commit fixes
         run: |
