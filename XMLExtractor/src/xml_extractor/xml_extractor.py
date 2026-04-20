@@ -34,7 +34,7 @@ import shutil
 import sys
 import time
 
-#DEBUG# import traceback
+# DEBUG# import traceback
 import zipfile
 
 import pyzipper  # type: ignore
@@ -276,7 +276,6 @@ def validate_arguments() -> argparse.Namespace:
         version=f"%(prog)s {__version__} by Laurent Morissette - Generate XML files based on SQLDEV export.",
         help="Show version information",
     )
-    
 
     args = parser.parse_args()
 
@@ -289,7 +288,7 @@ def validate_arguments() -> argparse.Namespace:
     # Ensure a valid input file is supplied
     if args.input_file is None or not Path(args.input_file).exists():
         parser.print_help(sys.stderr)
-        
+
         raise FileNotFoundError(
             f"Error: an existing input file is required. File '{args.input_file}' does not exist."
         )
@@ -899,8 +898,8 @@ def main() -> None:
     except Exception as e:
         logger.error(f"Unexpected error: {e}")
         logger.error("Script execution failed.")
-        #logger.exception("Stack trace for debugging:")
-        #traceback.print_exc()
+        # logger.exception("Stack trace for debugging:")
+        # traceback.print_exc()
         play_sound(SOUND_ERROR, False)  # False = not muted; force the error sound
         sys.exit(1)
 

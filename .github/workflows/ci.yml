@@ -1,38 +1,97 @@
-name: CI
+name: CI + Quality + Release
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
+permissions:
+  contents: write
+  pull-requests: write
 
-    defaults:
-      run:
-        working-directory: XMLExtractor
+jobs:
+  # -------------------------
+  # QUALITY
+  # -------------------------
+  quality:
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-          cache: "pip"
+          python-version: "3.11"
 
-      - name: Install deps
+      - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
-          pip install pytest pytest-cov pyzipper
+          pip install --upgrade pip
+          pip install -e .[dev]
+          pip install pytest-cov pytest-xdist ruff reuse
 
-      - name: Install project
-        run: pip install -e .
-
-      - name: Run tests
+      # -------------------------
+      # LINT (CHECK ONLY)
+      # -------------------------
+      - name: Lint (Ruff)
         run: |
-            PYTHONPATH=src pytest tests/ \
+          ruff check src tests
+
+      # -------------------------
+      # FORMAT CHECK
+      # -------------------------
+      - name: Format check
+        run: |
+          ruff format src tests --check
+
+      # -------------------------
+      # SPDX CHECK (NO AUTO FIX)
+      # -------------------------
+      - name: Check SPDX license
+        run: |
+          reuse lint
+
+      # -------------------------
+      # TESTS + COVERAGE
+      # -------------------------
+      - name: Run tests with coverage
+        env:
+          PYTHONPATH: src
+        run: |
+          pytest -n auto --dist=loadscope \
             --cov=xml_extractor \
-            --cov=decorators \
             --cov-report=xml \
-            --cov-report=term
+            --cov-report=term \
+            --maxfail=1 \
+            --disable-warnings
+
+      # -------------------------
+      # CODECOV
+      # -------------------------
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage.xml
+          fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  # -------------------------
+  # RELEASE
+  # -------------------------
+  release:
+    needs: quality
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Release Please
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

@@ -24,7 +24,6 @@ test modules.
 # Now import works reliably
 
 
-
 # ---------------------------------------------------------------------------
 # Ensure src/ is in PYTHONPATH (CRITICAL FIX)
 # ---------------------------------------------------------------------------
@@ -94,6 +93,7 @@ REPLACE_MAP = {"*": "-", "\x02": "", "\x1a": ""}
 # Factory helper
 # ---------------------------------------------------------------------------
 
+
 def make_extractor(**overrides):
     defaults = dict(
         input_file="input.xml",
@@ -109,9 +109,11 @@ def make_extractor(**overrides):
     defaults.update(overrides)
     return xe.XMLExtractor(**defaults)
 
+
 # ---------------------------------------------------------------------------
 # iterparse patch helper
 # ---------------------------------------------------------------------------
+
 
 @contextmanager
 def patch_iterparse(xml_string: str):
@@ -126,9 +128,11 @@ def patch_iterparse(xml_string: str):
     with patch("xml_extractor.xml_extractor.ET.iterparse", side_effect=fake_iterparse):
         yield
 
+
 # ---------------------------------------------------------------------------
 # Real log_exceptions loader (FIXED)
 # ---------------------------------------------------------------------------
+
 
 def load_real_log_exceptions():
     candidates = [

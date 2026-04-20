@@ -38,7 +38,10 @@ class TestCheckOutputDir(unittest.TestCase):
     def test_directory_created_when_not_exists(self):
         """Verify that Directory created when not exists."""
         ext = make_extractor(output_dir="new_dir")
-        with patch("xml_extractor.xml_extractor.os.path.exists", return_value=False), patch("xml_extractor.xml_extractor.os.makedirs") as mock_makedirs:
+        with (
+            patch("xml_extractor.xml_extractor.os.path.exists", return_value=False),
+            patch("xml_extractor.xml_extractor.os.makedirs") as mock_makedirs,
+        ):
             ext.check_output_dir()
         mock_makedirs.assert_called_once_with("new_dir", exist_ok=True)
 

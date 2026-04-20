@@ -17,6 +17,7 @@ class TestValidateArguments(unittest.TestCase):
 
     def setUp(self):
         import xml_extractor.xml_extractor as xe_mod  # type: ignore
+
         xe_mod.logger = MagicMock()
 
     # --------------------------------------------------
@@ -55,7 +56,10 @@ class TestValidateArguments(unittest.TestCase):
         with (
             patch.object(sys, "argv", ["prog", "file.xml", "--validate"]),
             patch("xml_extractor.xml_extractor.Path.exists", return_value=True),
-            patch("xml_extractor.xml_extractor.validate_xml_structure", side_effect=ET.ParseError("bad xml")),
+            patch(
+                "xml_extractor.xml_extractor.validate_xml_structure",
+                side_effect=ET.ParseError("bad xml"),
+            ),
             patch("xml_extractor.xml_extractor.sys.exit") as mock_exit,
         ):
             xe.validate_arguments()

@@ -22,20 +22,20 @@ import pathlib as _pl
 import sys as _sys
 
 _argv0_stem = _pl.Path(_sys.argv[0]).stem if _sys.argv else ""
-_is_script  = _argv0_stem == "xml_extractor"
+_is_script = _argv0_stem == "xml_extractor"
 
 if not _is_script:
     from .xml_extractor import (
-        #DEFAULT_COLUMN_NAME,
-        #DEFAULT_FILE_ID_TAG,
-        #DEFAULT_OUTPUT_DIR,
+        # DEFAULT_COLUMN_NAME,
+        # DEFAULT_FILE_ID_TAG,
+        # DEFAULT_OUTPUT_DIR,
         # Internal modules tests patch via patch("xml_extractor.<mod>.<attr>")
         ET,
-        #LOG_FILE_NAME,
-        #MIN_PASSWORD_LENGTH,
-        #SOUND_DONE,
-        #SOUND_ERROR,
-        #SOUND_START,
+        # LOG_FILE_NAME,
+        # MIN_PASSWORD_LENGTH,
+        # SOUND_DONE,
+        # SOUND_ERROR,
+        # SOUND_START,
         WINSOUND_AVAILABLE,
         Path,
         XMLExtractor,
@@ -63,6 +63,7 @@ if not _is_script:
         from .xml_extractor import winsound  # type: ignore
     except ImportError:
         import types as _types
+
         winsound = _sys.modules.get("winsound") or _types.ModuleType("winsound")
 
     __all__ = [

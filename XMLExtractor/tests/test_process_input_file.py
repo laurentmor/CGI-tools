@@ -16,6 +16,7 @@ class TestProcessInputFile(unittest.TestCase):
 
     def setUp(self):
         import xml_extractor.xml_extractor as xe_mod  # type: ignore
+
         xe_mod.logger = MagicMock()
         xe.replace_map = REPLACE_MAP
 
