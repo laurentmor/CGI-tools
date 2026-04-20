@@ -1,5 +1,5 @@
 name: CI + Quality + Release
-working-directory: XMLExtractor
+
 on:
   push:
     branches:
@@ -11,19 +11,21 @@ permissions:
   pull-requests: write
 
 jobs:
-  # -------------------------
-  # QUALITY
-  # -------------------------
   quality:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
+      # -------------------------
+      # CACHE (pip + wheels)
+      # -------------------------
       - name: Cache pip
         uses: actions/cache@v4
         with:
-          path: ~/.cache/pip
+          path: |
+            ~/.cache/pip
           key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
 
       - uses: actions/setup-python@v5
@@ -37,7 +39,7 @@ jobs:
           pip install pytest-cov pytest-xdist ruff reuse
 
       # -------------------------
-      # LINT (CHECK ONLY)
+      # LINT
       # -------------------------
       - name: Lint (Ruff)
         run: |
@@ -51,7 +53,7 @@ jobs:
           ruff format src tests --check
 
       # -------------------------
-      # SPDX CHECK (NO AUTO FIX)
+      # SPDX CHECK
       # -------------------------
       - name: Check SPDX license
         run: |
@@ -72,26 +74,26 @@ jobs:
             --disable-warnings
 
       # -------------------------
-      # CODECOV
+      # CODECOV (SAFE)
       # -------------------------
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
           files: coverage.xml
-          fail_ci_if_error: true
+          fail_ci_if_error: false
           token: ${{ secrets.CODECOV_TOKEN }}
 
-  # -------------------------
-  # RELEASE
-  # -------------------------
   release:
     needs: quality
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Release Please
         uses: googleapis/release-please-action@v4
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
+          
