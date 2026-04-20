@@ -1,5 +1,5 @@
 name: CI + Quality + Release
-
+working-directory: XMLExtractor
 on:
   push:
     branches:
