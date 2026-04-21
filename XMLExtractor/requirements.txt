@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 lxml==5.3.1
 pycryptodomex==3.22.0
 pyzipper==0.3.6

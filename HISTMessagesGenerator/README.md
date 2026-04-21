@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 # HISTMessagesGenerator
 
 A Python tool for generating historical message files from SQL export data.

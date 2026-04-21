@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 import unittest
 from unittest.mock import patch
 import xml.etree.ElementTree as ET

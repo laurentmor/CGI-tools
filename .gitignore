@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 Guide to use the XML Exporter script.docx
 script.log
 XML-From-DB-Grabber-1.0.zip
@@ -35,3 +38,4 @@ export.xml
 sql_statements.sql
 XMLExtractor-1.2/output/xml_extractor.exe
 .coverage
+*.ps1

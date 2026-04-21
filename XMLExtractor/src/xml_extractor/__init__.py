@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 # __init__.py
 #
 # Re-exports every public symbol from the submodule so that
