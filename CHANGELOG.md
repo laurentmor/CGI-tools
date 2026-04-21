@@ -3,6 +3,30 @@
 
 # Changelog
 
+## [0.4.1](https://github.com/laurentmor/CGI-tools/compare/v0.4.0...v0.4.1) (2026-04-21)
+
+
+### 🐛 Bug Fixes
+
+* CI base dir ([236fd59](https://github.com/laurentmor/CGI-tools/commit/236fd595b0927a30024f74b0d994159acc8aa85c))
+* CI base dir ([1d40427](https://github.com/laurentmor/CGI-tools/commit/1d404273ad6be26260c62d94003b3e27958b6216))
+* correcting tests so they pass ([789e6ea](https://github.com/laurentmor/CGI-tools/commit/789e6eab37b2567db48b2a38d30ff68b6040e171))
+* workflow ([179d126](https://github.com/laurentmor/CGI-tools/commit/179d12642dd20e8d1ea3ab85b5dffeb0e89d09c9))
+* workflow ([ff1d4b0](https://github.com/laurentmor/CGI-tools/commit/ff1d4b0645450910d2a2995e744622d4c6e87e05))
+* workflow ([d82e7d7](https://github.com/laurentmor/CGI-tools/commit/d82e7d7785bcbaa9e6f3aac85db09525dd8bb8dc))
+
+
+### 🧹 Maintenance
+
+* clean tests ([637fe29](https://github.com/laurentmor/CGI-tools/commit/637fe293765cdb2d9165ac9cbec0e385bf174286))
+* proper copyright/licensing ([182ac5a](https://github.com/laurentmor/CGI-tools/commit/182ac5ad60f6e0eab973c570d1a0ed1ac0c9f2ce))
+
+
+### ♻️ Refactoring
+
+* rename XMLExtractor-1.2 to XMLExtractor ([4a46dfc](https://github.com/laurentmor/CGI-tools/commit/4a46dfc5ce615387095951c7701f7db9981453fd))
+* rewritw config and CI ([d1071c3](https://github.com/laurentmor/CGI-tools/commit/d1071c3b202165d0f7089bb1174cbf90d797639a))
+
 ## [0.4.0](https://github.com/laurentmor/CGI-tools/compare/v0.3.3...v0.4.0) (2026-04-19)
 
 
