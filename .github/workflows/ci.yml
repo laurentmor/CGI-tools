@@ -55,6 +55,10 @@ jobs:
           cd XMLExtractor
           ruff format src tests --check
 
+      - name: update license headers # SAFE
+        run: |
+          cd XMLExtractor
+          reuse update -s
       # -------------------------
       # SPDX CHECK
       # -------------------------
