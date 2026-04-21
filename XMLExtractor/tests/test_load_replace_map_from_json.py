@@ -7,7 +7,7 @@ import json
 import unittest
 from unittest.mock import mock_open, patch
 
-import xml_extractor as xe
+import xml_extractor as xe  # type: ignore
 
 
 class TestLoadReplaceMapFromJson(unittest.TestCase):

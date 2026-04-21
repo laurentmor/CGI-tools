@@ -1,0 +1,102 @@
+name: CI + Quality + Release
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: XMLExtractor
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # -------------------------
+      # CACHE (pip)
+      # -------------------------
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -e .[dev]
+          pip install pytest-cov pytest-xdist ruff reuse
+
+      # -------------------------
+      # LINT
+      # -------------------------
+      - name: Lint (Ruff)
+        run: ruff check src tests
+
+      # -------------------------
+      # FORMAT CHECK
+      # -------------------------
+      - name: Format check
+        run: ruff format src tests --check
+
+      # -------------------------
+      # SPDX CHECK (REUSE)
+      # -------------------------
+      - name: Check SPDX license
+        run: reuse lint
+
+      # -------------------------
+      # TESTS + COVERAGE
+      # -------------------------
+      - name: Run tests with coverage
+        env:
+          PYTHONPATH: src
+        run: |
+          pytest -n auto --dist=loadscope \
+            --cov=xml_extractor \
+            --cov-report=xml \
+            --cov-report=term \
+            --maxfail=1 \
+            --disable-warnings
+
+      # -------------------------
+      # CODECOV
+      # -------------------------
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: XMLExtractor/coverage.xml
+          fail_ci_if_error: false
+          token: ${{ secrets.CODECOV_TOKEN }}
+
+  # -------------------------
+  # RELEASE
+  # -------------------------
+  release:
+    needs: quality
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Release Please
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

@@ -8,7 +8,7 @@ import logging
 import unittest
 from unittest.mock import MagicMock, patch
 
-import xml_extractor as xe
+import xml_extractor as xe  # type: ignore
 
 
 class TestConfigureLogging(unittest.TestCase):
@@ -22,14 +22,19 @@ class TestConfigureLogging(unittest.TestCase):
             m = MagicMock(spec=original_fh)
             m.setFormatter = MagicMock()
             m.setLevel = MagicMock()
+            m.level = logging.NOTSET  # required: logging internals access handler.level
             return m
 
-        with (
-            patch("os.getcwd", return_value="/home/user"),
-            patch("logging.FileHandler", side_effect=fake_fh),
-        ):
-            log = logging.getLogger("xml_extractor")
-            log.handlers.clear()
-            xe.configure_logging()
+        log = logging.getLogger("xml_extractor.xml_extractor")
+        original_handlers = log.handlers[:]
+        try:
+            with (
+                patch("os.getcwd", return_value="/home/user"),
+                patch("logging.FileHandler", side_effect=fake_fh),
+            ):
+                log.handlers.clear()
+                xe.configure_logging()
+        finally:
+            log.handlers[:] = original_handlers
 
         self.assertIn("script.log", captured.get("name", ""))

@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 # Changelog
 
 ## [0.4.0](https://github.com/laurentmor/CGI-tools/compare/v0.3.3...v0.4.0) (2026-04-19)

@@ -7,7 +7,7 @@ These tests verify that sounds play only when a file exists and mute mode is dis
 import unittest
 from unittest.mock import patch
 
-import xml_extractor as xe
+import xml_extractor as xe  # type: ignore
 
 
 class TestPlaySound(unittest.TestCase):
@@ -19,8 +19,8 @@ class TestPlaySound(unittest.TestCase):
     def test_play_sound_called(self):
         """Verify that play_sound calls winsound.PlaySound when not muted and file exists."""
         with (
-            patch("xml_extractor.WINSOUND_AVAILABLE", True),
-            patch("xml_extractor.winsound") as mock_winsound,
+            patch("xml_extractor.xml_extractor.WINSOUND_AVAILABLE", True),
+            patch("xml_extractor.xml_extractor.winsound") as mock_winsound,
             patch("pathlib.Path.exists", return_value=True),
         ):
             xe.play_sound("test.wav", mute=False)

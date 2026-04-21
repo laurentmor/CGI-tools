@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 # CGI Tools Repository
 
 A collection of Python utilities and support packages for XML extraction, SQL export processing, accounting data updates.

@@ -1,0 +1,9 @@
+version = 1
+[[annotations]]
+path = ["**/*.md", "**/*.txt", "**/*.docx"]
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["**/*.toml", "**/*.ini", "**/*.yml", "**/*.json"]
+SPDX-License-Identifier = "MIT"
+SPDX-FileCopyrightText = "2026 Laurent Morissette"

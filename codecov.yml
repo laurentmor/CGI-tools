@@ -1,0 +1,28 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 80%
+        threshold: 2%
+    patch:
+      default:
+        target: 80%
+
+  precision: 2
+  round: down
+  range: 70...100
+
+comment:
+  layout: "reach,diff,flags,tree"
+  behavior: default
+
+# 🔥 Focus sur ton module principal
+flags:
+  xml_extractor:
+    paths:
+      - XMLExtractor/src/xml_extractor
+
+# 🔍 Ignore bruit inutile
+ignore:
+  - "tests/*"
+  - "**/__init__.py"

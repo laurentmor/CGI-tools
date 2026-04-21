@@ -7,7 +7,7 @@ These tests cover file cleaning, temporary backup handling, and replacement sema
 import unittest
 from unittest.mock import MagicMock, mock_open, patch
 
-import xml_extractor as xe
+import xml_extractor as xe  # type: ignore
 from tests.fixtures import REPLACE_MAP
 
 
@@ -15,7 +15,9 @@ class TestProcessInputFile(unittest.TestCase):
     """Verify that input files are cleaned, backed up, and replaced correctly when necessary."""
 
     def setUp(self):
-        xe.logger = MagicMock()
+        import xml_extractor.xml_extractor as xe_mod  # type: ignore
+
+        xe_mod.logger = MagicMock()
         xe.replace_map = REPLACE_MAP
 
     def test_cleaning_happens(self):
@@ -28,9 +30,9 @@ class TestProcessInputFile(unittest.TestCase):
 
         with (
             patch("builtins.open", side_effect=open_side_effect),
-            patch("xml_extractor.clean_xml_content", return_value="clean\n"),
-            patch("xml_extractor.shutil.copy2"),
-            patch("xml_extractor.os.replace") as mock_replace,
+            patch("xml_extractor.xml_extractor.clean_xml_content", return_value="clean\n"),
+            patch("xml_extractor.xml_extractor.shutil.copy2"),
+            patch("xml_extractor.xml_extractor.os.replace") as mock_replace,
         ):
             xe.process_input_file_to_ensure_is_clean("file.xml")
 
@@ -43,10 +45,10 @@ class TestProcessInputFile(unittest.TestCase):
 
         with (
             patch("builtins.open", m),
-            patch("xml_extractor.clean_xml_content", side_effect=lambda x, _, __: x),
-            patch("xml_extractor.shutil.copy2"),
-            patch("xml_extractor.os.path.exists", return_value=False),
-            patch("xml_extractor.os.remove") as mock_remove,
+            patch("xml_extractor.xml_extractor.clean_xml_content", side_effect=lambda x, _, __: x),
+            patch("xml_extractor.xml_extractor.shutil.copy2"),
+            patch("xml_extractor.xml_extractor.os.path.exists", return_value=False),
+            patch("xml_extractor.xml_extractor.os.remove") as mock_remove,
         ):
             xe.process_input_file_to_ensure_is_clean("file.xml")
 
@@ -58,10 +60,10 @@ class TestProcessInputFile(unittest.TestCase):
 
         with (
             patch("builtins.open", m),
-            patch("xml_extractor.clean_xml_content", side_effect=lambda x, _, __: x),
-            patch("xml_extractor.shutil.copy2"),
-            patch("xml_extractor.os.path.exists", return_value=True),
-            patch("xml_extractor.os.remove") as mock_remove,
+            patch("xml_extractor.xml_extractor.clean_xml_content", side_effect=lambda x, _, __: x),
+            patch("xml_extractor.xml_extractor.shutil.copy2"),
+            patch("xml_extractor.xml_extractor.os.path.exists", return_value=True),
+            patch("xml_extractor.xml_extractor.os.remove") as mock_remove,
         ):
             xe.process_input_file_to_ensure_is_clean("file.xml")
 
@@ -80,9 +82,9 @@ class TestProcessInputFile(unittest.TestCase):
 
         with (
             patch("builtins.open", side_effect=open_side_effect),
-            patch("xml_extractor.clean_xml_content", side_effect=fake_clean),
-            patch("xml_extractor.shutil.copy2"),
-            patch("xml_extractor.os.replace"),
+            patch("xml_extractor.xml_extractor.clean_xml_content", side_effect=fake_clean),
+            patch("xml_extractor.xml_extractor.shutil.copy2"),
+            patch("xml_extractor.xml_extractor.os.replace"),
         ):
             xe.process_input_file_to_ensure_is_clean("file.xml")
 
@@ -94,10 +96,10 @@ class TestProcessInputFile(unittest.TestCase):
 
         with (
             patch("builtins.open", m),
-            patch("xml_extractor.clean_xml_content", return_value="cleaned\n"),
-            patch("xml_extractor.shutil.copy2") as mock_copy,
-            patch("xml_extractor.os.replace"),
-            patch("xml_extractor.os.path.exists", return_value=False),
+            patch("xml_extractor.xml_extractor.clean_xml_content", return_value="cleaned\n"),
+            patch("xml_extractor.xml_extractor.shutil.copy2") as mock_copy,
+            patch("xml_extractor.xml_extractor.os.replace"),
+            patch("xml_extractor.xml_extractor.os.path.exists", return_value=False),
         ):
             xe.process_input_file_to_ensure_is_clean("file.xml")
 
