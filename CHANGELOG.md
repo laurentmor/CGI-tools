@@ -3,6 +3,13 @@
 
 # Changelog
 
+## [0.4.2](https://github.com/laurentmor/CGI-tools/compare/v0.4.1...v0.4.2) (2026-04-21)
+
+
+### 🧹 Maintenance
+
+* proper workflow name for badge display ([48c830c](https://github.com/laurentmor/CGI-tools/commit/48c830ce4fc67e498c56db3bb823cc7a3c444e41))
+
 ## [0.4.1](https://github.com/laurentmor/CGI-tools/compare/v0.4.0...v0.4.1) (2026-04-21)
 
 
