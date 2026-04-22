@@ -8,9 +8,6 @@ authors = [
 ]
 readme = "README.md"
 requires-python = ">=3.11"
-organization = "CGI"
-justification = "Tool for XML extraction"
-keywords = ["xml", "extraction", "tool"]
 dependencies = [
     "lxml"
 ]
