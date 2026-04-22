@@ -2,6 +2,7 @@
 name = "xml-extractor"
 version = "1.2.6"  # géré automatiquement par release-please
 description = "XML extraction tool"
+
 authors = [
     { name = "Laurent Morissette-Fournier", email = "laurent.morissette-fournier@domain.com" }
 ]
@@ -19,6 +20,8 @@ dev = [
     "ruff",
     "reuse"
 ]
+[project.scripts]
+xml-extractor = "xml_extractor.xml_extractor:main"
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
@@ -26,6 +29,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+xml_extractor = ["sounds/*.wav"]
 
 # -------------------------
 # Ruff (lint)
