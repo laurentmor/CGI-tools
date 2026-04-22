@@ -2,11 +2,15 @@
 name = "xml-extractor"
 version = "1.2.6"  # géré automatiquement par release-please
 description = "XML extraction tool"
+
 authors = [
     { name = "Laurent Morissette-Fournier", email = "laurent.morissette-fournier@domain.com" }
 ]
 readme = "README.md"
 requires-python = ">=3.11"
+organization = "CGI"
+justification = "Tool for XML extraction"
+keywords = ["xml", "extraction", "tool"]
 dependencies = [
     "lxml"
 ]
