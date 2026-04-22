@@ -3,6 +3,30 @@
 
 # Changelog
 
+## [1.0.0](https://github.com/laurentmor/CGI-tools/compare/v0.4.2...v1.0.0) (2026-04-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* **cli:** sound paths are no longer filesystem-based, so direct file access to sounds is not supported.  Use the xml-extractor CLI or import the package and use the play_sound function to access sounds.
+
+### 🚀 Features
+
+* **cli:** add global CLI entrypoint and bundle sound assets ([824876c](https://github.com/laurentmor/CGI-tools/commit/824876c5348b05dc1a0a1cf4d388ce394307c2c0))
+* script is now  installable ([ae61c5c](https://github.com/laurentmor/CGI-tools/commit/ae61c5c5805b556a8ad5062c2c73fa207367dd3c))
+* script is now  installable ([ebd2ad9](https://github.com/laurentmor/CGI-tools/commit/ebd2ad9b9bcbbcb75a65f573677d7abe0fc17500))
+
+
+### 🐛 Bug Fixes
+
+* proect file ([6ed0e86](https://github.com/laurentmor/CGI-tools/commit/6ed0e868b95ee5a0275d71197248969f569b0625))
+
+
+### 🧹 Maintenance
+
+* **deps:** bump lxml from 5.3.1 to 6.1.0 in /XMLExtractor ([25d0334](https://github.com/laurentmor/CGI-tools/commit/25d0334258971e58752473a3a63f74005f774e2e))
+* lint ([f2abf11](https://github.com/laurentmor/CGI-tools/commit/f2abf112c3cfae0b5dd52152e57a5b117be31c0c))
+
 ## [0.4.2](https://github.com/laurentmor/CGI-tools/compare/v0.4.1...v0.4.2) (2026-04-21)
 
 
