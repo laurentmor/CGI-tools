@@ -36,6 +36,7 @@ import time
 
 # DEBUG# import traceback
 import zipfile
+from importlib.resources import files
 
 import pyzipper  # type: ignore
 
@@ -140,7 +141,8 @@ def play_sound(sound_file: str, mute: bool) -> None:
     """
     if mute or not WINSOUND_AVAILABLE:
         return
-    sound_path = Path("sounds") / sound_file
+    sound_path = files("xml_extractor.sounds") /sound_file
+
     if sound_path.exists():
         winsound.PlaySound(str(sound_path.resolve()), winsound.SND_FILENAME)
 
