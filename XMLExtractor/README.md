@@ -1,145 +1,193 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2026 Laurent Morissette
 
-# XML Extractor from SQL Developer Export
+<div align="center">
 
-This Python tool extracts, cleans, validates, and exports XML content from SQL Developer export files. It now uses `xml_extractor.py` as the primary script entry point and supports advanced capabilities like ZIP compression, password protection, logging, test mode, and invalid XML character replacement.
+# 🗂️ XMLExtractor
 
-![Tests](https://github.com/laurentmor/CGI-tools/actions/workflows/tests.yml/badge.svg)
-![Coverage](https://codecov.io/gh/laurentmor/CGI-tools/branch/main/graph/badge.svg)
-![GitHub release](https://img.shields.io/github/v/release/laurentmor/CGI-tools)
-![Downloads](https://img.shields.io/github/downloads/laurentmor/CGI-tools/total)
-![Python](https://img.shields.io/badge/python-3.10%20|%203.11%20|%203.12-blue)
-![License](https://img.shields.io/github/license/laurentmor/CGI-tools)
-![Lint](https://github.com/laurentmor/CGI-tools/actions/workflows/ci-release.yml/badge.svg)
-![Last commit](https://img.shields.io/github/last-commit/laurentmor/CGI-tools)
-![Version](https://img.shields.io/github/v/release/laurentmor/CGI-tools?color=blue&label=version)
-![Stars](https://img.shields.io/github/stars/laurentmor/CGI-tools?style=social)
+**Extract, clean, validate, and archive XML records from SQL Developer export files.**
+
+[![Tests](https://github.com/laurentmor/CGI-tools/actions/workflows/tests.yml/badge.svg)](https://github.com/laurentmor/CGI-tools/actions/workflows/tests.yml)
+[![Coverage](https://codecov.io/gh/laurentmor/CGI-tools/branch/main/graph/badge.svg)](https://codecov.io/gh/laurentmor/CGI-tools)
+[![Release](https://img.shields.io/github/v/release/laurentmor/CGI-tools?color=blue)](https://github.com/laurentmor/CGI-tools/releases)
+[![Python](https://img.shields.io/badge/python-3.10%20|%203.11%20|%203.12-blue)](https://www.python.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Stars](https://img.shields.io/github/stars/laurentmor/CGI-tools?style=social)](https://github.com/laurentmor/CGI-tools/stargazers)
+
+</div>
+
+---
+
+## What it does
+
+SQL Developer XML exports pack every row's data into a single file. XMLExtractor streams through that file, pulls out each record's XML payload, names it from an ID tag you choose, and writes it as a standalone `.xml` file — with optional cleanup, validation, and ZIP archiving.
+
+```
+export.xml  →  xmls/MSG001.xml
+               xmls/MSG002.xml
+               xmls/MSG003.xml
+               ...          →  archive.zip  (optional, AES-256 encrypted)
+```
+
+---
 
 ## Features
 
+| | |
+|---|---|
+| ⚡ **Streaming parser** | `iterparse`-based — processes arbitrarily large files with constant memory |
+| 🧼 **XML sanitisation** | Strips illegal characters, applies a custom JSON replacement map |
+| ✅ **Validation** | Checks XML structure and column existence before extracting |
+| 🔒 **AES-256 ZIP** | Optional encrypted archive via `pyzipper` |
+| 🏃 **Dry-run mode** | Simulate the full run without writing a single file |
+| 📋 **Structured logging** | Timestamped log to `script.log` |
+| 📈 **Progress display** | Per-record percentage as extraction proceeds |
+| 🔉 **Sound feedback** | Start / done / error WAVs (Windows; `--mute` to silence) |
+| 🧪 **119 tests · 97.79% coverage** | pytest suite across Python 3.10, 3.11, 3.12 |
 
-
-
-- ✅ Extracts XML content from a specified column in an SQL Developer export.
-- 🔒 Optionally compresses extracted files into a password-protected ZIP archive.
-- 🧼 Cleans invalid XML characters and optionally applies a user-defined replacement map.
-- 🔁 Supports test mode to process predefined test sets and auto-generate missing sets.
-- 🧪 Validates XML structure and ensures the required column and tag exist.
-- 📁 Organizes extracted XML files in a user-specified output directory.
-- 🔉 Plays sound effects at script start/end (Windows only; can be muted).
-- 📋 Logs execution to a file (`script.log` or `script-test.log`).
-- 🧰 Built-in argument validation and error handling.
-- 📈 Displays progress for each processed item.
-- 🔁 Optional pause at the end (can be skipped).
-- 🧪 Dry-run mode to simulate execution without writing files.
-- 🧪 Improved test coverage and documentation for the XMLExtractor suite (97.79% coverage across 119 tests).
-
-## Bug Fixes & Performance Improvements
-
-- Fixed ZIP encryption and encoding issues when creating protected archives with `pyzipper`.
-- Corrected XML file name extraction logic to reliably derive output names from XML content.
-- Resolved an undefined variable error in the script's error handling path.
-- Improved memory usage and parsing stability by fully cleaning `iterparse` XML elements.
-- Fixed path resolution issues when the tool is packaged as an executable with PyInstaller.
-- Optimized file cleaning with streaming I/O to reduce memory footprint for large XML files.
-- Normalized path handling across all file operations using `pathlib.Path`.
-- Added static type hints to core functions and methods for clearer code contracts and maintainability.
-- Cached precompiled regex patterns for character replacement when the replacement map is reused, improving performance during XML cleaning.
-- Updated test mocks to maintain compatibility with code improvements, ensuring all 119 tests pass.
-- Achieved 97.79% test coverage with comprehensive testing of user interaction paths and edge cases.
-
-## Requirements
-
-- Python 3.7+
-- Required packages:
-  - `pyzipper`
+---
 
 ## Installation
 
-1. Clone the repository.
-2. Install dependencies:
+```bash
+# 1. Clone the repo
+git clone https://github.com/laurentmor/CGI-tools.git
+cd CGI-tools/XMLExtractor
 
-   ```bash
-   install-deps.bat
-   ```
+# 2. Create a virtual environment
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\Activate.ps1
+
+# 3. Install the package and its dependencies
+pip install -e .
+```
+
+**Dependencies** (installed automatically via `pyproject.toml`):
+
+| Package | Version | Purpose |
+|---|---|---|
+| `pyzipper` | ≥ 0.3.6 | AES-256 ZIP encryption |
+| `pycryptodomex` | ≥ 3.22.0 | Cryptographic backend for pyzipper |
+| `lxml` | ≥ 5.3.1 | Fast XML parsing |
+
+---
 
 ## Usage
 
 ```bash
-python xml_extractor.py <input_file> <output_dir> [options]
+python -m xml_extractor <input_file> [output_dir] [options]
 ```
 
-### Positional Arguments
+### Positional arguments
 
-- `input_file`: Path to the input XML file (required unless in test mode).
-- `output_dir`: Directory where XML files will be saved (default: `xmls`).
+| Argument | Description | Default |
+|---|---|---|
+| `input_file` | SQL Developer XML export file | *(required)* |
+| `output_dir` | Directory for extracted XML files | `xmls` |
 
 ### Options
 
-| Option | Description |
-|--------|-------------|
-| `--column-name` | Name of the column containing XML (default: `RICH_TEXT_NCLOB`) |
-| `--file-id-tag` | Tag used to name output files (default: `MessageID`) |
-| `--z <zip_name> <zip_password>` | Create a ZIP file with optional password |
-| `--mute` | Mute sound effects |
-| `--skip-pause` | Skip pause at the end of script |
-| `--test [N]` | Run in test mode with optional test set size (default: 10) |
-| `--validate` | Validate XML structure only |
-| `--dry-run` | Simulate script execution without writing files |
-| `--version` | Show script version info |
+| Flag | Description |
+|---|---|
+| `--column-name NAME` | Column containing XML data | `RICH_TEXT_NCLOB` |
+| `--file-id-tag TAG` | XML tag used as output filename stem | `MessageID` |
+| `--z NAME [PASSWORD]` | Create a ZIP archive; add a password for AES-256 encryption |
+| `--dry-run` | Simulate without writing any files |
+| `--validate` | Validate XML structure only, then exit |
+| `--mute` | Suppress WAV sound effects |
+| `--skip-pause` | Skip the end-of-run prompt (useful in CI) |
+| `--version` | Print version and exit |
 
 ### Examples
 
-Extract XML content into `xmls/` directory:
-
 ```bash
-python xml_extractor.py export.xml xmls/
+# Basic extraction
+python -m xml_extractor export.xml
+
+# Custom column and ID tag
+python -m xml_extractor export.xml output/ --column-name MY_COL --file-id-tag TxnID
+
+# Encrypted ZIP archive
+python -m xml_extractor export.xml output/ --z archive.zip s3cr3tpass
+
+# Dry run — nothing is written to disk
+python -m xml_extractor export.xml --dry-run
+
+# Validate XML well-formedness and exit
+python -m xml_extractor export.xml --validate
 ```
-
-Create a password-protected ZIP file:
-
-```bash
-python xml_extractor.py export.xml xmls/ --z result.zip mypassword
-```
-
-Run in test mode with 5 mock entries:
-
-```bash
-python xml_extractor.py --test 5
-```
-
-Validate XML structure only:
-
-```bash
-python xml_extractor.py export.xml --validate
-```
-
-## Logging
-
-Execution logs are saved to:
-
-- `script.log` for normal runs
-- `script-test.log` for test mode
-
-If an error occurs, it will also be shown in Notepad (on Windows).
-
-## Changelog Summary
-
-- Password-protected ZIP creation
-- XML cleaning and validation
-- CLI validation and help prompts
-- Logging, dry-run mode, and progress display
-- Improved performance and memory management
-- Automatic test set generation
-- Updated test suite documentation and narrative comments
-- Resolved ZIP encoding and XML naming bug fixes
-
-## Author
-
-**Laurent Morissette**
-Version: `1.3`
 
 ---
 
-> _"This script was built for real-world XML extraction from complex SQL Developer exports with robustness and flexibility in mind."_
+## Project structure
+
+```
+XMLExtractor/
+├── src/
+│   └── xml_extractor/
+│       ├── __init__.py
+│       ├── xml_extractor.py   # core extraction engine
+│       ├── decorators.py      # @log_exceptions decorator
+│       └── version.py         # version resolution (package → git tag → dev)
+├── tests/
+│   ├── fixtures.py            # shared test helpers
+│   ├── conftest.py            # stubs for platform-specific deps
+│   └── test_*.py              # 29 test modules · 119 tests
+├── sounds/                    # WAV feedback files
+├── pyproject.toml             # src-layout packaging
+├── pytest.ini                 # coverage configuration
+└── requirements.txt           # pinned dependencies
+```
+
+---
+
+## Running tests
+
+```bash
+# Full suite with coverage report
+pytest
+
+# Fail fast on first failure
+pytest -x --tb=short
+
+# Open HTML coverage report
+pytest && open htmlcov/index.html    # macOS
+pytest && start htmlcov/index.html   # Windows
+```
+
+Current status: **119 tests · 97.79% coverage · CI green on Python 3.10, 3.11, 3.12**
+
+---
+
+## How it works
+
+1. **Sanitise** — scans the input file line-by-line, strips invalid XML characters, applies `replacements.json`, writes a `.bak` backup only when changes are made.
+2. **Validate** — confirms the file is well-formed XML and that the target column exists.
+3. **Stream** — `ET.iterparse` yields `<ROW>` end-events one at a time; each subtree is cleared immediately after processing to keep memory flat.
+4. **Extract** — the target `<COLUMN>` text is written to `<output_dir>/<ID>.xml`.
+5. **Archive** — if `--z` is given, wraps the output directory in a plain or AES-256 encrypted ZIP.
+
+---
+
+## Logging
+
+| Scenario | File |
+|---|---|
+| Normal run | `script.log` |
+
+Format: `YYYY-MM-DD HH:MM - LEVEL - message`
+
+---
+
+## Author
+
+**Laurent Morissette** · [Twitter/X](https://twitter.com/laurentmor) · [Buy me a coffee ☕](https://www.buymeacoffee.com/laurentMords)
+
+---
+
+<div align="center">
+
+*If this saved you time, a ⭐ is always appreciated.*
+
+</div>
