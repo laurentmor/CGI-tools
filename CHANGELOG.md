@@ -3,6 +3,14 @@
 
 # Changelog
 
+## [2.0.1](https://github.com/laurentmor/CGI-tools/compare/v2.0.0...v2.0.1) (2026-04-25)
+
+
+### 🧹 Maintenance
+
+* cleanup ([8924e47](https://github.com/laurentmor/CGI-tools/commit/8924e47e11ad6c4358e3d534bfbf7423b9e11309))
+* cleanup ([31b1b4d](https://github.com/laurentmor/CGI-tools/commit/31b1b4d61b26cfc5fd538f52ba45a5e160e00baf))
+
 ## [2.0.0](https://github.com/laurentmor/CGI-tools/compare/v1.0.0...v2.0.0) (2026-04-22)
 
 
