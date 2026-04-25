@@ -1,5 +1,5 @@
-# SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2026 Laurent Morissette
+<!--SPDX-License-Identifier: MIT
+# SPDX-FileCopyrightText: 2026 Laurent Morissette-->
 
 <div align="center">
 
