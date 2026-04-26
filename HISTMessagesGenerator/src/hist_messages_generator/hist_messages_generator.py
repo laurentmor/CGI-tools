@@ -10,15 +10,17 @@ from SQL Developer (<ROWS> format).
 
 Author: Laurent Morissette
 """
+import argparse
 import logging
+import time
+import xml.etree.ElementTree as ET
+from enum import IntEnum
+
 from rich.logging import RichHandler
 
-import argparse
-import xml.etree.ElementTree as ET
-import time
-from decorators import log_exceptions
-from ProductClassResolver import resolve_class
-from enum import IntEnum
+from .logging_decorators import log_exceptions
+from .product_class_resolver import resolve_class
+from .version import __version__
 
 
 class InstrumentIndex(IntEnum):
@@ -193,6 +195,7 @@ def main():
     parser.add_argument('input_file', type=str, help='Path to the XML input file.')
     parser.add_argument('customer', type=str, help='Customer ID')
     parser.add_argument('bank', type=str, help='Bank')
+    parser.add_argument('--version', action='version', version=f'HISTMessagesGenerator {__version__}')
 
     args = parser.parse_args()
     updater = HISTMessagesGenerator(log_file=args.log_file, input_file=args.input_file, customer=args.customer, bank=args.bank)

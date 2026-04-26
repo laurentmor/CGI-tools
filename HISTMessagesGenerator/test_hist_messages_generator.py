@@ -1,14 +1,14 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2026 Laurent Morissette
 
-import unittest
-from unittest.mock import patch
-import xml.etree.ElementTree as ET
-import tempfile
-import os
 import logging
+import os
+import tempfile
+import unittest
+import xml.etree.ElementTree as ET
+from unittest.mock import patch
 
-from HISTMessagesGenerator import HISTMessagesGenerator
+from hist_messages_generator import HISTMessagesGenerator
 
 
 class TestHISTMessagesGenerator(unittest.TestCase):
