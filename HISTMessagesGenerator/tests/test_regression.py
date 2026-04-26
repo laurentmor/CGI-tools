@@ -80,20 +80,24 @@ class TestReg002DuplicateInstrumentFirstWins:
     """When the same INSTRUMENT_ID appears twice, the first row's data is kept."""
 
     def test_first_party_type_preserved(self):
-        xml = make_xml([
-            {"INSTRUMENT_ID": "DUP1", "TYPE_": "DLC", "CUSTOMER_PARTY_TYPE": "FIRST"},
-            {"INSTRUMENT_ID": "DUP1", "TYPE_": "DLC", "CUSTOMER_PARTY_TYPE": "SECOND"},
-        ])
+        xml = make_xml(
+            [
+                {"INSTRUMENT_ID": "DUP1", "TYPE_": "DLC", "CUSTOMER_PARTY_TYPE": "FIRST"},
+                {"INSTRUMENT_ID": "DUP1", "TYPE_": "DLC", "CUSTOMER_PARTY_TYPE": "SECOND"},
+            ]
+        )
         root = ET.fromstring(xml)
         g = HISTMessagesGenerator.__new__(HISTMessagesGenerator)
         result = g.build_instruments_dictionary(root)
         assert result["DUP1"][1] == "FIRST"
 
     def test_dict_length_is_one(self):
-        xml = make_xml([
-            {"INSTRUMENT_ID": "DUP1", "TYPE_": "DLC", "CUSTOMER_PARTY_TYPE": "A"},
-            {"INSTRUMENT_ID": "DUP1", "TYPE_": "DLC", "CUSTOMER_PARTY_TYPE": "B"},
-        ])
+        xml = make_xml(
+            [
+                {"INSTRUMENT_ID": "DUP1", "TYPE_": "DLC", "CUSTOMER_PARTY_TYPE": "A"},
+                {"INSTRUMENT_ID": "DUP1", "TYPE_": "DLC", "CUSTOMER_PARTY_TYPE": "B"},
+            ]
+        )
         root = ET.fromstring(xml)
         g = HISTMessagesGenerator.__new__(HISTMessagesGenerator)
         assert len(g.build_instruments_dictionary(root)) == 1
@@ -106,9 +110,9 @@ class TestReg003WhitespaceStripped:
     """Leading/trailing whitespace in XML column values must be stripped."""
 
     def test_instrument_id_stripped(self):
-        xml = make_xml([
-            {"INSTRUMENT_ID": "  WS001  ", "TYPE_": "DLC", "CUSTOMER_PARTY_TYPE": "BUYER"}
-        ])
+        xml = make_xml(
+            [{"INSTRUMENT_ID": "  WS001  ", "TYPE_": "DLC", "CUSTOMER_PARTY_TYPE": "BUYER"}]
+        )
         root = ET.fromstring(xml)
         g = HISTMessagesGenerator.__new__(HISTMessagesGenerator)
         result = g.build_instruments_dictionary(root)
@@ -116,9 +120,9 @@ class TestReg003WhitespaceStripped:
         assert "  WS001  " not in result
 
     def test_party_type_stripped(self):
-        xml = make_xml([
-            {"INSTRUMENT_ID": "WS002", "TYPE_": "DLC", "CUSTOMER_PARTY_TYPE": "  BUYER  "}
-        ])
+        xml = make_xml(
+            [{"INSTRUMENT_ID": "WS002", "TYPE_": "DLC", "CUSTOMER_PARTY_TYPE": "  BUYER  "}]
+        )
         root = ET.fromstring(xml)
         g = HISTMessagesGenerator.__new__(HISTMessagesGenerator)
         result = g.build_instruments_dictionary(root)

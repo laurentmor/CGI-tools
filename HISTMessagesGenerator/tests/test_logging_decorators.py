@@ -95,7 +95,9 @@ class TestExceptionLogging:
     def test_mapped_exception_logged_at_custom_level(self):
         mock_lgr = _make_mock_logger()
 
-        @log_exceptions({ValueError: "v"}, log_level="error", raise_exception=False, logger=mock_lgr)
+        @log_exceptions(
+            {ValueError: "v"}, log_level="error", raise_exception=False, logger=mock_lgr
+        )
         def boom():
             raise ValueError("x")
 
@@ -237,6 +239,7 @@ class TestLoggerResolution:
 
     def test_default_logger_used_when_none(self, caplog):
         """When logger=None, module logger is used."""
+
         @log_exceptions({ValueError: "v"}, raise_exception=False, logger=None)
         def boom():
             raise ValueError("default logger test")

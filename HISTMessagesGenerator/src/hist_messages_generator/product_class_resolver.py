@@ -27,7 +27,7 @@ class ProductType(StrEnum):
     OAP = "OAP"
     RPM = "RPM"
     SRM = "SRM"
-    BIL = "BIL" #Added 01 march 2026
+    BIL = "BIL"  # Added 01 march 2026
 
 
 class InstrumentClass(StrEnum):
@@ -53,7 +53,7 @@ class InstrumentClass(StrEnum):
     OPEN_ACCOUNT_PAYMENT = "open_account_payment"
     RPM = "receivables_payables_management"
     SRM = "selective_receivable_management"
-    BIL = "billing_instrument" #Added 01 march 2026
+    BIL = "billing_instrument"  # Added 01 march 2026
 
 
 PRODUCT_TO_INSTRUMENT = {
@@ -79,7 +79,7 @@ PRODUCT_TO_INSTRUMENT = {
     ProductType.OAP: InstrumentClass.OPEN_ACCOUNT_PAYMENT,
     ProductType.RPM: InstrumentClass.RPM,
     ProductType.SRM: InstrumentClass.SRM,
-    ProductType.BIL: InstrumentClass.BIL, #Added March 1 2026
+    ProductType.BIL: InstrumentClass.BIL,  # Added March 1 2026
 }
 
 

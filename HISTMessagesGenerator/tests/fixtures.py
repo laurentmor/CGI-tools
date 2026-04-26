@@ -25,9 +25,7 @@ def make_xml(rows: list[dict[str, str]]) -> str:
     return "\n".join(parts)
 
 
-SINGLE_ROW = make_xml(
-    [{"INSTRUMENT_ID": "INS001", "TYPE_": "DLC", "CUSTOMER_PARTY_TYPE": "BUYER"}]
-)
+SINGLE_ROW = make_xml([{"INSTRUMENT_ID": "INS001", "TYPE_": "DLC", "CUSTOMER_PARTY_TYPE": "BUYER"}])
 
 MULTI_ROW = make_xml(
     [
@@ -49,9 +47,29 @@ ALL_TYPES_ROWS = make_xml(
         {"INSTRUMENT_ID": f"INS{i:03d}", "TYPE_": t, "CUSTOMER_PARTY_TYPE": "BUYER"}
         for i, t in enumerate(
             [
-                "DLC", "SLC", "CAR", "RMB", "DBA", "CBA", "RBA", "DFP",
-                "ADV", "LOI", "DCO", "DIR", "TAC", "GUA", "PBD", "PBS",
-                "SBS", "FIN", "ATP", "OAP", "RPM", "SRM", "BIL",
+                "DLC",
+                "SLC",
+                "CAR",
+                "RMB",
+                "DBA",
+                "CBA",
+                "RBA",
+                "DFP",
+                "ADV",
+                "LOI",
+                "DCO",
+                "DIR",
+                "TAC",
+                "GUA",
+                "PBD",
+                "PBS",
+                "SBS",
+                "FIN",
+                "ATP",
+                "OAP",
+                "RPM",
+                "SRM",
+                "BIL",
             ],
             start=1,
         )

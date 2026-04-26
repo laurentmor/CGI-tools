@@ -23,8 +23,8 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-_ROOT  = Path(__file__).parent.resolve()
-_SRC   = _ROOT / "src"
+_ROOT = Path(__file__).parent.resolve()
+_SRC = _ROOT / "src"
 _TESTS = _ROOT / "tests"
 
 for _p in (_SRC, _TESTS, _ROOT):

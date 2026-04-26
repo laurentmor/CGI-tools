@@ -23,7 +23,6 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-
 # ---------------------------------------------------------------------------
 # ProductClassResolver.py line 91 – KeyError branch
 # ---------------------------------------------------------------------------
@@ -56,7 +55,9 @@ class TestResolveClassKeyErrorBranch:
 
 
 class TestValidateXmlStructureFalsyBranch:
-    def test_falsy_validation_short_circuits_run(self, generator_factory, single_row_xml, tmp_path, monkeypatch):
+    def test_falsy_validation_short_circuits_run(
+        self, generator_factory, single_row_xml, tmp_path, monkeypatch
+    ):
         """
         Patch validate_xml_structure to return False (falsy) so that lines 82-83
         in run() are executed (the "Invalid XML structure" error + early return).
@@ -108,8 +109,9 @@ class TestMainGuard:
 
     def test_module_has_main_guard(self):
         """Verify the source file contains the __main__ guard (static check)."""
-        import hist_messages_generator.hist_messages_generator as mod
         import inspect
+
+        import hist_messages_generator.hist_messages_generator as mod
 
         source = inspect.getsource(mod)
         assert 'if __name__ == "__main__"' in source

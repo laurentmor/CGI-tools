@@ -31,9 +31,29 @@ from hist_messages_generator.product_class_resolver import (
 
 class TestProductTypeEnum:
     ALL_CODES = [
-        "DLC", "SLC", "CAR", "RMB", "DBA", "CBA", "RBA", "DFP",
-        "ADV", "LOI", "DCO", "DIR", "TAC", "GUA", "PBD", "PBS",
-        "SBS", "FIN", "ATP", "OAP", "RPM", "SRM", "BIL",
+        "DLC",
+        "SLC",
+        "CAR",
+        "RMB",
+        "DBA",
+        "CBA",
+        "RBA",
+        "DFP",
+        "ADV",
+        "LOI",
+        "DCO",
+        "DIR",
+        "TAC",
+        "GUA",
+        "PBD",
+        "PBS",
+        "SBS",
+        "FIN",
+        "ATP",
+        "OAP",
+        "RPM",
+        "SRM",
+        "BIL",
     ]
 
     def test_all_expected_codes_present(self):
@@ -102,7 +122,9 @@ class TestProductToInstrumentMapping:
 
     def test_no_duplicate_values(self):
         values = list(PRODUCT_TO_INSTRUMENT.values())
-        assert len(values) == len(set(values)), "Each ProductType should map to a unique InstrumentClass"
+        assert len(values) == len(set(values)), (
+            "Each ProductType should map to a unique InstrumentClass"
+        )
 
 
 # ---------------------------------------------------------------------------

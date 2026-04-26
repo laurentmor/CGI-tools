@@ -144,9 +144,7 @@ def test_benchmark_get_row_count_1000(benchmark, generator_factory, tmp_xml):
 
 
 class TestRunPerformance:
-    def test_run_100_instruments_under_2s(
-        self, generator_factory, tmp_xml, tmp_path, monkeypatch
-    ):
+    def test_run_100_instruments_under_2s(self, generator_factory, tmp_xml, tmp_path, monkeypatch):
         monkeypatch.chdir(tmp_path)
         xml_path = tmp_xml(_make_xml_n(100))
         g = generator_factory(xml_path)

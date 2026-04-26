@@ -78,7 +78,9 @@ class TestInit:
             bank="B",
             enable_file_logging=False,
         )
-        handlers = [h for h in HISTMessagesGenerator.logger.handlers if isinstance(h, logging.FileHandler)]  # noqa: F841
+        handlers = [
+            h for h in HISTMessagesGenerator.logger.handlers if isinstance(h, logging.FileHandler)
+        ]  # noqa: F841
         # No new file handlers added when disabled (there may be pre-existing ones)
         log_path = tmp_path / "x.log"
         assert not log_path.exists()
@@ -243,9 +245,15 @@ class TestBuildInstrumentsDictionary:
         assert result == {}
 
     def test_whitespace_stripped_from_values(self):
-        xml = make_xml([
-            {"INSTRUMENT_ID": "  INS999  ", "TYPE_": "  DLC  ", "CUSTOMER_PARTY_TYPE": "  BUYER  "}
-        ])
+        xml = make_xml(
+            [
+                {
+                    "INSTRUMENT_ID": "  INS999  ",
+                    "TYPE_": "  DLC  ",
+                    "CUSTOMER_PARTY_TYPE": "  BUYER  ",
+                }
+            ]
+        )
         root = ET.fromstring(xml)
         g = HISTMessagesGenerator.__new__(HISTMessagesGenerator)
         result = g.build_instruments_dictionary(root)
@@ -265,14 +273,18 @@ class TestRun:
         g.run()
         assert (tmp_path / "sql_statements.sql").exists()
 
-    def test_run_sql_contains_insert(self, generator_factory, single_row_xml, tmp_path, monkeypatch):
+    def test_run_sql_contains_insert(
+        self, generator_factory, single_row_xml, tmp_path, monkeypatch
+    ):
         monkeypatch.chdir(tmp_path)
         g = generator_factory(single_row_xml)
         g.run()
         sql = (tmp_path / "sql_statements.sql").read_text()
         assert "INSERT INTO outgoing_intrfc_e" in sql
 
-    def test_run_sql_contains_customer(self, generator_factory, single_row_xml, tmp_path, monkeypatch):
+    def test_run_sql_contains_customer(
+        self, generator_factory, single_row_xml, tmp_path, monkeypatch
+    ):
         monkeypatch.chdir(tmp_path)
         g = generator_factory(single_row_xml, customer="MY_CUST")
         g.run()
@@ -286,21 +298,27 @@ class TestRun:
         sql = (tmp_path / "sql_statements.sql").read_text()
         assert "MY_BANK" in sql
 
-    def test_run_sql_contains_instrument_id(self, generator_factory, single_row_xml, tmp_path, monkeypatch):
+    def test_run_sql_contains_instrument_id(
+        self, generator_factory, single_row_xml, tmp_path, monkeypatch
+    ):
         monkeypatch.chdir(tmp_path)
         g = generator_factory(single_row_xml)
         g.run()
         sql = (tmp_path / "sql_statements.sql").read_text()
         assert "INS001" in sql
 
-    def test_run_sql_contains_commit(self, generator_factory, single_row_xml, tmp_path, monkeypatch):
+    def test_run_sql_contains_commit(
+        self, generator_factory, single_row_xml, tmp_path, monkeypatch
+    ):
         monkeypatch.chdir(tmp_path)
         g = generator_factory(single_row_xml)
         g.run()
         sql = (tmp_path / "sql_statements.sql").read_text()
         assert "commit;" in sql
 
-    def test_run_sql_contains_select_block(self, generator_factory, single_row_xml, tmp_path, monkeypatch):
+    def test_run_sql_contains_select_block(
+        self, generator_factory, single_row_xml, tmp_path, monkeypatch
+    ):
         monkeypatch.chdir(tmp_path)
         g = generator_factory(single_row_xml)
         g.run()
@@ -378,9 +396,7 @@ class TestRun:
         sql = (tmp_path / "sql_statements.sql").read_text()
         assert "-- HIST for customer ACME" in sql
 
-    def test_run_all_product_types(
-        self, generator_factory, all_types_xml, tmp_path, monkeypatch
-    ):
+    def test_run_all_product_types(self, generator_factory, all_types_xml, tmp_path, monkeypatch):
         monkeypatch.chdir(tmp_path)
         g = generator_factory(all_types_xml)
         g.run()
