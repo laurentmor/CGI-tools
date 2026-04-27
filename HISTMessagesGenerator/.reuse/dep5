@@ -1,0 +1,35 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: xml-extractor
+
+# =========================
+# PYTHON CODE (STRICT)
+# =========================
+Files: src/** tests/**
+Copyright: 2026 Laurent Morissette
+License: MIT
+
+# =========================
+# ROOT FILES
+# =========================
+Files: *
+Copyright: 2026 Laurent Morissette
+License: MIT
+
+# =========================
+# EXCLUSIONS / GENERATED
+# =========================
+Files: htmlcov/** .pytest_cache/** .ruff_cache/** .coverage
+License: MIT
+
+# =========================
+# BINARIES
+# =========================
+Files: *.wav *.zip *.ico *.png *.jpg
+License: MIT
+
+# =========================
+# LEGACY / EXTRA CODE
+# =========================
+Files: HISTMessagesGenerator/**
+Copyright: 2026 Laurent Morissette
+License: MIT
