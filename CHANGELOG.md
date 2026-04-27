@@ -3,6 +3,19 @@
 
 # Changelog
 
+## [2.0.2](https://github.com/laurentmor/CGI-tools/compare/v2.0.1...v2.0.2) (2026-04-27)
+
+
+### 🧹 Maintenance
+
+* add SPDX-License to test runner ([5b6eddf](https://github.com/laurentmor/CGI-tools/commit/5b6eddfd9fedae410e09b9ed15d812d7cd2e7603))
+
+
+### ♻️ Refactoring
+
+* arranged module strucure so obeccts and types can be resolved by tests - all passing ([49c127b](https://github.com/laurentmor/CGI-tools/commit/49c127b5145323272cdb049a64d83cb724d4e434))
+* **HISTGEN:** clean src layout, 192-test suite, 96% coverage, README ([f3b6afc](https://github.com/laurentmor/CGI-tools/commit/f3b6afc3f5c67e441a0a0c2d8f39c89a9148d0d0))
+
 ## [2.0.1](https://github.com/laurentmor/CGI-tools/compare/v2.0.0...v2.0.1) (2026-04-25)
 
 
