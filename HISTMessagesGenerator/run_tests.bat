@@ -2,6 +2,15 @@
 REM ============================================================
 REM  run_tests.bat  --  run the full xml_extractor test suite
 REM  Place this file in the same folder as xml_extractor.py
+REM  and run it to execute all tests and view coverage reports. 
+REM  Requires Python 3.11+ and pytest with coverage plugins.
+REM  Usage:
+REM    1. Ensure Python 3.11+ is installed and on PATH
+REM    2. Run this script: run_tests.bat
+REM    3. View results in console and coverage report in htmlcov\index.html 
+REM    SPDX-License-Identifier: MIT
+REM    SPDX-FileCopyrightText: 2026 Laurent Morissette
+
 REM ============================================================
 
 setlocal EnableDelayedExpansion

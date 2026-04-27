@@ -79,9 +79,6 @@ HISTMessagesGenerator/
     └── test_coverage_gaps.py
 ```
 
-> **Important:** The package directory is `hist_message_generator` (no trailing `s`).  
-> All import statements must use this exact name.
-
 ---
 
 ## Requirements
