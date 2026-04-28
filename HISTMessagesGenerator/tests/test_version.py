@@ -15,8 +15,6 @@ from __future__ import annotations
 
 from unittest.mock import patch
 
-import pytest
-
 
 class TestGetVersion:
     def test_returns_string(self):
@@ -42,8 +40,8 @@ class TestGetVersion:
         with patch(
             "hist_messages_generator.version.version",
             side_effect=PackageNotFoundError("xml-extractor"),
-        ):
-            with patch(
+        ),\
+             patch(
                 "hist_messages_generator.version.subprocess.check_output",
                 return_value="v1.2.3-4-gabcdef",
             ):
@@ -58,8 +56,8 @@ class TestGetVersion:
         with patch(
             "hist_messages_generator.version.version",
             side_effect=PackageNotFoundError("xml-extractor"),
-        ):
-            with patch(
+        ),\
+             patch(
                 "hist_messages_generator.version.subprocess.check_output",
                 side_effect=Exception("git not found"),
             ):

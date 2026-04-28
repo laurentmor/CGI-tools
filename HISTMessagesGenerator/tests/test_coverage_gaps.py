@@ -7,24 +7,22 @@ coverage report. Each test is annotated with the source file and line(s)
 it covers.
 
 Covered here:
-- ProductClassResolver.py:91  – KeyError branch in resolve_class (impossible in
+- ProductClassResolver.py:91   KeyError branch in resolve_class (impossible in
   normal flow but reachable by mutating PRODUCT_TO_INSTRUMENT)
-- hist_messages_generator.py:82-83  – validate_xml_structure returning falsy
+- hist_messages_generator.py:82-83   validate_xml_structure returning falsy
   (unreachable via public API; patched at method level)
-- hist_messages_generator.py:204  – `if __name__ == "__main__"` guard
-- __init__.py:62-70  – fail-safe except block when package import fails
+- hist_messages_generator.py:204   `if __name__ == "__main__"` guard
+- __init__.py:62-70  fail-safe except block when package import fails
 """
 
 from __future__ import annotations
 
-import runpy
-import sys
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
 # ---------------------------------------------------------------------------
-# ProductClassResolver.py line 91 – KeyError branch
+# ProductClassResolver.py line 91 - KeyError branch
 # ---------------------------------------------------------------------------
 
 
@@ -50,7 +48,7 @@ class TestResolveClassKeyErrorBranch:
 
 
 # ---------------------------------------------------------------------------
-# hist_messages_generator.py lines 82-83 – validate_xml_structure falsy path
+# hist_messages_generator.py lines 82-83 - validate_xml_structure falsy path
 # ---------------------------------------------------------------------------
 
 
@@ -77,7 +75,7 @@ class TestValidateXmlStructureFalsyBranch:
 
 
 # ---------------------------------------------------------------------------
-# hist_messages_generator.py line 204 – __main__ guard
+# hist_messages_generator.py line 204 - __main__ guard
 # ---------------------------------------------------------------------------
 
 
@@ -118,7 +116,7 @@ class TestMainGuard:
 
 
 # ---------------------------------------------------------------------------
-# __init__.py lines 62-70 – fail-safe except block
+# __init__.py lines 62-70 - fail-safe except block
 # ---------------------------------------------------------------------------
 
 
@@ -131,7 +129,7 @@ class TestInitFailSafe:
         # We cannot easily re-import the real package with a broken sub-module
         # without side effects, so we directly exercise the fail-safe logic by
         # executing the relevant code path as a standalone snippet.
-        import types
+        import types  # noqa: F401
 
         namespace: dict = {}
         exec(

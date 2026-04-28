@@ -33,13 +33,68 @@ where = ["src"]
 [tool.setuptools.package-data]
 xml_extractor = ["sounds/*.wav"]
 
-# -------------------------
-# Ruff (lint)
-# -------------------------
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+fix = true
+respect-gitignore = true
 
+# -------------------------
+# Lint rules (strict mais intelligent)
+# -------------------------
 [tool.ruff.lint]
-select = ["E", "F", "I"]
-ignore = ["E501"]
+select = [
+    "E",   # pycodestyle (erreurs)
+    "F",   # pyflakes (bugs)
+    "I",   # imports (isort)
+    "B",   # bugbear (vrais pièges Python)
+    "C4",  # comprehensions (optimisation)
+    "UP",  # modernisation Python (pyupgrade)
+    "ARG", # arguments inutilisés
+    "SIM", # simplifications
+    "RET", # return patterns
+    "PTH", # pathlib vs os.path
+    "RUF", # règles Ruff spécifiques
+]
+
+ignore = [
+    "E501",   # line length (géré par formatter)
+    "B008",   # dépendances dans args par défaut (trop strict parfois)
+    "ARG001", # arguments inutilisés (tests / interfaces)
+]
+
+# -------------------------
+# Imports (isort intelligent)
+# -------------------------
+[tool.ruff.lint.isort]
+known-first-party = [
+    "hist_messages_generator",
+    "xml_extractor"
+]
+combine-as-imports = true
+force-single-line = false
+
+# -------------------------
+# Format (remplace black)
+# -------------------------
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
+
+# -------------------------
+# Per-file overrides (CRUCIAL)
+# -------------------------
+[tool.ruff.lint.per-file-ignores]
+
+# Tests → plus permissifs
+"tests/**.py" = [
+    "S101",   # assert autorisé
+    "ARG",    # args inutilisés OK
+    "PLR2004" # magic values OK
+]
+
+# __init__ → re-exports
+"__init__.py" = [
+    "F401"  # imports non utilisés (normal pour API publique)
+]

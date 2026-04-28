@@ -30,7 +30,7 @@ from hist_messages_generator.product_class_resolver import (
 
 
 class TestProductTypeEnum:
-    ALL_CODES = [
+    ALL_CODES = (
         "DLC",
         "SLC",
         "CAR",
@@ -54,7 +54,7 @@ class TestProductTypeEnum:
         "RPM",
         "SRM",
         "BIL",
-    ]
+    )
 
     def test_all_expected_codes_present(self):
         for code in self.ALL_CODES:
@@ -106,7 +106,7 @@ class TestProductToInstrumentMapping:
             assert pt in PRODUCT_TO_INSTRUMENT, f"Missing mapping for {pt}"
 
     def test_every_mapped_value_is_instrument_class(self):
-        for pt, ic in PRODUCT_TO_INSTRUMENT.items():
+        for _, ic in PRODUCT_TO_INSTRUMENT.items():
             assert isinstance(ic, InstrumentClass)
 
     def test_known_mappings(self):

@@ -15,8 +15,6 @@ Covers:
 
 from __future__ import annotations
 
-import pytest
-
 
 class TestPackagePublicAPI:
     def test_hist_messages_generator_importable(self):

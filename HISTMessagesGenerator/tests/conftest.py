@@ -25,13 +25,13 @@ from fixtures import (
 )
 
 __all__ = [
-    "make_xml",
-    "SINGLE_ROW",
-    "MULTI_ROW",
-    "DUPLICATE_ROW",
     "ALL_TYPES_ROWS",
-    "MISSING_COLUMNS_ROW",
+    "DUPLICATE_ROW",
     "LARGE_XML",
+    "MISSING_COLUMNS_ROW",
+    "MULTI_ROW",
+    "SINGLE_ROW",
+    "make_xml",
 ]
 
 

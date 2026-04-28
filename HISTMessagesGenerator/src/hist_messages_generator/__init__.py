@@ -49,14 +49,14 @@ if not _is_script:
             log_exceptions = _types.ModuleType("log_exceptions")
 
         __all__ = [
-            "HISTMessagesGenerator",
-            "InstrumentIndex",
-            "main",
-            "log_exceptions",
             # exposed modules (useful for tests / patching)
             "ET",
-            "time",
+            "HISTMessagesGenerator",
+            "InstrumentIndex",
+            "log_exceptions",
             "logging",
+            "main",
+            "time",
         ]
 
     except Exception as _e:

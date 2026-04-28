@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2026 Laurent Morissette
 
@@ -16,8 +15,7 @@ import logging
 import time
 import xml.etree.ElementTree as ET
 from enum import IntEnum
-
-from rich.logging import RichHandler
+from pathlib import Path
 
 from .logging_decorators import log_exceptions
 from .product_class_resolver import resolve_class
@@ -77,7 +75,7 @@ class HISTMessagesGenerator:
     @log_exceptions(
         {FileNotFoundError: "Input file not found", ET.ParseError: "Error parsing XML"},
         raise_exception=True,
-        logger=lambda self: HISTMessagesGenerator.logger,
+        logger=lambda self: HISTMessagesGenerator.logger,  # noqa: ARG005
     )
     def run(self):
         start = time.time()
@@ -137,7 +135,7 @@ values (generate_uoid(), TO_DATE(TO_CHAR(SYSDATE, 'DD-MON-YYYY')), TO_DATE(TO_CH
 
         code += "commit;\n\n"
         code += select
-        with open("sql_statements.sql", "w") as sql_file:
+        with Path.open("sql_statements.sql", "w") as sql_file:
             sql_file.write(code)
 
         HISTMessagesGenerator.logger.info("SQL statements successfully written.")
@@ -149,7 +147,7 @@ values (generate_uoid(), TO_DATE(TO_CHAR(SYSDATE, 'DD-MON-YYYY')), TO_DATE(TO_CH
     # BUILD INSTRUMENT DICTIONARY
     # ==========================
     def build_instruments_dictionary(self, xml):
-        built_dict = dict()
+        built_dict = {}
         # dup_count=0
         for row in xml.findall("ROW"):
             line = {
@@ -178,7 +176,7 @@ values (generate_uoid(), TO_DATE(TO_CHAR(SYSDATE, 'DD-MON-YYYY')), TO_DATE(TO_CH
     @log_exceptions(
         {Exception: "Error occurred while getting row count"},
         raise_exception=True,
-        logger=lambda self: HISTMessagesGenerator.logger,
+        logger=lambda self: HISTMessagesGenerator.logger,  # noqa: ARG005
     )
     def get_row_count(self):
         return sum(1 for _, elem in ET.iterparse(self.input_file) if elem.tag == "ROW")
@@ -186,10 +184,10 @@ values (generate_uoid(), TO_DATE(TO_CHAR(SYSDATE, 'DD-MON-YYYY')), TO_DATE(TO_CH
     @log_exceptions(
         {Exception: "Error occurred while validating XML structure"},
         raise_exception=True,
-        logger=lambda self: HISTMessagesGenerator.logger,
+        logger=lambda self: HISTMessagesGenerator.logger,  # noqa: ARG005
     )
     def validate_xml_structure(self, input_file):
-        return True if ET.parse(input_file) else False
+        return bool(ET.parse(input_file))
 
     def validate_columns_exist(self, input_file, column_names):
         """
@@ -199,7 +197,7 @@ values (generate_uoid(), TO_DATE(TO_CHAR(SYSDATE, 'DD-MON-YYYY')), TO_DATE(TO_CH
         found = set()
 
         # Open the file explicitly so Windows does not lock it after parsing
-        with open(input_file, "rb") as f:  # open in binary mode for ET.iterparse
+        with Path.open(input_file, "rb") as f:  # open in binary mode for ET.iterparse
             for _, elem in ET.iterparse(f):
                 if elem.tag == "ROW":
                     present = {col.attrib.get("NAME") for col in elem.findall("COLUMN")}

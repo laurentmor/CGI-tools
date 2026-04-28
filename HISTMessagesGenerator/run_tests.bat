@@ -1,16 +1,7 @@
-@echo off
+<?xml version="1.0" encoding="UTF-16" standalone="no"?><Proponix><Header><DestinationID>PRO</DestinationID><SenderID>NBC</SenderID><ClientBank>NBC</ClientBank><OperationOrganizationID>SCF</OperationOrganizationID><MessageType>COMPRESP</MessageType><DateSent>20260427</DateSent><TimeSent>1118</TimeSent><MessageID>0000201127</MessageID></Header><SubHeader><ReplyToMessageID>103744129C</ReplyToMessageID><InstrumentID/><Product/><ProductType/><ActivityType/><SequenceNumberOfActivity/><WorkItemNumber>1108392</WorkItemNumber></SubHeader><Body><Result><Action>PASS</Action><Summary>The activity passes the compliance check in Finscan</Summary></Result><FlaggedEntities/></Body><Timestamp><Date>20260427</Date><Time>151814</Time></Timestamp></Proponix>@echo off
 REM ============================================================
 REM  run_tests.bat  --  run the full xml_extractor test suite
 REM  Place this file in the same folder as xml_extractor.py
-REM  and run it to execute all tests and view coverage reports. 
-REM  Requires Python 3.11+ and pytest with coverage plugins.
-REM  Usage:
-REM    1. Ensure Python 3.11+ is installed and on PATH
-REM    2. Run this script: run_tests.bat
-REM    3. View results in console and coverage report in htmlcov\index.html 
-REM    SPDX-License-Identifier: MIT
-REM    SPDX-FileCopyrightText: 2026 Laurent Morissette
-
 REM ============================================================
 
 setlocal EnableDelayedExpansion
