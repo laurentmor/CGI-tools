@@ -22,12 +22,10 @@ class TestValidateXmlStructure(unittest.TestCase):
 
     def test_invalid_xml_raises_parse_error(self):
         """Verify that Invalid xml raises parse error."""
-        with patch("xml_extractor.ET.parse", side_effect=ET.ParseError("bad xml")):
-            with self.assertRaises(ET.ParseError):
-                xe.validate_xml_structure("bad.xml")
+        with patch("xml_extractor.ET.parse", side_effect=ET.ParseError("bad xml")), self.assertRaises(ET.ParseError):
+            xe.validate_xml_structure("bad.xml")
 
     def test_missing_file_raises(self):
         """Verify that Missing file raises."""
-        with patch("xml_extractor.ET.parse", side_effect=FileNotFoundError):
-            with self.assertRaises(FileNotFoundError):
-                xe.validate_xml_structure("missing.xml")
+        with patch("xml_extractor.ET.parse", side_effect=FileNotFoundError), self.assertRaises(FileNotFoundError):
+            xe.validate_xml_structure("missing.xml")

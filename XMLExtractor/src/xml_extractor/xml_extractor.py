@@ -167,7 +167,7 @@ def load_replace_map_from_json(json_path: str) -> dict[str, Any]:
         dict: Dictionary with replacement mappings.
     """
     try:
-        with open(json_path, encoding="utf-8") as f:
+        with open(str(json_path), encoding="utf-8") as f:  # noqa: PTH123
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as e:
         logger.warning(f"Could not load replacement map: {e} - using default map.")
@@ -365,7 +365,7 @@ def process_input_file_to_ensure_is_clean(input_file: str) -> None:
     if replace_map:
         replace_regex = re.compile("|".join(map(re.escape, replace_map)))
 
-    with open(str(input_path), encoding="utf-8", errors="ignore") as fin:
+    with open(str(input_path), encoding="utf-8", errors="ignore") as fin:  # noqa: PTH123
         for line in fin:
             clean_line = clean_xml_content(line, replace_map, replace_regex)
             if clean_line != line:
@@ -376,14 +376,14 @@ def process_input_file_to_ensure_is_clean(input_file: str) -> None:
         # Only create a backup when the file actually needs to be modified
         shutil.copy2(str(input_path), str(backup))
         logger.info(f"Backup created: {backup}")
-        with open(str(temp), "w", encoding="utf-8") as fout:
+        with open(str(temp), "w", encoding="utf-8") as fout:  # noqa: PTH123
             fout.writelines(cleaned_lines)
         logger.info("Cleaning done. Continuing...")
-        os.replace(str(temp), str(input_path))
+        os.replace(str(temp), str(input_path))  # noqa: PTH105
     else:
         logger.info("No illegal characters found. No replacement done.")
-        if os.path.exists(str(temp)):
-            os.remove(str(temp))
+        if os.path.exists(str(temp)):  # noqa: PTH110
+            os.remove(str(temp))  # noqa: PTH107
 
 
 def clean_xml_content(
@@ -460,7 +460,7 @@ def validate_column_exists(input_file: str, column_name: str) -> bool:
         if input_file.strip().startswith("<"):
             root = ET.fromstring(input_file)
         else:
-            if not os.path.exists(input_file):
+            if not os.path.exists(input_file):  # noqa: PTH110
                 raise ValueError(f"File not found: {input_file}")
             tree = ET.parse(input_file)
             root = tree.getroot()
@@ -574,8 +574,8 @@ class XMLExtractor:
             )
             return
 
-        if os.path.exists(self.output_dir):
-            if os.path.isfile(self.output_dir):
+        if os.path.exists(self.output_dir):  # noqa: PTH110
+            if os.path.isfile(self.output_dir):  # noqa: PTH113
                 answer = (
                     input(
                         f"Output path '{self.output_dir}' exists as a file. "
@@ -585,8 +585,8 @@ class XMLExtractor:
                     .upper()
                 )
                 if answer == "Y":
-                    os.remove(self.output_dir)
-                    os.makedirs(self.output_dir, exist_ok=True)
+                    os.remove(self.output_dir)  # noqa: PTH107
+                    os.makedirs(self.output_dir, exist_ok=True)  # noqa: PTH103
                     logger.info(f"Removed file and created output directory '{self.output_dir}'.")
                 else:
                     logger.error(f"Output path '{self.output_dir}' is a file. Cannot proceed.")
@@ -602,7 +602,7 @@ class XMLExtractor:
                 )
                 if answer == "Y":
                     self.delete_output_dir()
-                    os.makedirs(self.output_dir, exist_ok=True)
+                    os.makedirs(self.output_dir, exist_ok=True)  # noqa: PTH103
                     logger.info(f"Output directory '{self.output_dir}' recreated.")
                 else:
                     logger.info(
@@ -610,7 +610,7 @@ class XMLExtractor:
                         "Content will be appended."
                     )
         else:
-            os.makedirs(self.output_dir, exist_ok=True)
+            os.makedirs(self.output_dir, exist_ok=True)  # noqa: PTH103
             logger.info(f"Output directory '{self.output_dir}' created.")
 
     # ------------------------------------------------------------------
@@ -657,8 +657,7 @@ class XMLExtractor:
             return self.input_file.count("<ROW>")
         # For file input, read line by line to count <ROW> occurrences without loading entire file
         # into memory
-        with open(self.input_file, encoding="utf-8", errors="ignore") as f:
-            return sum(1 for line in f if "<ROW>" in line)
+        return sum(1 for line in open(self.input_file, encoding="utf-8", errors="ignore") if "<ROW>" in line)  # noqa: PTH123
 
     # ------------------------------------------------------------------
     # Main extraction
@@ -723,7 +722,7 @@ class XMLExtractor:
                             logger.info(f"Processing {self.file_id_tag}: {xml_id}")
                         if not self.dry_run:
                             output_path = Path(self.output_dir) / file_name
-                            with open(str(output_path), "w", encoding="utf-8") as output:
+                            with open(str(output_path), "w", encoding="utf-8") as output:  # noqa: PTH123
                                 output.write(rich_text.text.strip())
                                 file_count += 1
                                 logger.info(f"File created: {file_name}")
@@ -859,7 +858,7 @@ def main() -> None:
         # validate_arguments already checks file existence; this is a safety net
         # for the case where main() is called programmatically without going
         # through validate_arguments.
-        if not os.path.exists(args.input_file):
+        if not os.path.exists(args.input_file):  # noqa: PTH110
             raise FileNotFoundError(f"Input file '{args.input_file}' does not exist.")
 
         base_path = get_base_path()

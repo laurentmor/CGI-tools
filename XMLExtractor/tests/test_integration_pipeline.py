@@ -5,8 +5,8 @@
 These tests simulate export.xml parsing, file creation, and optional ZIP generation entirely in memory."""
 
 import logging
-import os
 import unittest
+from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import xml_extractor as xe
@@ -60,7 +60,7 @@ class TestIntegrationPipeline(unittest.TestCase):
         ):
             ext.extract_and_save_elements()
 
-        names = {os.path.basename(p) for p in opened_files}
+        names = {Path(p).name for p in opened_files}
         self.assertIn("103594361C.xml", names)
         self.assertIn("1035943663.xml", names)
         self.assertIn("103594362F.xml", names)

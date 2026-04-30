@@ -47,16 +47,15 @@ class TestBenchmarks(unittest.TestCase):
     significant regressions
     while allowing for variability across different machines and environments."""
 
-    THRESHOLDS = {
-        "clean_xml_1000_lines": 0.5,  # seconds
-        "get_message_id_10000": 0.5,
-        "get_row_count_100_rows": 1.0,
-        "extract_10_rows": 1.0,
-        "extract_100_rows": 3.0,
-    }
-
     def setUp(self):
         xe.logger = logging.getLogger("test")
+        self.THRESHOLDS = {
+            "clean_xml_1000_lines": 0.5,  # seconds
+            "get_message_id_10000": 0.5,
+            "get_row_count_100_rows": 1.0,
+            "extract_10_rows": 1.0,
+            "extract_100_rows": 3.0,
+        }
 
     def test_bench_clean_xml_1000_lines(self):
         """Verify that Bench clean xml 1000 lines."""
@@ -76,7 +75,7 @@ class TestBenchmarks(unittest.TestCase):
         for _ in range(10_000):
             ext.get_message_id(content)
         elapsed = time.perf_counter() - t0
-        print(f"\n[BENCH] get_message_id ×10 000: {elapsed * 1000:.2f} ms")
+        print(f"\n[BENCH] get_message_id x10 000: {elapsed * 1000:.2f} ms")
         self.assertLess(elapsed, self.THRESHOLDS["get_message_id_10000"])
 
     def test_bench_get_row_count_100_rows(self):

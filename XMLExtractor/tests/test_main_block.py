@@ -16,17 +16,17 @@ class TestMainBlock(unittest.TestCase):
     """Verify main entrypoint behavior, CLI handling, and __main__ guard execution."""
 
     def _fake_args(self, **overrides):
-        defaults = dict(
-            input_file="file.xml",
-            output_dir="out",
-            column_name="COL",
-            z=None,
-            file_id_tag="MessageID",
-            mute=False,
-            test=None,
-            dry_run=False,
-            skip_pause=True,
-        )
+        defaults = {
+            "input_file": "file.xml",
+            "output_dir": "out",
+            "column_name": "COL",
+            "z": None,
+            "file_id_tag": "MessageID",
+            "mute": False,
+            "test": None,
+            "dry_run": False,
+            "skip_pause": True,
+        }
         defaults.update(overrides)
         return MagicMock(**defaults)
 
@@ -46,9 +46,9 @@ class TestMainBlock(unittest.TestCase):
             patch.object(xe_mod, "XMLExtractor", return_value=fake_extractor),
             patch.object(xe_mod.time, "time", side_effect=itertools.count(0)),
             patch.object(xe_mod.sys, "exit", side_effect=SystemExit) as mock_exit,
+            self.assertRaises(SystemExit),
         ):
-            with self.assertRaises(SystemExit):
-                xe.main()
+            xe.main()
 
         fake_extractor.extract_and_save_elements.assert_called_once()
         mock_exit.assert_called_with(0)
@@ -63,9 +63,9 @@ class TestMainBlock(unittest.TestCase):
             patch.object(xe_mod.os.path, "exists", return_value=False),
             patch.object(xe_mod, "play_sound"),
             patch.object(xe_mod.sys, "exit", side_effect=SystemExit) as mock_exit,
+            self.assertRaises(SystemExit),
         ):
-            with self.assertRaises(SystemExit):
-                xe.main()
+            xe.main()
 
         mock_exit.assert_called_with(1)
 
@@ -82,9 +82,9 @@ class TestMainBlock(unittest.TestCase):
             ),
             patch.object(xe_mod, "play_sound"),
             patch.object(xe_mod.sys, "exit", side_effect=SystemExit) as mock_exit,
+            self.assertRaises(SystemExit),
         ):
-            with self.assertRaises(SystemExit):
-                xe.main()
+            xe.main()
 
         mock_exit.assert_called_with(1)
 

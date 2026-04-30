@@ -47,13 +47,13 @@ class TestPerformanceRegression(unittest.TestCase):
         ratio = actual_us / baseline
         print(
             f"\n[PERF] {label}: {actual_us:.2f} µs/call  "
-            f"(baseline {baseline:.3f} µs, ratio {ratio:.1f}×, limit {max_multiplier}×)"
+            f"(baseline {baseline:.3f} µs, ratio {ratio:.1f}x, limit {max_multiplier}x)"
         )
         self.assertLess(
             ratio,
             max_multiplier,
             f"{label} too slow: {actual_us:.2f} µs/call is "
-            f"{ratio:.1f}× baseline (limit {max_multiplier}×)",
+            f"{ratio:.1f}x baseline (limit {max_multiplier}x)",
         )
 
     # ------------------------------------------------------------------
@@ -104,10 +104,10 @@ class TestPerformanceRegression(unittest.TestCase):
         t_100 = min(timeit.repeat(run_100, number=1, repeat=10))
         t_1000 = min(timeit.repeat(run_1000, number=1, repeat=10))
         ratio = t_1000 / t_100 if t_100 > 0 else 1
-        print(f"\n[PERF] linear scaling ratio (×10 input): {ratio:.2f}×")
+        print(f"\n[PERF] linear scaling ratio (x10 input): {ratio:.2f}x")
         self.assertLess(
             ratio,
             20,
-            f"clean_xml_content scaling ratio {ratio:.2f}× exceeds 20× "
+            f"clean_xml_content scaling ratio {ratio:.2f}x exceeds 20x "
             f"(t_100={t_100 * 1000:.2f}ms, t_1000={t_1000 * 1000:.2f}ms)",
         )

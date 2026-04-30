@@ -38,12 +38,10 @@ class TestValidateArguments(unittest.TestCase):
     # --------------------------------------------------
     def test_missing_input_file_raises(self):
         """Verify that Missing input file raises."""
-        with (
-            patch.object(sys, "argv", ["prog", "missing.xml"]),
-            patch("xml_extractor.xml_extractor.Path.exists", return_value=False),
-            patch("argparse.ArgumentParser.print_help"),
-            patch("xml_extractor.xml_extractor.play_sound"),self.assertRaises(Exception)
-        ):
+        with patch.object(sys, "argv", ["prog", "missing.xml"]), \
+            patch("xml_extractor.xml_extractor.Path.exists", return_value=False), \
+            patch("argparse.ArgumentParser.print_help"), \
+            patch("xml_extractor.xml_extractor.play_sound"), self.assertRaises(FileNotFoundError):
             xe.validate_arguments()
 
     # --------------------------------------------------

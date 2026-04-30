@@ -95,17 +95,17 @@ REPLACE_MAP = {"*": "-", "\x02": "", "\x1a": ""}
 
 
 def make_extractor(**overrides):
-    defaults = dict(
-        input_file="input.xml",
-        output_dir="output",
-        output_file_name="archive",
-        column_name="RICH_TEXT_NCLOB",
-        create_zip=False,
-        zip_password=None,
-        file_id_tag="MessageID",
-        mute=True,
-        dry_run=False,
-    )
+    defaults = {
+        "input_file": "input.xml",
+        "output_dir": "output",
+        "output_file_name": "archive",
+        "column_name": "RICH_TEXT_NCLOB",
+        "create_zip": False,
+        "zip_password": None,
+        "file_id_tag": "MessageID",
+        "mute": True,
+        "dry_run": False,
+    }
     defaults.update(overrides)
     return xe.XMLExtractor(**defaults)
 
