@@ -3,6 +3,16 @@
 
 # Changelog
 
+## [2.0.3](https://github.com/laurentmor/CGI-tools/compare/v2.0.2...v2.0.3) (2026-04-30)
+
+
+### 🐛 Bug Fixes
+
+* add REUSE SPDX headers to HISTMessagesGenerator/run_tests.bat ([a751bec](https://github.com/laurentmor/CGI-tools/commit/a751bec5801a1ae624cd3e005001526dd86007b3))
+* adjust tests for Path.open compatibility after ruff lint fix ([4b2d29b](https://github.com/laurentmor/CGI-tools/commit/4b2d29b575ec9f38d8eaf15a2bd20ac367d45bf9))
+* preserve test-compatible file I/O in XMLExtractor while satisfying ruff ([8857a9f](https://github.com/laurentmor/CGI-tools/commit/8857a9f98fce2cb4f99815744ce549828b4a9bb7))
+* resolve ruff formatting and Path.open lint issue ([18c9666](https://github.com/laurentmor/CGI-tools/commit/18c9666d3f2d8f269a669a8eff0286ebac85e7c9))
+
 ## [2.0.2](https://github.com/laurentmor/CGI-tools/compare/v2.0.1...v2.0.2) (2026-04-27)
 
 
