@@ -87,7 +87,7 @@ def resolve_class(type_: str) -> InstrumentClass:
     try:
         product = ProductType(type_.strip().upper())
         return PRODUCT_TO_INSTRUMENT[product]
-    except KeyError:
-        raise ValueError(f"No instrument mapping for product type: {type_}")
-    except ValueError:
-        raise ValueError(f"Invalid product type: {type_}")
+    except KeyError as err:
+        raise ValueError(f"No instrument mapping for product type: {type_}") from err
+    except ValueError as err:
+        raise ValueError(f"Invalid product type: {type_}") from err
