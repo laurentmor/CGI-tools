@@ -107,6 +107,7 @@ class TestBenchmarks(unittest.TestCase):
         with (
             patch_iterparse(xml_string),
             patch("builtins.open", return_value=handle),
+            patch("pathlib.Path.open", return_value=handle),
             patch.object(ext, "check_output_dir"),
             patch.object(ext, "create_zip_archive"),
         ):

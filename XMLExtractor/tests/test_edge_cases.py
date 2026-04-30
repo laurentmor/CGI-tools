@@ -55,9 +55,13 @@ class TestEdgeCases(unittest.TestCase):
             handle.write = lambda data: written.update({path: data})
             return handle
 
+        def fake_path_open(path, mode="r", **kw):
+            return fake_open(path, mode, **kw)
+
         with (
             patch_iterparse(xml),
             patch("builtins.open", side_effect=fake_open),
+            patch("pathlib.Path.open", new=fake_path_open),
             patch.object(ext, "check_output_dir"),
             patch.object(ext, "create_zip_archive"),
         ):

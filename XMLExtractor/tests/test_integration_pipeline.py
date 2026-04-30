@@ -57,6 +57,7 @@ class TestIntegrationPipeline(unittest.TestCase):
             patch.object(ext, "check_output_dir"),
             patch.object(ext, "create_zip_archive"),
             patch("builtins.open", side_effect=tracked_open),
+            patch("pathlib.Path.open", new=tracked_open),
         ):
             ext.extract_and_save_elements()
 
@@ -76,6 +77,7 @@ class TestIntegrationPipeline(unittest.TestCase):
         with (
             patch_iterparse(self.EXPORT_XML),
             patch("builtins.open", return_value=handle),
+            patch("pathlib.Path.open", return_value=handle),
             patch.object(ext, "check_output_dir"),
             patch.object(ext, "create_zip_archive") as mock_zip,
         ):
