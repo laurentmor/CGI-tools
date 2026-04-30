@@ -46,5 +46,8 @@ class TestValidateColumnExists(unittest.TestCase):
 
     def test_file_not_found_raises(self):
         """Verify that File not found raises."""
-        with patch("os.path.exists", return_value=False), self.assertRaises((ValueError, Exception)):
+        with (
+            patch("os.path.exists", return_value=False),
+            self.assertRaises((ValueError, Exception)),
+        ):
             xe.validate_column_exists("missing.xml", "COL")

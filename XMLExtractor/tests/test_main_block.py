@@ -103,7 +103,8 @@ class TestMainBlock(unittest.TestCase):
             patch.object(xe_mod, "play_sound"),
             patch.object(xe_mod, "XMLExtractor", return_value=fake_extractor),
             patch.object(xe_mod.time, "time", side_effect=itertools.count(0)),
-            patch.object(xe_mod.sys, "exit", side_effect=SystemExit),self.assertRaises(SystemExit)
+            patch.object(xe_mod.sys, "exit", side_effect=SystemExit),
+            self.assertRaises(SystemExit),
         ):
             xe.main()
 
@@ -125,7 +126,8 @@ class TestMainBlock(unittest.TestCase):
             patch.object(xe_mod, "XMLExtractor", return_value=fake_extractor),
             patch.object(xe_mod.time, "time", side_effect=itertools.count(0)),
             patch("builtins.input") as mock_input,
-            patch.object(xe_mod.sys, "exit", side_effect=SystemExit),self.assertRaises(SystemExit)
+            patch.object(xe_mod.sys, "exit", side_effect=SystemExit),
+            self.assertRaises(SystemExit),
         ):
             xe.main()
 

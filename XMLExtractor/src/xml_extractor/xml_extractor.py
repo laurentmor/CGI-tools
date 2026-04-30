@@ -657,7 +657,11 @@ class XMLExtractor:
             return self.input_file.count("<ROW>")
         # For file input, read line by line to count <ROW> occurrences without loading entire file
         # into memory
-        return sum(1 for line in open(self.input_file, encoding="utf-8", errors="ignore") if "<ROW>" in line)  # noqa: PTH123
+        return sum(
+            1
+            for line in Path(self.input_file).open(encoding="utf-8", errors="ignore")
+            if "<ROW>" in line
+        )
 
     # ------------------------------------------------------------------
     # Main extraction

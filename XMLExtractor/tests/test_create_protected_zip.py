@@ -97,9 +97,12 @@ class TestCreateProtectedZip(unittest.TestCase):
     def test_exception_in_zipfile_reraised(self):
         """Verify that Exception in zipfile reraised."""
         ext = make_extractor(zip_password="secret123", output_dir="out")
-        with patch(
-            "xml_extractor.xml_extractor.pyzipper.AESZipFile", side_effect=OSError("zip error")
-        ), self.assertRaises(IOError):
+        with (
+            patch(
+                "xml_extractor.xml_extractor.pyzipper.AESZipFile", side_effect=OSError("zip error")
+            ),
+            self.assertRaises(IOError),
+        ):
             ext.create_protected_zip("archive.zip")
 
     # --------------------------------------------------
@@ -115,7 +118,8 @@ class TestCreateProtectedZip(unittest.TestCase):
             patch("xml_extractor.xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
             patch(
                 "xml_extractor.xml_extractor.os.walk", return_value=iter([("out", [], ["a.xml"])])
-            ),self.assertRaises(IOError)
+            ),
+            self.assertRaises(IOError),
         ):
             ext.create_protected_zip("archive.zip")
 

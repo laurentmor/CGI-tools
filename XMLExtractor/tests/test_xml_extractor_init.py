@@ -70,7 +70,8 @@ class TestCheckOutputDir(unittest.TestCase):
             patch("xml_extractor.xml_extractor.os.path.exists", return_value=True),
             patch("xml_extractor.xml_extractor.os.path.isfile", return_value=True),
             patch("builtins.input", return_value="N"),
-            patch("xml_extractor.xml_extractor.logger") as mock_logger,self.assertRaises(ValueError)
+            patch("xml_extractor.xml_extractor.logger") as mock_logger,
+            self.assertRaises(ValueError),
         ):
             ext.check_output_dir()
         mock_logger.error.assert_called_with("Output path 'file_path' is a file. Cannot proceed.")

@@ -28,7 +28,8 @@ class TestValidateArguments(unittest.TestCase):
         with (
             patch.object(sys, "argv", ["prog"]),
             patch("argparse.ArgumentParser.print_help"),
-            patch("sys.exit", side_effect=SystemExit) as mock_exit,self.assertRaises(SystemExit)
+            patch("sys.exit", side_effect=SystemExit) as mock_exit,
+            self.assertRaises(SystemExit),
         ):
             xe.validate_arguments()
         mock_exit.assert_called_with(1)
@@ -38,10 +39,13 @@ class TestValidateArguments(unittest.TestCase):
     # --------------------------------------------------
     def test_missing_input_file_raises(self):
         """Verify that Missing input file raises."""
-        with patch.object(sys, "argv", ["prog", "missing.xml"]), \
-            patch("xml_extractor.xml_extractor.Path.exists", return_value=False), \
-            patch("argparse.ArgumentParser.print_help"), \
-            patch("xml_extractor.xml_extractor.play_sound"), self.assertRaises(FileNotFoundError):
+        with (
+            patch.object(sys, "argv", ["prog", "missing.xml"]),
+            patch("xml_extractor.xml_extractor.Path.exists", return_value=False),
+            patch("argparse.ArgumentParser.print_help"),
+            patch("xml_extractor.xml_extractor.play_sound"),
+            self.assertRaises(FileNotFoundError),
+        ):
             xe.validate_arguments()
 
     # --------------------------------------------------
