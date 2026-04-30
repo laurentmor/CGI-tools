@@ -35,10 +35,9 @@ class TestExtractAndSave(unittest.TestCase):
         with (
             patch("xml_extractor.ET.iterparse", return_value=context),
             patch.object(ext, "get_row_count", return_value=1),
-            patch.object(ext, "check_output_dir"),
+            patch.object(ext, "check_output_dir"),self.assertRaises(ValueError)
         ):
-            with self.assertRaises(ValueError):
-                ext.extract_and_save_elements()
+            ext.extract_and_save_elements()
 
     # --------------------------------------------------
     # 2. No ROW elements

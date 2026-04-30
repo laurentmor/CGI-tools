@@ -28,10 +28,9 @@ class TestValidateArguments(unittest.TestCase):
         with (
             patch.object(sys, "argv", ["prog"]),
             patch("argparse.ArgumentParser.print_help"),
-            patch("sys.exit", side_effect=SystemExit) as mock_exit,
+            patch("sys.exit", side_effect=SystemExit) as mock_exit,self.assertRaises(SystemExit)
         ):
-            with self.assertRaises(SystemExit):
-                xe.validate_arguments()
+            xe.validate_arguments()
         mock_exit.assert_called_with(1)
 
     # --------------------------------------------------
@@ -43,10 +42,9 @@ class TestValidateArguments(unittest.TestCase):
             patch.object(sys, "argv", ["prog", "missing.xml"]),
             patch("xml_extractor.xml_extractor.Path.exists", return_value=False),
             patch("argparse.ArgumentParser.print_help"),
-            patch("xml_extractor.xml_extractor.play_sound"),
+            patch("xml_extractor.xml_extractor.play_sound"),self.assertRaises(Exception)
         ):
-            with self.assertRaises(Exception):
-                xe.validate_arguments()
+            xe.validate_arguments()
 
     # --------------------------------------------------
     # 5. --validate with invalid XML → exit(1)

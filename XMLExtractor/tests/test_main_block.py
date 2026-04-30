@@ -103,10 +103,9 @@ class TestMainBlock(unittest.TestCase):
             patch.object(xe_mod, "play_sound"),
             patch.object(xe_mod, "XMLExtractor", return_value=fake_extractor),
             patch.object(xe_mod.time, "time", side_effect=itertools.count(0)),
-            patch.object(xe_mod.sys, "exit", side_effect=SystemExit),
+            patch.object(xe_mod.sys, "exit", side_effect=SystemExit),self.assertRaises(SystemExit)
         ):
-            with self.assertRaises(SystemExit):
-                xe.main()
+            xe.main()
 
         fake_extractor.extract_and_save_elements.assert_called_once()
 
@@ -126,10 +125,9 @@ class TestMainBlock(unittest.TestCase):
             patch.object(xe_mod, "XMLExtractor", return_value=fake_extractor),
             patch.object(xe_mod.time, "time", side_effect=itertools.count(0)),
             patch("builtins.input") as mock_input,
-            patch.object(xe_mod.sys, "exit", side_effect=SystemExit),
+            patch.object(xe_mod.sys, "exit", side_effect=SystemExit),self.assertRaises(SystemExit)
         ):
-            with self.assertRaises(SystemExit):
-                xe.main()
+            xe.main()
 
         mock_input.assert_called_once()
 

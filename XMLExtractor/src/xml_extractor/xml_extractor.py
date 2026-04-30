@@ -50,7 +50,8 @@ import json
 import logging
 import re
 from pathlib import Path
-from typing import Any, Dict, Optional, Pattern
+from re import Pattern
+from typing import Any
 from xml.etree import ElementTree as ET
 
 from .logging_decorators import log_exceptions
@@ -84,7 +85,7 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 # replace_map: Dictionary containing character replacements for cleaning XML
 # content, loaded from JSON at startup.
-replace_map: Optional[Dict[str, str]] = None
+replace_map: dict[str, str] | None = None
 
 # ---------------------------------------------------------------------------
 # Logging
@@ -152,7 +153,7 @@ def play_sound(sound_file: str, mute: bool) -> None:
 # ---------------------------------------------------------------------------
 
 
-def load_replace_map_from_json(json_path: str) -> Dict[str, Any]:
+def load_replace_map_from_json(json_path: str) -> dict[str, Any]:
     """Load a replacement map from a JSON file for XML content cleaning.
 
     Reads a JSON file containing key-value pairs for character replacements.
@@ -166,7 +167,7 @@ def load_replace_map_from_json(json_path: str) -> Dict[str, Any]:
         dict: Dictionary with replacement mappings.
     """
     try:
-        with open(json_path, "r", encoding="utf-8") as f:
+        with open(json_path, encoding="utf-8") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as e:
         logger.warning(f"Could not load replacement map: {e} - using default map.")
@@ -314,7 +315,7 @@ def validate_arguments() -> argparse.Namespace:
     return args
 
 
-def validate_zip_password(password: Optional[str]) -> bool:
+def validate_zip_password(password: str | None) -> bool:
     """Validate the ZIP password length for security.
 
     Ensures the password is at least MIN_PASSWORD_LENGTH characters long.
@@ -364,7 +365,7 @@ def process_input_file_to_ensure_is_clean(input_file: str) -> None:
     if replace_map:
         replace_regex = re.compile("|".join(map(re.escape, replace_map)))
 
-    with open(str(input_path), "r", encoding="utf-8", errors="ignore") as fin:
+    with open(str(input_path), encoding="utf-8", errors="ignore") as fin:
         for line in fin:
             clean_line = clean_xml_content(line, replace_map, replace_regex)
             if clean_line != line:
@@ -386,10 +387,10 @@ def process_input_file_to_ensure_is_clean(input_file: str) -> None:
 
 
 def clean_xml_content(
-    content: Optional[str],
-    replace_map: Optional[Dict[str, str]],
-    replace_regex: Optional[Pattern] = None,
-) -> Optional[str]:
+    content: str | None,
+    replace_map: dict[str, str] | None,
+    replace_regex: Pattern | None = None,
+) -> str | None:
     """Clean XML content by removing invalid characters and applying replacements.
 
     Performs two cleaning operations:
@@ -505,10 +506,10 @@ class XMLExtractor:
         input_file: str,
         output_dir: str,
         *,
-        output_file_name: Optional[str] = None,
+        output_file_name: str | None = None,
         column_name: str = DEFAULT_COLUMN_NAME,
         create_zip: bool = False,
-        zip_password: Optional[str] = None,
+        zip_password: str | None = None,
         file_id_tag: str = DEFAULT_FILE_ID_TAG,
         mute: bool = False,
         dry_run: bool = False,
@@ -535,7 +536,7 @@ class XMLExtractor:
         self.file_id_tag = file_id_tag
         self.mute = mute
         self.dry_run = dry_run
-        self.zip_filename: Optional[str] = None
+        self.zip_filename: str | None = None
 
     # ------------------------------------------------------------------
     # Directory management
@@ -656,7 +657,7 @@ class XMLExtractor:
             return self.input_file.count("<ROW>")
         # For file input, read line by line to count <ROW> occurrences without loading entire file
         # into memory
-        with open(self.input_file, "r", encoding="utf-8", errors="ignore") as f:
+        with open(self.input_file, encoding="utf-8", errors="ignore") as f:
             return sum(1 for line in f if "<ROW>" in line)
 
     # ------------------------------------------------------------------
@@ -748,7 +749,7 @@ class XMLExtractor:
         raise_exception=True,
         logger=logger,
     )
-    def create_unprotected_zip(self, zip_filename: Optional[str] = None) -> None:
+    def create_unprotected_zip(self, zip_filename: str | None = None) -> None:
         """Create a plain ZIP archive without password protection.
 
         Uses standard ZIP compression to archive all files in the output
@@ -782,7 +783,7 @@ class XMLExtractor:
         raise_exception=True,
         logger=logger,  # was missing in the original
     )
-    def create_protected_zip(self, zip_filename: Optional[str] = None) -> None:
+    def create_protected_zip(self, zip_filename: str | None = None) -> None:
         """Create a ZIP archive with AES encryption and password protection.
 
         Uses pyzipper to create a password-protected ZIP file.  All files in

@@ -89,7 +89,7 @@ class TestCreateProtectedZip(unittest.TestCase):
         ):
             ext.create_protected_zip("archive.zip")
 
-        fake_zip.setpassword.assert_called_once_with("pässwörd".encode("utf-8"))
+        fake_zip.setpassword.assert_called_once_with("pässwörd".encode())
 
     # --------------------------------------------------
     # 5. Exception on open re-raised
@@ -98,10 +98,9 @@ class TestCreateProtectedZip(unittest.TestCase):
         """Verify that Exception in zipfile reraised."""
         ext = make_extractor(zip_password="secret123", output_dir="out")
         with patch(
-            "xml_extractor.xml_extractor.pyzipper.AESZipFile", side_effect=IOError("zip error")
-        ):
-            with self.assertRaises(IOError):
-                ext.create_protected_zip("archive.zip")
+            "xml_extractor.xml_extractor.pyzipper.AESZipFile", side_effect=OSError("zip error")
+        ), self.assertRaises(IOError):
+            ext.create_protected_zip("archive.zip")
 
     # --------------------------------------------------
     # 6. Exception on write re-raised
@@ -110,16 +109,15 @@ class TestCreateProtectedZip(unittest.TestCase):
         """Verify that Exception in write reraised."""
         ext = make_extractor(zip_password="secret123", output_dir="out")
         fake_zip = self._make_fake_zip()
-        fake_zip.write.side_effect = IOError("write error")
+        fake_zip.write.side_effect = OSError("write error")
 
         with (
             patch("xml_extractor.xml_extractor.pyzipper.AESZipFile", return_value=fake_zip),
             patch(
                 "xml_extractor.xml_extractor.os.walk", return_value=iter([("out", [], ["a.xml"])])
-            ),
+            ),self.assertRaises(IOError)
         ):
-            with self.assertRaises(IOError):
-                ext.create_protected_zip("archive.zip")
+            ext.create_protected_zip("archive.zip")
 
     # --------------------------------------------------
     # 7. Logger called on success
