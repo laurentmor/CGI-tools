@@ -135,7 +135,7 @@ values (generate_uoid(), TO_DATE(TO_CHAR(SYSDATE, 'DD-MON-YYYY')), TO_DATE(TO_CH
 
         code += "commit;\n\n"
         code += select
-        with Path.open("sql_statements.sql", "w") as sql_file:
+        with Path("sql_statements.sql").open("w", encoding="utf-8") as sql_file:
             sql_file.write(code)
 
         HISTMessagesGenerator.logger.info("SQL statements successfully written.")
@@ -160,7 +160,7 @@ values (generate_uoid(), TO_DATE(TO_CHAR(SYSDATE, 'DD-MON-YYYY')), TO_DATE(TO_CH
             if instrument_ID:
                 if instrument_ID not in built_dict:
                     built_dict[instrument_ID] = (
-                        resolve_class(instrument_CLASS),
+                        resolve_class(instrument_CLASS or ""),
                         customer_party_type,
                     )
                 else:

@@ -45,6 +45,7 @@ try:
 
     WINSOUND_AVAILABLE = True
 except ImportError:
+    winsound = None
     WINSOUND_AVAILABLE = False
 import json
 import logging
@@ -142,10 +143,11 @@ def play_sound(sound_file: str, mute: bool) -> None:
     """
     if mute or not WINSOUND_AVAILABLE:
         return
+    assert winsound is not None
     sound_path = files("xml_extractor.sounds") / sound_file
 
-    if sound_path.exists():
-        winsound.PlaySound(str(sound_path.resolve()), winsound.SND_FILENAME)
+    if sound_path.is_file():
+        winsound.PlaySound(str(sound_path), winsound.SND_FILENAME)
 
 
 # ---------------------------------------------------------------------------
@@ -153,7 +155,7 @@ def play_sound(sound_file: str, mute: bool) -> None:
 # ---------------------------------------------------------------------------
 
 
-def load_replace_map_from_json(json_path: str) -> dict[str, Any]:
+def load_replace_map_from_json(json_path: Path | str) -> dict[str, Any]:
     """Load a replacement map from a JSON file for XML content cleaning.
 
     Reads a JSON file containing key-value pairs for character replacements.
@@ -161,7 +163,7 @@ def load_replace_map_from_json(json_path: str) -> dict[str, Any]:
     a safe built-in default map.
 
     Args:
-        json_path (str): Path to the JSON file containing the replacement map.
+        json_path (Path | str): Path to the JSON file containing the replacement map.
 
     Returns:
         dict: Dictionary with replacement mappings.
@@ -483,7 +485,7 @@ def validate_column_exists(input_file: str, column_name: str) -> bool:
 def get_base_path() -> Path:
     """Return the base path, handling both development and PyInstaller contexts."""
     if getattr(sys, "frozen", False):
-        return Path(sys._MEIPASS)
+        return Path(sys._MEIPASS)  # type: ignore[attr-defined]
     return Path(__file__).parent
 
 
@@ -808,7 +810,8 @@ class XMLExtractor:
             compression=zipfile.ZIP_DEFLATED,
             encryption=pyzipper.WZ_AES,
         ) as zipf:
-            zipf.setpassword(self.zip_password.encode("utf-8"))
+            if self.zip_password:
+                zipf.setpassword(self.zip_password.encode("utf-8"))
             for root, _, files in os.walk(self.output_dir):
                 for file in files:
                     file_path = Path(root) / file
