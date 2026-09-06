@@ -45,6 +45,7 @@ try:
 
     WINSOUND_AVAILABLE = True
 except ImportError:
+    winsound = None
     WINSOUND_AVAILABLE = False
 import json
 import logging
@@ -142,10 +143,12 @@ def play_sound(sound_file: str, mute: bool) -> None:
     """
     if mute or not WINSOUND_AVAILABLE:
         return
-    sound_path = files("xml_extractor.sounds") / sound_file
+    assert winsound is not None
+    sound_dir = Path(str(files("xml_extractor.sounds")))
+    sound_path = sound_dir / sound_file
 
     if sound_path.exists():
-        winsound.PlaySound(str(sound_path.resolve()), winsound.SND_FILENAME)
+        winsound.PlaySound(str(sound_path), winsound.SND_FILENAME)
 
 
 # ---------------------------------------------------------------------------
@@ -342,6 +345,33 @@ def validate_zip_password(password: str | None) -> bool:
 # XML cleaning
 # ---------------------------------------------------------------------------
 
+# Matches an XML declaration's encoding attribute where the value is some
+# case/hyphen variant of "UTF-8" (e.g. UTF8, utf8, Utf-8) but not already
+# the canonical "UTF-8" spelling. expat (used by ElementTree) does not
+# recognize "UTF8" as an alias, which causes spurious
+# "not well-formed (invalid token)" errors on the first non-ASCII byte it
+# encounters, even though the underlying bytes are valid UTF-8.
+_ENCODING_DECL_REGEX = re.compile(r"(encoding=(['\"]))UTF-?8\2", re.IGNORECASE)
+
+
+def normalize_xml_encoding_declaration(line: str) -> str:
+    """Normalize a malformed 'UTF8' encoding declaration to canonical 'UTF-8'.
+
+    Only rewrites the encoding value itself (e.g. ``encoding='UTF8'`` ->
+    ``encoding='UTF-8'``); lines without an XML encoding declaration, or
+    where it is already correctly spelled, are returned unchanged.
+
+    Args:
+        line (str): A line of the XML file (typically only the first line
+            of the document contains the XML declaration).
+
+    Returns:
+        str: The line with the encoding declaration normalized, if present.
+    """
+    if not line or "encoding=" not in line:
+        return line
+    return _ENCODING_DECL_REGEX.sub(lambda m: f"{m.group(1)}UTF-8{m.group(2)}", line)
+
 
 def process_input_file_to_ensure_is_clean(input_file: str) -> None:
     """Clean the input XML file to ensure it contains only valid XML characters.
@@ -368,6 +398,7 @@ def process_input_file_to_ensure_is_clean(input_file: str) -> None:
     with open(str(input_path), encoding="utf-8", errors="ignore") as fin:  # noqa: PTH123
         for line in fin:
             clean_line = clean_xml_content(line, replace_map, replace_regex)
+            clean_line = normalize_xml_encoding_declaration(clean_line)  # type: ignore
             if clean_line != line:
                 cleaned = True
             cleaned_lines.append(clean_line)
@@ -483,7 +514,7 @@ def validate_column_exists(input_file: str, column_name: str) -> bool:
 def get_base_path() -> Path:
     """Return the base path, handling both development and PyInstaller contexts."""
     if getattr(sys, "frozen", False):
-        return Path(sys._MEIPASS)
+        return Path(sys._MEIPASS)  # type: ignore[attr-defined]
     return Path(__file__).parent
 
 
@@ -808,7 +839,8 @@ class XMLExtractor:
             compression=zipfile.ZIP_DEFLATED,
             encryption=pyzipper.WZ_AES,
         ) as zipf:
-            zipf.setpassword(self.zip_password.encode("utf-8"))
+            if self.zip_password:
+                zipf.setpassword(self.zip_password.encode("utf-8"))
             for root, _, files in os.walk(self.output_dir):
                 for file in files:
                     file_path = Path(root) / file
@@ -867,7 +899,7 @@ def main() -> None:
 
         base_path = get_base_path()
         replace_map_path = base_path / REPLACEMENT_MAP_FILE
-        replace_map = load_replace_map_from_json(replace_map_path)
+        replace_map = load_replace_map_from_json(replace_map_path)  # type: ignore
         logger.info(f"Replacement map loaded: {replace_map}")
 
         process_input_file_to_ensure_is_clean(args.input_file)
