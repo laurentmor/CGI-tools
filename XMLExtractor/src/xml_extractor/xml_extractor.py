@@ -144,9 +144,10 @@ def play_sound(sound_file: str, mute: bool) -> None:
     if mute or not WINSOUND_AVAILABLE:
         return
     assert winsound is not None
-    sound_path = files("xml_extractor.sounds") / sound_file
+    sound_dir = Path(str(files("xml_extractor.sounds")))
+    sound_path = sound_dir / sound_file
 
-    if sound_path.is_file():
+    if sound_path.exists():
         winsound.PlaySound(str(sound_path), winsound.SND_FILENAME)
 
 
