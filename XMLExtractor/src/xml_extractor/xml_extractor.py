@@ -397,7 +397,7 @@ def process_input_file_to_ensure_is_clean(input_file: str) -> None:
     with open(str(input_path), encoding="utf-8", errors="ignore") as fin:  # noqa: PTH123
         for line in fin:
             clean_line = clean_xml_content(line, replace_map, replace_regex)
-            clean_line = normalize_xml_encoding_declaration(clean_line) # type: ignore
+            clean_line = normalize_xml_encoding_declaration(clean_line)  # type: ignore
             if clean_line != line:
                 cleaned = True
             cleaned_lines.append(clean_line)
@@ -898,7 +898,7 @@ def main() -> None:
 
         base_path = get_base_path()
         replace_map_path = base_path / REPLACEMENT_MAP_FILE
-        replace_map = load_replace_map_from_json(replace_map_path) # type: ignore
+        replace_map = load_replace_map_from_json(replace_map_path)  # type: ignore
         logger.info(f"Replacement map loaded: {replace_map}")
 
         process_input_file_to_ensure_is_clean(args.input_file)
