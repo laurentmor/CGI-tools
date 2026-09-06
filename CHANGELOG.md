@@ -3,6 +3,21 @@
 
 # Changelog
 
+## [2.0.4](https://github.com/laurentmor/CGI-tools/compare/v2.0.3...v2.0.4) (2026-09-06)
+
+
+### 🐛 Bug Fixes
+
+* **xml:** normalize UTF-8 declarations in XML preprocessing ([edede4f](https://github.com/laurentmor/CGI-tools/commit/edede4f9e80961964669f0a3fafd12f5cdb642d9))
+* **xml:** normalize UTF-8 encoding declarations ([2431fd1](https://github.com/laurentmor/CGI-tools/commit/2431fd1b412358e248db8898abaaae1dd88aea1e))
+* **xml:** normalize UTF-8 XML encoding declarations ([26f4a08](https://github.com/laurentmor/CGI-tools/commit/26f4a088fe3ee7b923b5aa56d641d8881a1d5df2))
+* **xml:** normalize XML encoding and sound path checks ([47cd7e0](https://github.com/laurentmor/CGI-tools/commit/47cd7e06312ddac620302cd39466279f1a44b86c))
+
+
+### 🧹 Maintenance
+
+* trigger release ([4856207](https://github.com/laurentmor/CGI-tools/commit/485620752c620cc139f16ab92eed395ff875261a))
+
 ## [2.0.3](https://github.com/laurentmor/CGI-tools/compare/v2.0.2...v2.0.3) (2026-04-30)
 
 
